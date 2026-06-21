@@ -1,0 +1,107 @@
+aid: datacrunch
+name: DataCrunch
+review:
+  question: Does DataCrunch expose a documented public WebSocket or streaming API?
+  answer: false
+  date: '2026-06-21'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. The DataCrunch Public API at
+    https://api.datacrunch.io/v1 is a request/response REST API governing GPU
+    cloud resources (instances, instance-types, availability, images, ssh-keys,
+    startup-scripts, volumes, balance) and serverless container deployments.
+    No documented WebSocket (ws://, wss://) surface exists for these
+    management endpoints. The serverless inference endpoints exposed by
+    deployed containers can emit HTTP token streams (SSE-style) when the
+    underlying model server (vLLM/TGI/SGLang) is configured for streaming, but
+    that streaming behavior belongs to the user-deployed OpenAI-compatible
+    container, not to a DataCrunch-published streaming API surface, so no
+    AsyncAPI artifact is modeled here.
+findings:
+  summary: |
+    DataCrunch (rebranding to Verda; API host remains api.datacrunch.io) does
+    not publish a documented public WebSocket API. The Public API is REST over
+    HTTPS under https://api.datacrunch.io/v1, authenticated with OAuth2
+    client-credentials Bearer tokens scoped to cloud-api-v1. It covers
+    instance lifecycle (deploy/list/get/action), instance types and real-time
+    availability, OS images, startup scripts, SSH keys, block storage volumes,
+    locations, account balance, and serverless container deployments
+    (create/list/get/update/delete/scaling/status/pause/resume/purge-queue).
+    Deployed serverless containers additionally expose an OpenAI-compatible
+    inference endpoint (e.g. /v1/chat/completions, /v1/completions) whose
+    streaming is a property of the user's model server, not a DataCrunch
+    streaming API.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.datacrunch.io/v1
+      documented: true
+    - protocol: SSE
+      scheme: https
+      note: Token streaming can be emitted by user-deployed OpenAI-compatible container inference endpoints (vLLM/TGI/SGLang) when stream=true; this is the deployed model server's behavior, not a DataCrunch-published API surface.
+      documented: false
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in the DataCrunch Public API reference for management or inference as of the review date.
+  endpointsConfirmedRest:
+    - POST   https://api.datacrunch.io/v1/oauth2/token
+    - GET    https://api.datacrunch.io/v1/balance
+    - GET    https://api.datacrunch.io/v1/instances
+    - POST   https://api.datacrunch.io/v1/instances
+    - PUT    https://api.datacrunch.io/v1/instances
+    - GET    https://api.datacrunch.io/v1/instances/{instance_id}
+    - GET    https://api.datacrunch.io/v1/instance-types
+    - GET    https://api.datacrunch.io/v1/instance-availability
+    - GET    https://api.datacrunch.io/v1/instance-availability/{instance_type}
+    - GET    https://api.datacrunch.io/v1/images
+    - GET    https://api.datacrunch.io/v1/images/cluster
+    - GET    https://api.datacrunch.io/v1/scripts
+    - POST   https://api.datacrunch.io/v1/scripts
+    - GET    https://api.datacrunch.io/v1/scripts/{script_id}
+    - DELETE https://api.datacrunch.io/v1/scripts
+    - GET    https://api.datacrunch.io/v1/sshkeys
+    - POST   https://api.datacrunch.io/v1/sshkeys
+    - GET    https://api.datacrunch.io/v1/sshkeys/{sshkey_id}
+    - DELETE https://api.datacrunch.io/v1/sshkeys
+    - GET    https://api.datacrunch.io/v1/volumes
+    - POST   https://api.datacrunch.io/v1/volumes
+    - PUT    https://api.datacrunch.io/v1/volumes
+    - GET    https://api.datacrunch.io/v1/volumes/{volume_id}
+    - DELETE https://api.datacrunch.io/v1/volumes/{volume_id}
+    - GET    https://api.datacrunch.io/v1/volumes/trash
+    - GET    https://api.datacrunch.io/v1/volume-types
+    - GET    https://api.datacrunch.io/v1/locations
+    - GET    https://api.datacrunch.io/v1/container-deployments
+    - POST   https://api.datacrunch.io/v1/container-deployments
+    - GET    https://api.datacrunch.io/v1/container-deployments/{deployment_name}
+    - PATCH  https://api.datacrunch.io/v1/container-deployments/{deployment_name}
+    - DELETE https://api.datacrunch.io/v1/container-deployments/{deployment_name}
+    - GET    https://api.datacrunch.io/v1/container-deployments/{deployment_name}/status
+    - PATCH  https://api.datacrunch.io/v1/container-deployments/{deployment_name}/scaling
+    - POST   https://api.datacrunch.io/v1/container-deployments/{deployment_name}/pause
+    - POST   https://api.datacrunch.io/v1/container-deployments/{deployment_name}/resume
+    - POST   https://api.datacrunch.io/v1/container-deployments/{deployment_name}/purge-queue
+    - GET    https://api.datacrunch.io/v1/container-types
+sources:
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+    note: Interactive OpenAPI/Swagger reference for the Public API; all endpoints are HTTPS REST.
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+    note: Resources overview describes OAuth2 client-credentials auth and the REST resource groups.
+  - url: https://docs.datacrunch.io/containers/overview
+    type: Documentation
+    note: Serverless Containers tagged under the same Public API; OpenAI-compatible inference via deployed model servers (vLLM/TGI/SGLang).
+  - url: https://docs.datacrunch.io/containers/scaling
+    type: Documentation
+    note: Autoscaling by queue load, CPU, and GPU utilization with min/max replicas; no WebSocket control plane.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists, and no DataCrunch-published SSE API
+    surface is documented (inference streaming is a property of user-deployed
+    OpenAI-compatible containers). Therefore no AsyncAPI document was authored;
+    the catalog models the documented REST Public API only.

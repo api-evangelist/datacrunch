@@ -1,0 +1,74 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: DataCrunch
+providerId: datacrunch
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- GPU Cloud
+- Infrastructure
+- Compute
+- Inference
+- Serverless
+- Europe
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  The DataCrunch Public API at https://api.datacrunch.io/v1 is gated by OAuth2
+  Bearer access tokens scoped to cloud-api-v1. Practical limits are driven by
+  resource quotas (available GPU capacity per location, account spend/credit
+  balance, and per-project instance/volume allowances) rather than published
+  fixed request-per-minute numbers. Serverless container deployments enforce
+  autoscaling bounds via min/max replica counts and queue limits per
+  deployment. Specific numeric API request rate limits are not publicly
+  documented and are not reconciled in this artifact.
+notes: >-
+  Verify any per-endpoint request throttles, token expiry/refresh behavior,
+  and per-account GPU/instance quotas in the live API reference and account
+  console on reconciliation. Capacity-driven 4xx responses (no availability)
+  are distinct from request throttling.
+sources:
+- https://api.datacrunch.io/v1/docs
+- https://docs.datacrunch.io/
+- https://docs.datacrunch.io/containers/scaling
+responseCodes:
+  throttled: 429
+limits:
+- name: API Requests
+  scope: account
+  metric: requests
+  limit: see provider documentation
+  notes: No fixed public RPM/RPD published; requests authorized via OAuth2 Bearer token.
+- name: GPU Capacity / Availability
+  scope: account
+  metric: instances
+  limit: subject to real-time availability per location
+  notes: Deploys can be rejected when the requested instance type has no availability.
+- name: Account Quota / Balance
+  scope: account
+  metric: credit
+  limit: gated by prepaid balance and project quotas
+  notes: New deployments require sufficient account balance/credit.
+- name: Deployment Replicas
+  scope: deployment
+  metric: replicas
+  limit: min/max replica count per serverless deployment
+  notes: Autoscaling bounded by configured min/max replicas and queue length per replica.
+- name: Deployment Queue
+  scope: deployment
+  metric: messages
+  limit: per-deployment request queue with message TTL
+  notes: Queue can be purged via the purge-queue endpoint; messages expire per configured TTL.
+policies:
+- name: OAuth2 Token Scope
+  description: Tokens issued via client-credentials are scoped to cloud-api-v1 and restricted to documented Public API endpoints; refresh before expiry.
+- name: Capacity-Aware Retry
+  description: Treat no-availability responses as capacity signals; retry against alternate instance types or locations rather than tight-looping.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter and honor Retry-After on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

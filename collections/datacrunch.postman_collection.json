@@ -1,0 +1,524 @@
+{
+  "info": {
+    "name": "DataCrunch Public API",
+    "description": "Public REST API for DataCrunch GPU cloud. OAuth2 client-credentials issues a Bearer token used across instances, instance types, availability, images, startup scripts, SSH keys, volumes, balance, and serverless container deployments.",
+    "version": "1.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.datacrunch.io/v1"
+    }
+  ],
+  "item": [
+    {
+      "name": "OAuth",
+      "item": [
+        {
+          "name": "Obtain an OAuth2 access token",
+          "request": {
+            "method": "POST",
+            "auth": { "type": "noauth" },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/oauth2/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["oauth2", "token"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grant_type\": \"client_credentials\",\n  \"client_id\": \"<string>\",\n  \"client_secret\": \"<string>\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Balance",
+      "item": [
+        {
+          "name": "Get project account balance",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/balance?currency=usd",
+              "host": ["{{baseUrl}}"],
+              "path": ["balance"],
+              "query": [{ "key": "currency", "value": "usd" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Instances",
+      "item": [
+        {
+          "name": "List instances",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instances",
+              "host": ["{{baseUrl}}"],
+              "path": ["instances"]
+            }
+          }
+        },
+        {
+          "name": "Deploy a new instance",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/instances",
+              "host": ["{{baseUrl}}"],
+              "path": ["instances"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instance_type\": \"1H100.80S.30V\",\n  \"image\": \"<image_id>\",\n  \"ssh_key_ids\": [\"<ssh_key_id>\"],\n  \"hostname\": \"my-instance\",\n  \"location_code\": \"FIN-01\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Perform an action on instances",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/instances",
+              "host": ["{{baseUrl}}"],
+              "path": ["instances"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<instance_id>\",\n  \"action\": \"shutdown\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get an instance by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instances/:instance_id",
+              "host": ["{{baseUrl}}"],
+              "path": ["instances", ":instance_id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Instance Types & Availability",
+      "item": [
+        {
+          "name": "List instance types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instance-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["instance-types"]
+            }
+          }
+        },
+        {
+          "name": "List availability across locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instance-availability",
+              "host": ["{{baseUrl}}"],
+              "path": ["instance-availability"]
+            }
+          }
+        },
+        {
+          "name": "Get availability for an instance type",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instance-availability/:instance_type",
+              "host": ["{{baseUrl}}"],
+              "path": ["instance-availability", ":instance_type"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Images & Startup Scripts",
+      "item": [
+        {
+          "name": "List OS images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/images",
+              "host": ["{{baseUrl}}"],
+              "path": ["images"]
+            }
+          }
+        },
+        {
+          "name": "List cluster OS images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/images/cluster",
+              "host": ["{{baseUrl}}"],
+              "path": ["images", "cluster"]
+            }
+          }
+        },
+        {
+          "name": "List startup scripts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/scripts",
+              "host": ["{{baseUrl}}"],
+              "path": ["scripts"]
+            }
+          }
+        },
+        {
+          "name": "Create a startup script",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/scripts",
+              "host": ["{{baseUrl}}"],
+              "path": ["scripts"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-script\",\n  \"script\": \"#!/bin/bash\\napt-get update\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "SSH Keys",
+      "item": [
+        {
+          "name": "List SSH keys",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sshkeys",
+              "host": ["{{baseUrl}}"],
+              "path": ["sshkeys"]
+            }
+          }
+        },
+        {
+          "name": "Add an SSH key",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/sshkeys",
+              "host": ["{{baseUrl}}"],
+              "path": ["sshkeys"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-key\",\n  \"key\": \"ssh-ed25519 AAAA...\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get an SSH key by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sshkeys/:sshkey_id",
+              "host": ["{{baseUrl}}"],
+              "path": ["sshkeys", ":sshkey_id"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Volumes",
+      "item": [
+        {
+          "name": "List volumes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/volumes",
+              "host": ["{{baseUrl}}"],
+              "path": ["volumes"]
+            }
+          }
+        },
+        {
+          "name": "Create a volume",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/volumes",
+              "host": ["{{baseUrl}}"],
+              "path": ["volumes"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"NVMe\",\n  \"name\": \"data-vol\",\n  \"size\": 100\n}"
+            }
+          }
+        },
+        {
+          "name": "Perform a volume action",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/volumes",
+              "host": ["{{baseUrl}}"],
+              "path": ["volumes"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<volume_id>\",\n  \"action\": \"attach\",\n  \"instance_id\": \"<instance_id>\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get a volume by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/volumes/:volume_id",
+              "host": ["{{baseUrl}}"],
+              "path": ["volumes", ":volume_id"]
+            }
+          }
+        },
+        {
+          "name": "Delete a volume",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/volumes/:volume_id?is_permanent=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["volumes", ":volume_id"],
+              "query": [{ "key": "is_permanent", "value": "false" }]
+            }
+          }
+        },
+        {
+          "name": "List volume types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/volume-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["volume-types"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "item": [
+        {
+          "name": "List locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/locations",
+              "host": ["{{baseUrl}}"],
+              "path": ["locations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Serverless Containers",
+      "item": [
+        {
+          "name": "List container deployments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments"]
+            }
+          }
+        },
+        {
+          "name": "Create a container deployment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"my-llm\",\n  \"containers\": [\n    {\n      \"name\": \"vllm\",\n      \"image\": \"vllm/vllm-openai:latest\",\n      \"exposed_port\": 8000\n    }\n  ],\n  \"compute\": { \"name\": \"H100\", \"size\": 1 },\n  \"scaling\": { \"min_replica_count\": 0, \"max_replica_count\": 3 }\n}"
+            }
+          }
+        },
+        {
+          "name": "Get a deployment by name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name"]
+            }
+          }
+        },
+        {
+          "name": "Update a deployment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scaling\": { \"min_replica_count\": 1, \"max_replica_count\": 5 }\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete a deployment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name"]
+            }
+          }
+        },
+        {
+          "name": "Get deployment status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name", "status"]
+            }
+          }
+        },
+        {
+          "name": "Update deployment scaling",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name/scaling",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name", "scaling"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"min_replica_count\": 0,\n  \"max_replica_count\": 4\n}"
+            }
+          }
+        },
+        {
+          "name": "Pause a deployment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name/pause",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name", "pause"]
+            }
+          }
+        },
+        {
+          "name": "Resume a deployment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name/resume",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name", "resume"]
+            }
+          }
+        },
+        {
+          "name": "Purge deployment queue",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-deployments/:deployment_name/purge-queue",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-deployments", ":deployment_name", "purge-queue"]
+            }
+          }
+        },
+        {
+          "name": "List container types",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/container-types",
+              "host": ["{{baseUrl}}"],
+              "path": ["container-types"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

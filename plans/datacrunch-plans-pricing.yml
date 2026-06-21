@@ -1,0 +1,201 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: DataCrunch
+providerId: datacrunch
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: true
+tags:
+- GPU Cloud
+- Infrastructure
+- Compute
+- Inference
+- Serverless
+- Europe
+- Plans
+description: >-
+  DataCrunch uses transparent per-GPU-per-hour, pay-as-you-go pricing for
+  on-demand GPU instances, with lower long-term (reserved) rates available via
+  discount-period contracts. Serverless containers are billed per second of
+  active compute on a chosen container compute size with autoscaling, so you
+  pay only while replicas are running. Block storage volumes are billed per GB
+  per month. There are no fixed Free / Developer / Enterprise software tiers;
+  customers add credit (balance) and pay for the infrastructure they consume.
+notes: >-
+  Representative on-demand per-GPU-hour rates from the DataCrunch pricing page
+  (provider is rebranding to Verda; api.datacrunch.io remains the API host).
+  Rates change frequently and reserved/long-term contracts are cheaper; verify
+  current rates on the pricing page.
+sources:
+- https://datacrunch.io/pricing
+- https://datacrunch.io/products
+- https://docs.datacrunch.io/
+plans:
+- id: datacrunch-on-demand
+  name: On-Demand GPU Instances
+  type: usage
+  description: >-
+    Per-GPU-per-hour on-demand pricing for dedicated GPU instances with no
+    commitment. Billed by the second while the instance runs.
+  entries:
+  - label: NVIDIA B200 (192GB)
+    name: b200
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $3.99 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA H200 SXM (141GB)
+    name: h200
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $2.99 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA H100 SXM (80GB)
+    name: h100
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $2.29 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA A100 SXM (80GB)
+    name: a100_80gb
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $1.29 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA A100 (40GB)
+    name: a100_40gb
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $0.72 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA L40S (48GB)
+    name: l40s
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $0.91 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA RTX 6000 Ada (48GB)
+    name: rtx6000ada
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $0.83 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA RTX A6000 (48GB)
+    name: rtxa6000
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $0.49 per GPU/hour
+    userMultiplied: false
+  - label: NVIDIA V100 (32GB)
+    name: v100
+    type: usage
+    metric: gpu_hours
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: $0.14 per GPU/hour
+    userMultiplied: false
+  elements:
+  - name: GPU Instances
+  - name: Instance Types & Availability
+  - name: Images & Startup Scripts
+  - name: SSH Keys
+- id: datacrunch-long-term
+  name: Long-Term / Reserved Contracts
+  type: subscription
+  description: >-
+    Discounted per-GPU-hour rates for committed long-term contracts over
+    defined discount periods (e.g. monthly, multi-month), available for both
+    instances and clusters.
+  entries:
+  - label: Reserved GPU Instance
+    name: reserved_instance
+    type: subscription
+    metric: gpu_hours
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: discounted vs. on-demand (see long-term periods)
+    userMultiplied: false
+  elements:
+  - name: Long-Term Periods (Instances)
+  - name: Long-Term Periods (Clusters)
+- id: datacrunch-serverless-containers
+  name: Serverless Containers
+  type: usage
+  description: >-
+    Autoscaling serverless container deployments billed per second of active
+    compute on the selected container compute size; replicas scale to zero so
+    you pay only while serving.
+  entries:
+  - label: Container Compute
+    name: container_compute
+    type: usage
+    metric: compute_seconds
+    limit: -1
+    timeFrame: hour
+    geo: global
+    unit: 1
+    price: per-second billing by container compute type (see container-types)
+    userMultiplied: false
+  elements:
+  - name: Serverless Containers
+  - name: OpenAI-Compatible Inference
+- id: datacrunch-storage
+  name: Block Storage Volumes
+  type: usage
+  description: >-
+    Persistent NVMe/HDD block storage volumes billed per GB per month,
+    independent of instance runtime.
+  entries:
+  - label: Volume Storage
+    name: volume_storage
+    type: usage
+    metric: gb
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: per GB/month (see volume-types)
+    userMultiplied: false
+  elements:
+  - name: Volumes
+  - name: Volume Types
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

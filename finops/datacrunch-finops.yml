@@ -1,0 +1,109 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: DataCrunch
+providerId: datacrunch
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: true
+tags:
+- GPU Cloud
+- Infrastructure
+- Compute
+- Inference
+- Serverless
+- Europe
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of DataCrunch GPU cloud spend. DataCrunch bills per-GPU-per-hour
+  (by the second) for on-demand instances, discounted reserved rates for
+  long-term contracts, per-second container compute for autoscaling serverless
+  deployments, and per-GB-per-month for block storage volumes. Spend is funded
+  from a prepaid account balance, so cost control centers on right-sizing GPU
+  types, scaling serverless replicas to zero, and reclaiming idle volumes.
+notes: >-
+  Per-GPU-hour rates are subject to change and reserved contracts are cheaper;
+  verify against the DataCrunch pricing page during reconciliation. Provider is
+  rebranding to Verda; api.datacrunch.io remains the API host.
+sources:
+- https://datacrunch.io/pricing
+- https://docs.datacrunch.io/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: DataCrunch
+serviceCategory: Compute
+billingModel:
+  pricingCategory: Usage-Based
+  billingFrequency: Prepaid
+  billingCurrency: USD
+  chargeCategories:
+  - Usage
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: DataCrunch GPU Cloud
+  ServiceCategory: Compute
+  ProviderName: DataCrunch
+  PublisherName: DataCrunch
+  InvoiceIssuerName: DataCrunch
+  BillingCurrency: USD
+  ChargeCategory: Usage
+  PricingCategory: Usage-Based
+meters:
+- name: gpu_instance_hours
+  description: On-demand GPU instance runtime billed per GPU per hour (by the second).
+  unit: gpu_hours
+  aggregation: sum
+  dimensions:
+  - account
+  - instance_type
+  - location
+- name: reserved_gpu_hours
+  description: Long-term/reserved contract GPU hours at discounted committed rates.
+  unit: gpu_hours
+  aggregation: sum
+  dimensions:
+  - account
+  - instance_type
+  - contract_period
+- name: container_compute_seconds
+  description: Serverless container active compute billed per second on the chosen compute size.
+  unit: compute_seconds
+  aggregation: sum
+  dimensions:
+  - account
+  - deployment
+  - compute_size
+- name: volume_gb_months
+  description: Block storage volume capacity billed per GB per month.
+  unit: gb_months
+  aggregation: sum
+  dimensions:
+  - account
+  - volume_type
+  - location
+- name: account_balance
+  description: Prepaid account balance drawn down by usage charges.
+  unit: currency
+  aggregation: last
+  dimensions:
+  - account
+principles:
+- name: Visibility
+  description: Poll GET /balance and list instances/volumes/deployments to track live burn against prepaid credit.
+- name: Allocation
+  description: Tag instances and deployments by name/project; map GPU types and locations to internal cost centers.
+- name: Optimization
+  description: Right-size GPU type to the workload; use long-term contracts for steady demand; scale serverless replicas to zero between requests; delete idle volumes and empty trash.
+- name: Accountability
+  description: Assign owners per deployment/project; review prepaid balance draw-down and idle-resource reports regularly.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

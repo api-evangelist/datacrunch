@@ -1,0 +1,270 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "OAuth", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Obtain an OAuth2 access token", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/oauth2/token",
+            "body": { "type": "json", "data": "{\"grant_type\":\"client_credentials\",\"client_id\":\"<string>\",\"client_secret\":\"<string>\"}" }
+          },
+          "docs": "Exchange client credentials for a Bearer access token (scope cloud-api-v1)."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Balance", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Get project account balance", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/balance" },
+          "docs": "Retrieve the project account balance and currency."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Instances", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List instances", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/instances" },
+          "docs": "List instances, optionally filtered by status."
+        },
+        {
+          "info": { "name": "Deploy a new instance", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/instances",
+            "body": { "type": "json", "data": "{\"instance_type\":\"1H100.80S.30V\",\"image\":\"<image_id>\",\"ssh_key_ids\":[\"<ssh_key_id>\"],\"location_code\":\"FIN-01\"}" }
+          },
+          "docs": "Deploy a new GPU/CPU instance."
+        },
+        {
+          "info": { "name": "Perform an action on instances", "type": "http" },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.datacrunch.io/v1/instances",
+            "body": { "type": "json", "data": "{\"id\":\"<instance_id>\",\"action\":\"shutdown\"}" }
+          },
+          "docs": "Boot, start, shutdown, hibernate, restore, delete, or force_shutdown one or more instances."
+        },
+        {
+          "info": { "name": "Get an instance by id", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/instances/{instance_id}" },
+          "docs": "Fetch details for a specific instance."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Instance Types & Availability", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List instance types", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/instance-types" },
+          "docs": "List instance types with specs and per-hour pricing."
+        },
+        {
+          "info": { "name": "List availability across locations", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/instance-availability" },
+          "docs": "Check availability across all locations."
+        },
+        {
+          "info": { "name": "Get availability for an instance type", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/instance-availability/{instance_type}" },
+          "docs": "Check availability for a specific instance type."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Images & Startup Scripts", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List OS images", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/images" },
+          "docs": "List available OS images for instances."
+        },
+        {
+          "info": { "name": "List cluster OS images", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/images/cluster" },
+          "docs": "List available OS images for clusters."
+        },
+        {
+          "info": { "name": "List startup scripts", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/scripts" },
+          "docs": "List startup (cloud-init) scripts."
+        },
+        {
+          "info": { "name": "Create a startup script", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/scripts",
+            "body": { "type": "json", "data": "{\"name\":\"my-script\",\"script\":\"#!/bin/bash\\napt-get update\"}" }
+          },
+          "docs": "Create a startup script."
+        }
+      ]
+    },
+    {
+      "info": { "name": "SSH Keys", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List SSH keys", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/sshkeys" },
+          "docs": "List SSH keys with fingerprints."
+        },
+        {
+          "info": { "name": "Add an SSH key", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/sshkeys",
+            "body": { "type": "json", "data": "{\"name\":\"my-key\",\"key\":\"ssh-ed25519 AAAA...\"}" }
+          },
+          "docs": "Add a new SSH public key to the project."
+        },
+        {
+          "info": { "name": "Get an SSH key by id", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/sshkeys/{sshkey_id}" },
+          "docs": "Get details for a specific SSH key."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Volumes", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List volumes", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/volumes" },
+          "docs": "List all project volumes."
+        },
+        {
+          "info": { "name": "Create a volume", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/volumes",
+            "body": { "type": "json", "data": "{\"type\":\"NVMe\",\"name\":\"data-vol\",\"size\":100}" }
+          },
+          "docs": "Create and optionally attach a new volume."
+        },
+        {
+          "info": { "name": "Perform a volume action", "type": "http" },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.datacrunch.io/v1/volumes",
+            "body": { "type": "json", "data": "{\"id\":\"<volume_id>\",\"action\":\"attach\",\"instance_id\":\"<instance_id>\"}" }
+          },
+          "docs": "Attach, detach, delete, resize, clone, or rename volumes."
+        },
+        {
+          "info": { "name": "Get a volume by id", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/volumes/{volume_id}" },
+          "docs": "Retrieve details for a specific volume."
+        },
+        {
+          "info": { "name": "Delete a volume", "type": "http" },
+          "http": { "method": "DELETE", "url": "https://api.datacrunch.io/v1/volumes/{volume_id}" },
+          "docs": "Delete a volume, optionally permanently."
+        },
+        {
+          "info": { "name": "List volume types", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/volume-types" },
+          "docs": "List available volume types and specs."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Locations", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List locations", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/locations" },
+          "docs": "List available datacenter locations."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Serverless Containers", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List container deployments", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/container-deployments" },
+          "docs": "List serverless container deployments."
+        },
+        {
+          "info": { "name": "Create a container deployment", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/container-deployments",
+            "body": { "type": "json", "data": "{\"name\":\"my-llm\",\"containers\":[{\"name\":\"vllm\",\"image\":\"vllm/vllm-openai:latest\",\"exposed_port\":8000}],\"compute\":{\"name\":\"H100\",\"size\":1},\"scaling\":{\"min_replica_count\":0,\"max_replica_count\":3}}" }
+          },
+          "docs": "Create an autoscaling serverless container deployment."
+        },
+        {
+          "info": { "name": "Get a deployment by name", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}" },
+          "docs": "Get a deployment by name."
+        },
+        {
+          "info": { "name": "Update a deployment", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}",
+            "body": { "type": "json", "data": "{\"scaling\":{\"min_replica_count\":1,\"max_replica_count\":5}}" }
+          },
+          "docs": "Update a deployment configuration."
+        },
+        {
+          "info": { "name": "Delete a deployment", "type": "http" },
+          "http": { "method": "DELETE", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}" },
+          "docs": "Delete a deployment."
+        },
+        {
+          "info": { "name": "Get deployment status", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}/status" },
+          "docs": "Get deployment status and replica counts."
+        },
+        {
+          "info": { "name": "Update deployment scaling", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}/scaling",
+            "body": { "type": "json", "data": "{\"min_replica_count\":0,\"max_replica_count\":4}" }
+          },
+          "docs": "Update deployment scaling options."
+        },
+        {
+          "info": { "name": "Pause a deployment", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}/pause" },
+          "docs": "Pause a deployment."
+        },
+        {
+          "info": { "name": "Resume a deployment", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}/resume" },
+          "docs": "Resume a deployment."
+        },
+        {
+          "info": { "name": "Purge deployment queue", "type": "http" },
+          "http": { "method": "POST", "url": "https://api.datacrunch.io/v1/container-deployments/{deployment_name}/purge-queue" },
+          "docs": "Purge the deployment request queue."
+        },
+        {
+          "info": { "name": "List container types", "type": "http" },
+          "http": { "method": "GET", "url": "https://api.datacrunch.io/v1/container-types" },
+          "docs": "List serverless container compute types and pricing."
+        }
+      ]
+    }
+  ]
+}

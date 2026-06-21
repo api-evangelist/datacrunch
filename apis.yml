@@ -1,0 +1,199 @@
+aid: datacrunch
+url: https://raw.githubusercontent.com/api-evangelist/datacrunch/refs/heads/main/apis.yml
+name: DataCrunch
+kind: company
+description: DataCrunch is a European (Finland-based) GPU cloud offering on-demand
+  and reserved NVIDIA GPU instances (H200, H100, B200, A100, L40S, V100) plus a
+  serverless inference and container deployment platform. Its REST API at
+  https://api.datacrunch.io/v1 uses OAuth2 client-credentials to issue Bearer
+  tokens and exposes instances, instance types, availability, images, SSH keys,
+  startup scripts, volumes, balance, and serverless containers, with an
+  OpenAI-compatible inference endpoint for deployed models.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- GPU Cloud
+- Infrastructure
+- Compute
+- Inference
+- Serverless
+- Europe
+created: '2026-06-21'
+modified: '2026-06-21'
+specificationVersion: '0.19'
+apis:
+- aid: datacrunch:instances
+  name: DataCrunch Instances API
+  tags:
+  - Instances
+  - Compute
+  - GPU
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Deploy, list, inspect, and act on GPU/CPU instances. Actions (boot,
+    shutdown, hibernate, restore, delete, force-shutdown) are issued via PUT against
+    one or more instance IDs.
+- aid: datacrunch:instance-types
+  name: DataCrunch Instance Types & Availability API
+  tags:
+  - Instance Types
+  - Availability
+  - Catalog
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Lists available instance types with GPU/CPU/RAM/storage specs and
+    per-hour pricing, and reports real-time availability across datacenter locations.
+- aid: datacrunch:images
+  name: DataCrunch Images & Startup Scripts API
+  tags:
+  - Images
+  - Startup Scripts
+  - Provisioning
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Lists available OS images for instances and clusters, and manages
+    startup (cloud-init) scripts used to provision instances at deploy time.
+- aid: datacrunch:ssh-keys
+  name: DataCrunch SSH Keys API
+  tags:
+  - SSH Keys
+  - Access
+  - Security
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Add, list, retrieve, and delete the SSH public keys injected into
+    instances at deploy time for secure access.
+- aid: datacrunch:volumes
+  name: DataCrunch Volumes API
+  tags:
+  - Volumes
+  - Storage
+  - Block Storage
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Create, list, inspect, and delete block storage volumes and run
+    volume actions (attach, detach, resize, clone, rename), including a trash
+    listing for soft-deleted volumes and a volume-types catalog.
+- aid: datacrunch:serverless-inference
+  name: DataCrunch Serverless Inference & Containers API
+  tags:
+  - Serverless
+  - Inference
+  - Containers
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.datacrunch.io/inference/overview
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/containers/overview
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Deploy and manage autoscaling serverless container deployments
+    (create, list, get, update, delete, scaling, status, pause, resume,
+    purge-queue) running vLLM/TGI/SGLang, and invoke deployed models through an
+    OpenAI-compatible inference endpoint.
+- aid: datacrunch:balance
+  name: DataCrunch Balance API
+  tags:
+  - Balance
+  - Billing
+  - Account
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  properties:
+  - url: https://docs.datacrunch.io/
+    type: Documentation
+  - url: https://api.datacrunch.io/v1/docs
+    type: APIReference
+  - url: openapi/datacrunch-openapi.yml
+    type: OpenAPI
+  - url: collections/datacrunch.postman_collection.json
+    type: PostmanCollection
+  - url: collections/datacrunch.opencollection.json
+    type: OpenCollection
+  description: Retrieves the project account balance and currency for the
+    authenticated client.
+common:
+- type: GitHubOrganization
+  url: https://github.com/DataCrunch-io
+- type: LinkedIn
+  url: https://www.linkedin.com/company/datacrunch-oy
+- type: Website
+  url: https://datacrunch.io
+- type: Documentation
+  url: https://docs.datacrunch.io/
+- type: Plans
+  url: plans/datacrunch-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/datacrunch-rate-limits.yml
+- type: FinOps
+  url: finops/datacrunch-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
