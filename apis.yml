@@ -180,6 +180,12 @@ apis:
   description: Retrieves the project account balance and currency for the
     authenticated client.
 common:
+- type: VulnerabilityDisclosure
+  url: security/datacrunch-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/datacrunch-domain-security.yml
+- type: Authentication
+  url: authentication/datacrunch-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/DataCrunch-io
 - type: LinkedIn
@@ -194,6 +200,8 @@ common:
   url: rate-limits/datacrunch-rate-limits.yml
 - type: FinOps
   url: finops/datacrunch-finops.yml
+- url: https://verda.com/blog
+  type: Blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

@@ -1,0 +1,15 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/datacrunch-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client
+    Credentials grant.
+  sources:
+  - openapi/datacrunch-openapi.yml
