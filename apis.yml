@@ -180,6 +180,8 @@ apis:
   description: Retrieves the project account balance and currency for the
     authenticated client.
 common:
+- type: AgenticAccess
+  url: agentic-access/datacrunch-agentic-access.yml
 - type: VulnerabilityDisclosure
   url: security/datacrunch-vulnerability-disclosure.yml
 - type: DomainSecurity
