@@ -1,0 +1,67 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Images API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Images
+paths:
+  /images:
+    get:
+      operationId: listImages
+      tags:
+      - Images
+      summary: List available OS images for instances
+      responses:
+        '200':
+          description: A list of OS images.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Image'
+  /images/cluster:
+    get:
+      operationId: listClusterImages
+      tags:
+      - Images
+      summary: List available OS images for clusters
+      responses:
+        '200':
+          description: A list of cluster OS images.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Image'
+components:
+  schemas:
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        image_type:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

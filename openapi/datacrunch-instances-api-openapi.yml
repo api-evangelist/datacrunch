@@ -1,0 +1,233 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Instances API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Instances
+paths:
+  /instances:
+    get:
+      operationId: listInstances
+      tags:
+      - Instances
+      summary: List instances
+      description: Retrieve all instances, optionally filtered by status.
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          type: string
+          example: running
+      responses:
+        '200':
+          description: A list of instances.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: deployInstance
+      tags:
+      - Instances
+      summary: Deploy a new instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployInstanceRequest'
+      responses:
+        '202':
+          description: Instance deployment accepted; returns the new instance id.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      operationId: instanceAction
+      tags:
+      - Instances
+      summary: Perform an action on one or more instances
+      description: Execute an action (boot, start, shutdown, hibernate, restore, delete, force_shutdown) against a single instance id or a list of instance ids.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceActionRequest'
+      responses:
+        '202':
+          description: Action accepted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /instances/{instance_id}:
+    get:
+      operationId: getInstance
+      tags:
+      - Instances
+      summary: Get an instance by id
+      parameters:
+      - name: instance_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Instance details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    InstanceActionRequest:
+      type: object
+      required:
+      - id
+      - action
+      properties:
+        id:
+          oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+        action:
+          type: string
+          enum:
+          - boot
+          - start
+          - shutdown
+          - hibernate
+          - restore
+          - delete
+          - force_shutdown
+        volume_ids:
+          type: array
+          items:
+            type: string
+    DeployInstanceRequest:
+      type: object
+      required:
+      - instance_type
+      - image
+      - ssh_key_ids
+      properties:
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        image:
+          type: string
+          description: OS image id or name.
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        hostname:
+          type: string
+        description:
+          type: string
+        location_code:
+          type: string
+          example: FIN-01
+        startup_script_id:
+          type: string
+        is_spot:
+          type: boolean
+        os_volume:
+          type: object
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+              description: Size in GB.
+        existing_volumes:
+          type: array
+          items:
+            type: string
+    Instance:
+      type: object
+      properties:
+        id:
+          type: string
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        status:
+          type: string
+          example: running
+        hostname:
+          type: string
+        ip:
+          type: string
+        location_code:
+          type: string
+          example: FIN-01
+        image:
+          type: string
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        price_per_hour:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  responses:
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

@@ -1,0 +1,137 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance SSH Keys API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: SSH Keys
+paths:
+  /sshkeys:
+    get:
+      operationId: listSSHKeys
+      tags:
+      - SSH Keys
+      summary: List SSH keys
+      responses:
+        '200':
+          description: A list of SSH keys.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSHKey'
+    post:
+      operationId: addSSHKey
+      tags:
+      - SSH Keys
+      summary: Add an SSH key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddSSHKeyRequest'
+      responses:
+        '201':
+          description: SSH key added; returns its id.
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      operationId: deleteSSHKeys
+      tags:
+      - SSH Keys
+      summary: Delete SSH keys by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdListRequest'
+      responses:
+        '200':
+          description: SSH keys deleted.
+  /sshkeys/{sshkey_id}:
+    get:
+      operationId: getSSHKey
+      tags:
+      - SSH Keys
+      summary: Get an SSH key by id
+      parameters:
+      - name: sshkey_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: SSH key details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSHKey'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    AddSSHKeyRequest:
+      type: object
+      required:
+      - name
+      - key
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+          description: SSH public key material.
+    IdListRequest:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    SSHKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        fingerprint:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

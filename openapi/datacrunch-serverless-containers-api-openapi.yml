@@ -1,0 +1,336 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Serverless Containers API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Serverless Containers
+paths:
+  /container-deployments:
+    get:
+      operationId: listContainerDeployments
+      tags:
+      - Serverless Containers
+      summary: List serverless container deployments
+      responses:
+        '200':
+          description: A list of deployments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContainerDeployment'
+    post:
+      operationId: createContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Create a serverless container deployment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
+      responses:
+        '201':
+          description: Deployment created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+  /container-deployments/{deployment_name}:
+    get:
+      operationId: getContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Get a deployment by name
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Update a deployment
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
+      responses:
+        '200':
+          description: Deployment updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+    delete:
+      operationId: deleteContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Delete a deployment
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment deleted.
+  /container-deployments/{deployment_name}/status:
+    get:
+      operationId: getContainerDeploymentStatus
+      tags:
+      - Serverless Containers
+      summary: Get deployment status
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+  /container-deployments/{deployment_name}/scaling:
+    get:
+      operationId: getContainerDeploymentScaling
+      tags:
+      - Serverless Containers
+      summary: Get deployment scaling options
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Scaling options.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScalingOptions'
+    patch:
+      operationId: updateContainerDeploymentScaling
+      tags:
+      - Serverless Containers
+      summary: Update deployment scaling options
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScalingOptions'
+      responses:
+        '200':
+          description: Scaling updated.
+  /container-deployments/{deployment_name}/pause:
+    post:
+      operationId: pauseContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Pause a deployment
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment paused.
+  /container-deployments/{deployment_name}/resume:
+    post:
+      operationId: resumeContainerDeployment
+      tags:
+      - Serverless Containers
+      summary: Resume a deployment
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment resumed.
+  /container-deployments/{deployment_name}/purge-queue:
+    post:
+      operationId: purgeContainerDeploymentQueue
+      tags:
+      - Serverless Containers
+      summary: Purge the deployment request queue
+      parameters:
+      - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Queue purged.
+  /container-types:
+    get:
+      operationId: listContainerTypes
+      tags:
+      - Serverless Containers
+      summary: List serverless container compute types and pricing
+      responses:
+        '200':
+          description: A list of container compute types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+components:
+  parameters:
+    DeploymentName:
+      name: deployment_name
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    DeploymentStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        replicas:
+          type: integer
+        target_replicas:
+          type: integer
+    ScalingOptions:
+      type: object
+      properties:
+        min_replica_count:
+          type: integer
+        max_replica_count:
+          type: integer
+        scale_down_policy:
+          type: object
+          properties:
+            delay_seconds:
+              type: integer
+        queue_message_ttl_seconds:
+          type: integer
+        concurrent_requests_per_replica:
+          type: integer
+        scaling_triggers:
+          type: object
+          properties:
+            queue_load:
+              type: object
+            cpu_utilization:
+              type: object
+            gpu_utilization:
+              type: object
+    Container:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+        exposed_port:
+          type: integer
+          example: 8080
+        healthcheck:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            port:
+              type: integer
+            path:
+              type: string
+        env:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value_or_reference_to_secret:
+                type: string
+        command:
+          type: array
+          items:
+            type: string
+    ContainerDeployment:
+      type: object
+      properties:
+        name:
+          type: string
+        container_registry_settings:
+          type: object
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        compute:
+          type: object
+          properties:
+            name:
+              type: string
+              example: General Compute
+            size:
+              type: integer
+        scaling:
+          $ref: '#/components/schemas/ScalingOptions'
+        is_spot:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    CreateContainerDeploymentRequest:
+      type: object
+      required:
+      - name
+      - containers
+      - compute
+      properties:
+        name:
+          type: string
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        compute:
+          type: object
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+        scaling:
+          $ref: '#/components/schemas/ScalingOptions'
+        is_spot:
+          type: boolean
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

@@ -1,0 +1,136 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Startup Scripts API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Startup Scripts
+paths:
+  /scripts:
+    get:
+      operationId: listStartupScripts
+      tags:
+      - Startup Scripts
+      summary: List startup scripts
+      responses:
+        '200':
+          description: A list of startup scripts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StartupScript'
+    post:
+      operationId: createStartupScript
+      tags:
+      - Startup Scripts
+      summary: Create a startup script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStartupScriptRequest'
+      responses:
+        '201':
+          description: Startup script created; returns its id.
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      operationId: deleteStartupScripts
+      tags:
+      - Startup Scripts
+      summary: Delete startup scripts by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdListRequest'
+      responses:
+        '200':
+          description: Scripts deleted.
+  /scripts/{script_id}:
+    get:
+      operationId: getStartupScript
+      tags:
+      - Startup Scripts
+      summary: Get a startup script by id
+      parameters:
+      - name: script_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Startup script details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartupScript'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    IdListRequest:
+      type: object
+      required:
+      - id
+      properties:
+        id:
+          oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+    CreateStartupScriptRequest:
+      type: object
+      required:
+      - name
+      - script
+      properties:
+        name:
+          type: string
+        script:
+          type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    StartupScript:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        script:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

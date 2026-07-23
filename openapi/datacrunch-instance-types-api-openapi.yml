@@ -1,0 +1,80 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Instance Types API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Instance Types
+paths:
+  /instance-types:
+    get:
+      operationId: listInstanceTypes
+      tags:
+      - Instance Types
+      summary: List available instance types
+      responses:
+        '200':
+          description: A list of instance types with specs and pricing.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceType'
+components:
+  schemas:
+    InstanceType:
+      type: object
+      properties:
+        id:
+          type: string
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        name:
+          type: string
+        description:
+          type: string
+        gpu:
+          type: object
+          properties:
+            description:
+              type: string
+            number_of_gpus:
+              type: integer
+        cpu:
+          type: object
+          properties:
+            description:
+              type: string
+            number_of_cores:
+              type: integer
+        memory:
+          type: object
+          properties:
+            description:
+              type: string
+            size_in_gigabytes:
+              type: integer
+        storage:
+          type: object
+          properties:
+            description:
+              type: string
+        price_per_hour:
+          type: number
+          format: float
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.

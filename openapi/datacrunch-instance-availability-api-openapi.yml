@@ -1,0 +1,82 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public Balance Instance Availability API
+  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+- url: https://api.datacrunch.io/v1
+security:
+- bearerAuth: []
+tags:
+- name: Instance Availability
+paths:
+  /instance-availability:
+    get:
+      operationId: listInstanceAvailability
+      tags:
+      - Instance Availability
+      summary: Check availability across all locations
+      parameters:
+      - name: is_spot
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: location_code
+        in: query
+        required: false
+        schema:
+          type: string
+          example: FIN-01
+      responses:
+        '200':
+          description: Availability grouped by location.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability'
+  /instance-availability/{instance_type}:
+    get:
+      operationId: getInstanceTypeAvailability
+      tags:
+      - Instance Availability
+      summary: Check availability for a specific instance type
+      parameters:
+      - name: instance_type
+        in: path
+        required: true
+        schema:
+          type: string
+          example: 1H100.80S.30V
+      responses:
+        '200':
+          description: Availability flag for the instance type.
+          content:
+            application/json:
+              schema:
+                type: boolean
+components:
+  schemas:
+    Availability:
+      type: object
+      properties:
+        location_code:
+          type: string
+          example: FIN-01
+        availabilities:
+          type: array
+          items:
+            type: string
+            example: 1H100.80S.30V
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
