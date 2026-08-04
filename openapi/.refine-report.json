@@ -1,0 +1,34 @@
+{
+  "provider": "datacrunch",
+  "sources": [
+    "datacrunch-balance-api-openapi.yml",
+    "datacrunch-images-api-openapi.yml",
+    "datacrunch-instance-availability-api-openapi.yml",
+    "datacrunch-instance-types-api-openapi.yml",
+    "datacrunch-instances-api-openapi.yml",
+    "datacrunch-locations-api-openapi.yml",
+    "datacrunch-oauth-api-openapi.yml",
+    "datacrunch-serverless-containers-api-openapi.yml",
+    "datacrunch-ssh-keys-api-openapi.yml",
+    "datacrunch-startup-scripts-api-openapi.yml",
+    "datacrunch-volumes-api-openapi.yml"
+  ],
+  "outputs": [
+    "datacrunch-balance-api-openapi.yml",
+    "datacrunch-images-api-openapi.yml",
+    "datacrunch-instance-availability-api-openapi.yml",
+    "datacrunch-instance-types-api-openapi.yml",
+    "datacrunch-instances-api-openapi.yml",
+    "datacrunch-locations-api-openapi.yml",
+    "datacrunch-oauth-api-openapi.yml",
+    "datacrunch-serverless-containers-api-openapi.yml",
+    "datacrunch-ssh-keys-api-openapi.yml",
+    "datacrunch-startup-scripts-api-openapi.yml",
+    "datacrunch-volumes-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

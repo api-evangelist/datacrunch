@@ -1,0 +1,1209 @@
+openapi: 3.0.1
+info:
+  title: DataCrunch Public API
+  description: >-
+    Public REST API for DataCrunch, a European GPU cloud. The API lets you
+    deploy and manage GPU/CPU instances, query instance types and real-time
+    availability, manage OS images and startup scripts, SSH keys, block
+    storage volumes, retrieve account balance, and deploy and operate
+    serverless container deployments for inference. Authentication uses the
+    OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access
+    token.
+  termsOfService: https://datacrunch.io/legal/terms-of-service
+  contact:
+    name: DataCrunch Support
+    url: https://docs.datacrunch.io/
+  version: '1.0'
+servers:
+  - url: https://api.datacrunch.io/v1
+security:
+  - bearerAuth: []
+tags:
+  - name: OAuth
+  - name: Balance
+  - name: Instances
+  - name: Instance Types
+  - name: Instance Availability
+  - name: Images
+  - name: Startup Scripts
+  - name: SSH Keys
+  - name: Volumes
+  - name: Locations
+  - name: Serverless Containers
+paths:
+  /oauth2/token:
+    post:
+      operationId: createToken
+      tags:
+        - OAuth
+      summary: Obtain an OAuth2 access token
+      description: >-
+        Exchange a client_id and client_secret for a Bearer access token using
+        the OAuth 2.0 Client Credentials grant. Tokens are scoped to
+        cloud-api-v1 and restricted to documented Public API endpoints.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+      responses:
+        '200':
+          description: Access token issued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /balance:
+    get:
+      operationId: getBalance
+      tags:
+        - Balance
+      summary: Get project account balance
+      parameters:
+        - name: currency
+          in: query
+          required: false
+          schema:
+            type: string
+            example: usd
+      responses:
+        '200':
+          description: Current balance.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Balance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /instances:
+    get:
+      operationId: listInstances
+      tags:
+        - Instances
+      summary: List instances
+      description: Retrieve all instances, optionally filtered by status.
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            example: running
+      responses:
+        '200':
+          description: A list of instances.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instance'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      operationId: deployInstance
+      tags:
+        - Instances
+      summary: Deploy a new instance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployInstanceRequest'
+      responses:
+        '202':
+          description: Instance deployment accepted; returns the new instance id.
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      operationId: instanceAction
+      tags:
+        - Instances
+      summary: Perform an action on one or more instances
+      description: >-
+        Execute an action (boot, start, shutdown, hibernate, restore, delete,
+        force_shutdown) against a single instance id or a list of instance ids.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstanceActionRequest'
+      responses:
+        '202':
+          description: Action accepted.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /instances/{instance_id}:
+    get:
+      operationId: getInstance
+      tags:
+        - Instances
+      summary: Get an instance by id
+      parameters:
+        - name: instance_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Instance details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /instance-types:
+    get:
+      operationId: listInstanceTypes
+      tags:
+        - Instance Types
+      summary: List available instance types
+      responses:
+        '200':
+          description: A list of instance types with specs and pricing.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceType'
+  /instance-availability:
+    get:
+      operationId: listInstanceAvailability
+      tags:
+        - Instance Availability
+      summary: Check availability across all locations
+      parameters:
+        - name: is_spot
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: location_code
+          in: query
+          required: false
+          schema:
+            type: string
+            example: FIN-01
+      responses:
+        '200':
+          description: Availability grouped by location.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Availability'
+  /instance-availability/{instance_type}:
+    get:
+      operationId: getInstanceTypeAvailability
+      tags:
+        - Instance Availability
+      summary: Check availability for a specific instance type
+      parameters:
+        - name: instance_type
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1H100.80S.30V
+      responses:
+        '200':
+          description: Availability flag for the instance type.
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /images:
+    get:
+      operationId: listImages
+      tags:
+        - Images
+      summary: List available OS images for instances
+      responses:
+        '200':
+          description: A list of OS images.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Image'
+  /images/cluster:
+    get:
+      operationId: listClusterImages
+      tags:
+        - Images
+      summary: List available OS images for clusters
+      responses:
+        '200':
+          description: A list of cluster OS images.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Image'
+  /scripts:
+    get:
+      operationId: listStartupScripts
+      tags:
+        - Startup Scripts
+      summary: List startup scripts
+      responses:
+        '200':
+          description: A list of startup scripts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StartupScript'
+    post:
+      operationId: createStartupScript
+      tags:
+        - Startup Scripts
+      summary: Create a startup script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateStartupScriptRequest'
+      responses:
+        '201':
+          description: Startup script created; returns its id.
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      operationId: deleteStartupScripts
+      tags:
+        - Startup Scripts
+      summary: Delete startup scripts by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdListRequest'
+      responses:
+        '200':
+          description: Scripts deleted.
+  /scripts/{script_id}:
+    get:
+      operationId: getStartupScript
+      tags:
+        - Startup Scripts
+      summary: Get a startup script by id
+      parameters:
+        - name: script_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Startup script details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartupScript'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /sshkeys:
+    get:
+      operationId: listSSHKeys
+      tags:
+        - SSH Keys
+      summary: List SSH keys
+      responses:
+        '200':
+          description: A list of SSH keys.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSHKey'
+    post:
+      operationId: addSSHKey
+      tags:
+        - SSH Keys
+      summary: Add an SSH key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddSSHKeyRequest'
+      responses:
+        '201':
+          description: SSH key added; returns its id.
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      operationId: deleteSSHKeys
+      tags:
+        - SSH Keys
+      summary: Delete SSH keys by id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdListRequest'
+      responses:
+        '200':
+          description: SSH keys deleted.
+  /sshkeys/{sshkey_id}:
+    get:
+      operationId: getSSHKey
+      tags:
+        - SSH Keys
+      summary: Get an SSH key by id
+      parameters:
+        - name: sshkey_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: SSH key details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSHKey'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /volumes:
+    get:
+      operationId: listVolumes
+      tags:
+        - Volumes
+      summary: List volumes
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A list of volumes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Volume'
+    post:
+      operationId: createVolume
+      tags:
+        - Volumes
+      summary: Create a volume
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolumeRequest'
+      responses:
+        '201':
+          description: Volume created; returns its id.
+          content:
+            application/json:
+              schema:
+                type: string
+    put:
+      operationId: volumeAction
+      tags:
+        - Volumes
+      summary: Perform a volume action
+      description: >-
+        Run an action against one or more volumes (attach, detach, delete,
+        resize, clone, rename).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VolumeActionRequest'
+      responses:
+        '202':
+          description: Action accepted.
+  /volumes/{volume_id}:
+    get:
+      operationId: getVolume
+      tags:
+        - Volumes
+      summary: Get a volume by id
+      parameters:
+        - name: volume_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Volume details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      operationId: deleteVolume
+      tags:
+        - Volumes
+      summary: Delete a volume
+      parameters:
+        - name: volume_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: is_permanent
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Volume deleted.
+  /volumes/trash:
+    get:
+      operationId: listTrashedVolumes
+      tags:
+        - Volumes
+      summary: List soft-deleted volumes
+      responses:
+        '200':
+          description: A list of volumes in trash.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Volume'
+  /volume-types:
+    get:
+      operationId: listVolumeTypes
+      tags:
+        - Volumes
+      summary: List volume types
+      responses:
+        '200':
+          description: A list of volume types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+  /locations:
+    get:
+      operationId: listLocations
+      tags:
+        - Locations
+      summary: List datacenter locations
+      responses:
+        '200':
+          description: A list of locations.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Location'
+  /container-deployments:
+    get:
+      operationId: listContainerDeployments
+      tags:
+        - Serverless Containers
+      summary: List serverless container deployments
+      responses:
+        '200':
+          description: A list of deployments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContainerDeployment'
+    post:
+      operationId: createContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Create a serverless container deployment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
+      responses:
+        '201':
+          description: Deployment created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+  /container-deployments/{deployment_name}:
+    get:
+      operationId: getContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Get a deployment by name
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Update a deployment
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
+      responses:
+        '200':
+          description: Deployment updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeployment'
+    delete:
+      operationId: deleteContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Delete a deployment
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment deleted.
+  /container-deployments/{deployment_name}/status:
+    get:
+      operationId: getContainerDeploymentStatus
+      tags:
+        - Serverless Containers
+      summary: Get deployment status
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentStatus'
+  /container-deployments/{deployment_name}/scaling:
+    get:
+      operationId: getContainerDeploymentScaling
+      tags:
+        - Serverless Containers
+      summary: Get deployment scaling options
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Scaling options.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScalingOptions'
+    patch:
+      operationId: updateContainerDeploymentScaling
+      tags:
+        - Serverless Containers
+      summary: Update deployment scaling options
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScalingOptions'
+      responses:
+        '200':
+          description: Scaling updated.
+  /container-deployments/{deployment_name}/pause:
+    post:
+      operationId: pauseContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Pause a deployment
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment paused.
+  /container-deployments/{deployment_name}/resume:
+    post:
+      operationId: resumeContainerDeployment
+      tags:
+        - Serverless Containers
+      summary: Resume a deployment
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Deployment resumed.
+  /container-deployments/{deployment_name}/purge-queue:
+    post:
+      operationId: purgeContainerDeploymentQueue
+      tags:
+        - Serverless Containers
+      summary: Purge the deployment request queue
+      parameters:
+        - $ref: '#/components/parameters/DeploymentName'
+      responses:
+        '200':
+          description: Queue purged.
+  /container-types:
+    get:
+      operationId: listContainerTypes
+      tags:
+        - Serverless Containers
+      summary: List serverless container compute types and pricing
+      responses:
+        '200':
+          description: A list of container compute types.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: >-
+        Bearer access token obtained from POST /oauth2/token via the OAuth 2.0
+        Client Credentials grant.
+  parameters:
+    DeploymentName:
+      name: deployment_name
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    TokenRequest:
+      type: object
+      required:
+        - grant_type
+        - client_id
+        - client_secret
+      properties:
+        grant_type:
+          type: string
+          enum:
+            - client_credentials
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        scope:
+          type: string
+          example: cloud-api-v1
+        expires_in:
+          type: integer
+          example: 3600
+    Balance:
+      type: object
+      properties:
+        amount:
+          type: number
+          format: float
+        currency:
+          type: string
+          example: usd
+    Instance:
+      type: object
+      properties:
+        id:
+          type: string
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        status:
+          type: string
+          example: running
+        hostname:
+          type: string
+        ip:
+          type: string
+        location_code:
+          type: string
+          example: FIN-01
+        image:
+          type: string
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        price_per_hour:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
+    DeployInstanceRequest:
+      type: object
+      required:
+        - instance_type
+        - image
+        - ssh_key_ids
+      properties:
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        image:
+          type: string
+          description: OS image id or name.
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        hostname:
+          type: string
+        description:
+          type: string
+        location_code:
+          type: string
+          example: FIN-01
+        startup_script_id:
+          type: string
+        is_spot:
+          type: boolean
+        os_volume:
+          type: object
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+              description: Size in GB.
+        existing_volumes:
+          type: array
+          items:
+            type: string
+    InstanceActionRequest:
+      type: object
+      required:
+        - id
+        - action
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        action:
+          type: string
+          enum:
+            - boot
+            - start
+            - shutdown
+            - hibernate
+            - restore
+            - delete
+            - force_shutdown
+        volume_ids:
+          type: array
+          items:
+            type: string
+    InstanceType:
+      type: object
+      properties:
+        id:
+          type: string
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        name:
+          type: string
+        description:
+          type: string
+        gpu:
+          type: object
+          properties:
+            description:
+              type: string
+            number_of_gpus:
+              type: integer
+        cpu:
+          type: object
+          properties:
+            description:
+              type: string
+            number_of_cores:
+              type: integer
+        memory:
+          type: object
+          properties:
+            description:
+              type: string
+            size_in_gigabytes:
+              type: integer
+        storage:
+          type: object
+          properties:
+            description:
+              type: string
+        price_per_hour:
+          type: number
+          format: float
+    Availability:
+      type: object
+      properties:
+        location_code:
+          type: string
+          example: FIN-01
+        availabilities:
+          type: array
+          items:
+            type: string
+            example: 1H100.80S.30V
+    Image:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        image_type:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+    StartupScript:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        script:
+          type: string
+    CreateStartupScriptRequest:
+      type: object
+      required:
+        - name
+        - script
+      properties:
+        name:
+          type: string
+        script:
+          type: string
+    SSHKey:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        fingerprint:
+          type: string
+    AddSSHKeyRequest:
+      type: object
+      required:
+        - name
+        - key
+      properties:
+        name:
+          type: string
+        key:
+          type: string
+          description: SSH public key material.
+    Volume:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          example: NVMe
+        size:
+          type: integer
+          description: Size in GB.
+        status:
+          type: string
+        is_os_volume:
+          type: boolean
+        target:
+          type: string
+        location_code:
+          type: string
+        instance_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    CreateVolumeRequest:
+      type: object
+      required:
+        - type
+        - name
+        - size
+      properties:
+        type:
+          type: string
+          example: NVMe
+        name:
+          type: string
+        size:
+          type: integer
+          description: Size in GB.
+        instance_id:
+          type: string
+          description: Optional instance to attach to on creation.
+        location_code:
+          type: string
+    VolumeActionRequest:
+      type: object
+      required:
+        - id
+        - action
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        action:
+          type: string
+          enum:
+            - attach
+            - detach
+            - delete
+            - rename
+            - resize
+            - clone
+        instance_id:
+          type: string
+        name:
+          type: string
+        size:
+          type: integer
+        is_permanent:
+          type: boolean
+    Location:
+      type: object
+      properties:
+        code:
+          type: string
+          example: FIN-01
+        name:
+          type: string
+        country_code:
+          type: string
+    ContainerDeployment:
+      type: object
+      properties:
+        name:
+          type: string
+        container_registry_settings:
+          type: object
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        compute:
+          type: object
+          properties:
+            name:
+              type: string
+              example: General Compute
+            size:
+              type: integer
+        scaling:
+          $ref: '#/components/schemas/ScalingOptions'
+        is_spot:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    Container:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+        exposed_port:
+          type: integer
+          example: 8080
+        healthcheck:
+          type: object
+          properties:
+            enabled:
+              type: boolean
+            port:
+              type: integer
+            path:
+              type: string
+        env:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value_or_reference_to_secret:
+                type: string
+        command:
+          type: array
+          items:
+            type: string
+    CreateContainerDeploymentRequest:
+      type: object
+      required:
+        - name
+        - containers
+        - compute
+      properties:
+        name:
+          type: string
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        compute:
+          type: object
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+        scaling:
+          $ref: '#/components/schemas/ScalingOptions'
+        is_spot:
+          type: boolean
+    DeploymentStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: healthy
+        replicas:
+          type: integer
+        target_replicas:
+          type: integer
+    ScalingOptions:
+      type: object
+      properties:
+        min_replica_count:
+          type: integer
+        max_replica_count:
+          type: integer
+        scale_down_policy:
+          type: object
+          properties:
+            delay_seconds:
+              type: integer
+        queue_message_ttl_seconds:
+          type: integer
+        concurrent_requests_per_replica:
+          type: integer
+        scaling_triggers:
+          type: object
+          properties:
+            queue_load:
+              type: object
+            cpu_utilization:
+              type: object
+            gpu_utilization:
+              type: object
+    IdListRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
