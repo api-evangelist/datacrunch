@@ -1,0 +1,718 @@
+{
+  "item": [
+    {
+      "id": "ed8837d9-f8a3-4532-bf8b-1ae3ce0998c3",
+      "name": "Instances",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "23a825df-79c7-4624-a849-1a0dfef4f47e",
+          "name": "List instances",
+          "request": {
+            "name": "List instances",
+            "description": {
+              "content": "Retrieve all instances, optionally filtered by status.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "instances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "status",
+                  "value": "<string>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "c144b187-6fcd-4ab0-b4ef-0f6e31d8a738",
+              "name": "A list of instances.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "running"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": \"string\",\n    \"instance_type\": \"1H100.80S.30V\",\n    \"status\": \"running\",\n    \"hostname\": \"string\",\n    \"ip\": \"string\",\n    \"location_code\": \"FIN-01\",\n    \"image\": \"string\",\n    \"ssh_key_ids\": [\n      \"string\",\n      \"string\"\n    ],\n    \"price_per_hour\": 5676.750000162555,\n    \"created_at\": \"2002-05-06T11:37:50.470Z\"\n  },\n  {\n    \"id\": \"string\",\n    \"instance_type\": \"1H100.80S.30V\",\n    \"status\": \"running\",\n    \"hostname\": \"string\",\n    \"ip\": \"string\",\n    \"location_code\": \"FIN-01\",\n    \"image\": \"string\",\n    \"ssh_key_ids\": [\n      \"string\",\n      \"string\"\n    ],\n    \"price_per_hour\": 6724.539542539,\n    \"created_at\": \"1964-09-14T10:17:41.429Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9e5a652d-da59-47fd-b512-79cdff3978df",
+              "name": "Missing or invalid access token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "running"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a94d8727-a23f-404a-be8a-40a4d5a2156c",
+          "name": "Deploy a new instance",
+          "request": {
+            "name": "Deploy a new instance",
+            "description": {},
+            "url": {
+              "path": [
+                "instances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instance_type\": \"<string>\",\n  \"image\": \"<string>\",\n  \"ssh_key_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"hostname\": \"<string>\",\n  \"description\": \"<string>\",\n  \"location_code\": \"<string>\",\n  \"startup_script_id\": \"<string>\",\n  \"is_spot\": \"<boolean>\",\n  \"os_volume\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"existing_volumes\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "f812a468-04fb-4507-840d-f3f228136d66",
+              "name": "Instance deployment accepted; returns the new instance id.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"instance_type\": \"1H100.80S.30V\",\n  \"image\": \"<string>\",\n  \"ssh_key_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"hostname\": \"<string>\",\n  \"description\": \"<string>\",\n  \"location_code\": \"FIN-01\",\n  \"startup_script_id\": \"<string>\",\n  \"is_spot\": \"<boolean>\",\n  \"os_volume\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"existing_volumes\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "\"string\"",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "080441ba-d090-4133-9978-17a696bab5b1",
+              "name": "Invalid request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"instance_type\": \"1H100.80S.30V\",\n  \"image\": \"<string>\",\n  \"ssh_key_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"hostname\": \"<string>\",\n  \"description\": \"<string>\",\n  \"location_code\": \"FIN-01\",\n  \"startup_script_id\": \"<string>\",\n  \"is_spot\": \"<boolean>\",\n  \"os_volume\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"existing_volumes\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ef944972-59a3-4299-bf3e-cfef3515ce8d",
+              "name": "Missing or invalid access token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"instance_type\": \"1H100.80S.30V\",\n  \"image\": \"<string>\",\n  \"ssh_key_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"hostname\": \"<string>\",\n  \"description\": \"<string>\",\n  \"location_code\": \"FIN-01\",\n  \"startup_script_id\": \"<string>\",\n  \"is_spot\": \"<boolean>\",\n  \"os_volume\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"existing_volumes\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "49fdc23c-498e-4a40-a271-31c9c931fc6b",
+          "name": "Perform an action on one or more instances",
+          "request": {
+            "name": "Perform an action on one or more instances",
+            "description": {
+              "content": "Execute an action (boot, start, shutdown, hibernate, restore, delete, force_shutdown) against a single instance id or a list of instance ids.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "instances"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PUT",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"<string>\",\n  \"action\": \"<string>\",\n  \"volume_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a3d328a7-00fa-4066-b516-10b8f8ea42a7",
+              "name": "Action accepted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"action\": \"<string>\",\n  \"volume_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "9ae31930-35a6-4ce1-b9e3-56da3f583d46",
+              "name": "Invalid request.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"action\": \"<string>\",\n  \"volume_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "115a96c5-8895-4e87-adac-e4f68f04b79b",
+              "name": "Missing or invalid access token.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PUT",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id\": \"<string>\",\n  \"action\": \"<string>\",\n  \"volume_ids\": [\n    \"<string>\",\n    \"<string>\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7f7f0431-855a-4ca2-a779-9d8e58d26cc5",
+          "name": "Get an instance by id",
+          "request": {
+            "name": "Get an instance by id",
+            "description": {},
+            "url": {
+              "path": [
+                "instances",
+                ":instance_id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "instance_id",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "cd5b0143-67a3-43dc-83a6-aa7ba723449d",
+              "name": "Instance details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances",
+                    ":instance_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "instance_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"string\",\n  \"instance_type\": \"1H100.80S.30V\",\n  \"status\": \"running\",\n  \"hostname\": \"string\",\n  \"ip\": \"string\",\n  \"location_code\": \"FIN-01\",\n  \"image\": \"string\",\n  \"ssh_key_ids\": [\n    \"string\",\n    \"string\"\n  ],\n  \"price_per_hour\": 3604.689806556861,\n  \"created_at\": \"1951-03-16T16:27:45.192Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e237233e-34ac-4f58-bf2a-3ab42b6c61e0",
+              "name": "Resource not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instances",
+                    ":instance_id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "instance_id",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datacrunch.io/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "e931ed2c-bd78-4f66-a3d7-9b832b65b6bb",
+    "name": "DataCrunch Public Balance Instances API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.\n\nContact Support:\n Name: DataCrunch Support",
+      "type": "text/plain"
+    }
+  }
+}

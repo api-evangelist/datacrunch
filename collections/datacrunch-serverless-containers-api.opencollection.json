@@ -1,0 +1,231 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Serverless Containers API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Serverless Containers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List serverless container deployments",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/container-deployments"
+          },
+          "docs": "List serverless container deployments"
+        },
+        {
+          "info": {
+            "name": "Create a serverless container deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/container-deployments",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a serverless container deployment"
+        },
+        {
+          "info": {
+            "name": "Get a deployment by name",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a deployment by name"
+        },
+        {
+          "info": {
+            "name": "Update a deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a deployment"
+        },
+        {
+          "info": {
+            "name": "Delete a deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Delete a deployment"
+        },
+        {
+          "info": {
+            "name": "Get deployment status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/status",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get deployment status"
+        },
+        {
+          "info": {
+            "name": "Get deployment scaling options",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/scaling",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get deployment scaling options"
+        },
+        {
+          "info": {
+            "name": "Update deployment scaling options",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/scaling",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update deployment scaling options"
+        },
+        {
+          "info": {
+            "name": "Pause a deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/pause",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Pause a deployment"
+        },
+        {
+          "info": {
+            "name": "Resume a deployment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/resume",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Resume a deployment"
+        },
+        {
+          "info": {
+            "name": "Purge the deployment request queue",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/container-deployments/:deployment_name/purge-queue",
+            "params": [
+              {
+                "name": "deployment_name",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Purge the deployment request queue"
+        },
+        {
+          "info": {
+            "name": "List serverless container compute types and pricing",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/container-types"
+          },
+          "docs": "List serverless container compute types and pricing"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

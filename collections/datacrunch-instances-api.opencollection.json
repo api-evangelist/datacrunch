@@ -1,0 +1,90 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Instances API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Instances",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List instances",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/instances",
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Retrieve all instances, optionally filtered by status."
+        },
+        {
+          "info": {
+            "name": "Deploy a new instance",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/instances",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Deploy a new instance"
+        },
+        {
+          "info": {
+            "name": "Perform an action on one or more instances",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.datacrunch.io/v1/instances",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Execute an action (boot, start, shutdown, hibernate, restore, delete, force_shutdown) against a single instance id or a list of instance ids."
+        },
+        {
+          "info": {
+            "name": "Get an instance by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/instances/:instance_id",
+            "params": [
+              {
+                "name": "instance_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get an instance by id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

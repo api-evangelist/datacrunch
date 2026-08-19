@@ -1,0 +1,35 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Locations API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Locations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List datacenter locations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/locations"
+          },
+          "docs": "List datacenter locations"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

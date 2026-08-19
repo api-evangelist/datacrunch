@@ -1,0 +1,46 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Images API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Images",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available OS images for instances",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/images"
+          },
+          "docs": "List available OS images for instances"
+        },
+        {
+          "info": {
+            "name": "List available OS images for clusters",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/images/cluster"
+          },
+          "docs": "List available OS images for clusters"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

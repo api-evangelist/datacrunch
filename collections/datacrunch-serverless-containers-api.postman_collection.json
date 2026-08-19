@@ -1,0 +1,1182 @@
+{
+  "item": [
+    {
+      "id": "a2153e60-3ce5-474a-8556-3551c44dbb50",
+      "name": "Serverless Containers",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "78dc10f2-bee9-4cb3-b177-6837dac5612a",
+          "name": "List serverless container deployments",
+          "request": {
+            "name": "List serverless container deployments",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9381f5f6-5b81-46e9-b67b-8a97feaeddb4",
+              "name": "A list of deployments.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"name\": \"string\",\n    \"container_registry_settings\": {},\n    \"containers\": [\n      {\n        \"name\": \"string\",\n        \"image\": \"string\",\n        \"exposed_port\": 8080,\n        \"healthcheck\": {\n          \"enabled\": false,\n          \"port\": 7662,\n          \"path\": \"string\"\n        },\n        \"env\": [\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          },\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          }\n        ],\n        \"command\": [\n          \"string\",\n          \"string\"\n        ]\n      },\n      {\n        \"name\": \"string\",\n        \"image\": \"string\",\n        \"exposed_port\": 8080,\n        \"healthcheck\": {\n          \"enabled\": false,\n          \"port\": 3043,\n          \"path\": \"string\"\n        },\n        \"env\": [\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          },\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          }\n        ],\n        \"command\": [\n          \"string\",\n          \"string\"\n        ]\n      }\n    ],\n    \"compute\": {\n      \"name\": \"General Compute\",\n      \"size\": 3233\n    },\n    \"scaling\": {\n      \"min_replica_count\": 1913,\n      \"max_replica_count\": 6673,\n      \"scale_down_policy\": {\n        \"delay_seconds\": 9509\n      },\n      \"queue_message_ttl_seconds\": 4511,\n      \"concurrent_requests_per_replica\": 3936,\n      \"scaling_triggers\": {\n        \"queue_load\": {},\n        \"cpu_utilization\": {},\n        \"gpu_utilization\": {}\n      }\n    },\n    \"is_spot\": false,\n    \"created_at\": \"1998-07-16T19:52:33.456Z\"\n  },\n  {\n    \"name\": \"string\",\n    \"container_registry_settings\": {},\n    \"containers\": [\n      {\n        \"name\": \"string\",\n        \"image\": \"string\",\n        \"exposed_port\": 8080,\n        \"healthcheck\": {\n          \"enabled\": true,\n          \"port\": 907,\n          \"path\": \"string\"\n        },\n        \"env\": [\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          },\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          }\n        ],\n        \"command\": [\n          \"string\",\n          \"string\"\n        ]\n      },\n      {\n        \"name\": \"string\",\n        \"image\": \"string\",\n        \"exposed_port\": 8080,\n        \"healthcheck\": {\n          \"enabled\": true,\n          \"port\": 5971,\n          \"path\": \"string\"\n        },\n        \"env\": [\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          },\n          {\n            \"name\": \"string\",\n            \"value_or_reference_to_secret\": \"string\"\n          }\n        ],\n        \"command\": [\n          \"string\",\n          \"string\"\n        ]\n      }\n    ],\n    \"compute\": {\n      \"name\": \"General Compute\",\n      \"size\": 5577\n    },\n    \"scaling\": {\n      \"min_replica_count\": 7701,\n      \"max_replica_count\": 2963,\n      \"scale_down_policy\": {\n        \"delay_seconds\": 3357\n      },\n      \"queue_message_ttl_seconds\": 4293,\n      \"concurrent_requests_per_replica\": 6105,\n      \"scaling_triggers\": {\n        \"queue_load\": {},\n        \"cpu_utilization\": {},\n        \"gpu_utilization\": {}\n      }\n    },\n    \"is_spot\": true,\n    \"created_at\": \"1972-08-02T03:10:13.406Z\"\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c69dd0d0-1326-4429-ba48-f51ed5fc7ac4",
+          "name": "Create a serverless container deployment",
+          "request": {
+            "name": "Create a serverless container deployment",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": \"<integer>\",\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": \"<integer>\",\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "dcf09e9b-f4d9-4c74-9b3e-73e82768cfeb",
+              "name": "Deployment created.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"name\": \"string\",\n  \"container_registry_settings\": {},\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"General Compute\",\n    \"size\": 7040\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": false,\n  \"created_at\": \"2014-11-04T06:57:31.478Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "46cdd4b3-f479-46c8-82bb-9342f77382ac",
+          "name": "Get a deployment by name",
+          "request": {
+            "name": "Get a deployment by name",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f9797cea-e732-46c7-b409-21e8d7c3d110",
+              "name": "Deployment details.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"name\": \"string\",\n  \"container_registry_settings\": {},\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"General Compute\",\n    \"size\": 7040\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": false,\n  \"created_at\": \"2014-11-04T06:57:31.478Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7eabdd0c-a92a-4031-bb31-176d4e78ac6e",
+              "name": "Resource not found.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"string\",\n  \"message\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "364a99bd-8f10-462e-a0fe-3c449ceaea33",
+          "name": "Update a deployment",
+          "request": {
+            "name": "Update a deployment",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": \"<integer>\",\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": \"<integer>\",\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "60df35c2-0733-49ec-84de-a5aac3983646",
+              "name": "Deployment updated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"<string>\",\n    \"size\": \"<integer>\"\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"name\": \"string\",\n  \"container_registry_settings\": {},\n  \"containers\": [\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"name\": \"<string>\",\n      \"image\": \"<string>\",\n      \"exposed_port\": 8080,\n      \"healthcheck\": {\n        \"enabled\": \"<boolean>\",\n        \"port\": \"<integer>\",\n        \"path\": \"<string>\"\n      },\n      \"env\": [\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"value_or_reference_to_secret\": \"<string>\"\n        }\n      ],\n      \"command\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"compute\": {\n    \"name\": \"General Compute\",\n    \"size\": 7040\n  },\n  \"scaling\": {\n    \"min_replica_count\": \"<integer>\",\n    \"max_replica_count\": \"<integer>\",\n    \"scale_down_policy\": {\n      \"delay_seconds\": \"<integer>\"\n    },\n    \"queue_message_ttl_seconds\": \"<integer>\",\n    \"concurrent_requests_per_replica\": \"<integer>\",\n    \"scaling_triggers\": {\n      \"queue_load\": \"<object>\",\n      \"cpu_utilization\": \"<object>\",\n      \"gpu_utilization\": \"<object>\"\n    }\n  },\n  \"is_spot\": false,\n  \"created_at\": \"2014-11-04T06:57:31.478Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "b0b3c4d3-c5ce-4f98-87ff-1cb54eb44c51",
+          "name": "Delete a deployment",
+          "request": {
+            "name": "Delete a deployment",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "DELETE",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "f50de171-79e8-4f0e-8ba9-cb13124dd30a",
+              "name": "Deployment deleted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cc337a6f-59b7-4e85-8520-cfaef2bf06c0",
+          "name": "Get deployment status",
+          "request": {
+            "name": "Get deployment status",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "9e11a6e4-8733-4c76-9c81-5f05520a141c",
+              "name": "Deployment status.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"status\": \"healthy\",\n  \"replicas\": 628,\n  \"target_replicas\": 2112\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "161c7e96-f3bd-4699-868d-7e5a5b281856",
+          "name": "Get deployment scaling options",
+          "request": {
+            "name": "Get deployment scaling options",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "scaling"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b3d330b3-21b1-4c2b-96af-99f47dec39c0",
+              "name": "Scaling options.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "scaling"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"min_replica_count\": \"<integer>\",\n  \"max_replica_count\": \"<integer>\",\n  \"scale_down_policy\": {\n    \"delay_seconds\": \"<integer>\"\n  },\n  \"queue_message_ttl_seconds\": \"<integer>\",\n  \"concurrent_requests_per_replica\": \"<integer>\",\n  \"scaling_triggers\": {\n    \"queue_load\": \"<object>\",\n    \"cpu_utilization\": \"<object>\",\n    \"gpu_utilization\": \"<object>\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "267cb559-b253-4cab-bbb4-dc74e7e41bbd",
+          "name": "Update deployment scaling options",
+          "request": {
+            "name": "Update deployment scaling options",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "scaling"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"min_replica_count\": \"<integer>\",\n  \"max_replica_count\": \"<integer>\",\n  \"scale_down_policy\": {\n    \"delay_seconds\": \"<integer>\"\n  },\n  \"queue_message_ttl_seconds\": \"<integer>\",\n  \"concurrent_requests_per_replica\": \"<integer>\",\n  \"scaling_triggers\": {\n    \"queue_load\": \"<object>\",\n    \"cpu_utilization\": \"<object>\",\n    \"gpu_utilization\": \"<object>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "1445ed41-a461-4abc-bf6b-b592dcee8097",
+              "name": "Scaling updated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "scaling"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"min_replica_count\": \"<integer>\",\n  \"max_replica_count\": \"<integer>\",\n  \"scale_down_policy\": {\n    \"delay_seconds\": \"<integer>\"\n  },\n  \"queue_message_ttl_seconds\": \"<integer>\",\n  \"concurrent_requests_per_replica\": \"<integer>\",\n  \"scaling_triggers\": {\n    \"queue_load\": \"<object>\",\n    \"cpu_utilization\": \"<object>\",\n    \"gpu_utilization\": \"<object>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0d63c54e-e09f-4f39-a951-577691115bc3",
+          "name": "Pause a deployment",
+          "request": {
+            "name": "Pause a deployment",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "pause"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "741d7599-14fc-4b8a-85ed-76c9ad492630",
+              "name": "Deployment paused.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "pause"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "00725481-5d62-4610-83f7-6e02902a8e02",
+          "name": "Resume a deployment",
+          "request": {
+            "name": "Resume a deployment",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "resume"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "39630d12-a38b-4e22-8d80-f1c461516076",
+              "name": "Deployment resumed.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "resume"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "60d2a481-18d9-439c-9f71-04969206a551",
+          "name": "Purge the deployment request queue",
+          "request": {
+            "name": "Purge the deployment request queue",
+            "description": {},
+            "url": {
+              "path": [
+                "container-deployments",
+                ":deployment_name",
+                "purge-queue"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "deployment_name",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "3fe6d9e1-edba-448f-b5f3-2bbc404ca30f",
+              "name": "Queue purged.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-deployments",
+                    ":deployment_name",
+                    "purge-queue"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "deployment_name",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e196c5c0-9c02-4653-8b6b-2714d147ba96",
+          "name": "List serverless container compute types and pricing",
+          "request": {
+            "name": "List serverless container compute types and pricing",
+            "description": {},
+            "url": {
+              "path": [
+                "container-types"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "b84c5834-3479-42a1-a294-ca11e6d91a31",
+              "name": "A list of container compute types.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "container-types"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datacrunch.io/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "879ef93a-a877-4542-9d8e-9c54f8e9b7ec",
+    "name": "DataCrunch Public Balance Serverless Containers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.\n\nContact Support:\n Name: DataCrunch Support",
+      "type": "text/plain"
+    }
+  }
+}

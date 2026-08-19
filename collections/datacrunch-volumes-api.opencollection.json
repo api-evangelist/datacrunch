@@ -1,0 +1,135 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Volumes API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Volumes",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List volumes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/volumes",
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "List volumes"
+        },
+        {
+          "info": {
+            "name": "Create a volume",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/volumes",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a volume"
+        },
+        {
+          "info": {
+            "name": "Perform a volume action",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.datacrunch.io/v1/volumes",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Run an action against one or more volumes (attach, detach, delete, resize, clone, rename)."
+        },
+        {
+          "info": {
+            "name": "Get a volume by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/volumes/:volume_id",
+            "params": [
+              {
+                "name": "volume_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a volume by id"
+        },
+        {
+          "info": {
+            "name": "Delete a volume",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datacrunch.io/v1/volumes/:volume_id",
+            "params": [
+              {
+                "name": "volume_id",
+                "value": "",
+                "type": "path"
+              },
+              {
+                "name": "is_permanent",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Delete a volume"
+        },
+        {
+          "info": {
+            "name": "List soft-deleted volumes",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/volumes/trash"
+          },
+          "docs": "List soft-deleted volumes"
+        },
+        {
+          "info": {
+            "name": "List volume types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/volume-types"
+          },
+          "docs": "List volume types"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

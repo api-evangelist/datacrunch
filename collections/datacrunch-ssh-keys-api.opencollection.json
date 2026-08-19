@@ -1,0 +1,83 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance SSH Keys API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "SSH Keys",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List SSH keys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/sshkeys"
+          },
+          "docs": "List SSH keys"
+        },
+        {
+          "info": {
+            "name": "Add an SSH key",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/sshkeys",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add an SSH key"
+        },
+        {
+          "info": {
+            "name": "Delete SSH keys by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datacrunch.io/v1/sshkeys",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Delete SSH keys by id"
+        },
+        {
+          "info": {
+            "name": "Get an SSH key by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/sshkeys/:sshkey_id",
+            "params": [
+              {
+                "name": "sshkey_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get an SSH key by id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

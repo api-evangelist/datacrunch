@@ -1,0 +1,229 @@
+{
+  "item": [
+    {
+      "id": "0c0a7bad-f3f1-4c19-bdbb-11647e181bcd",
+      "name": "Instance Availability",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "406c7d05-63a1-4d53-a1e4-c0673391cb8e",
+          "name": "Check availability across all locations",
+          "request": {
+            "name": "Check availability across all locations",
+            "description": {},
+            "url": {
+              "path": [
+                "instance-availability"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "is_spot",
+                  "value": "<boolean>"
+                },
+                {
+                  "disabled": false,
+                  "key": "location_code",
+                  "value": "<string>"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "7e656e0a-7f7c-459c-a65c-9b32ea58c32e",
+              "name": "Availability grouped by location.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instance-availability"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "is_spot",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "location_code",
+                      "value": "FIN-01"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"location_code\": \"FIN-01\",\n    \"availabilities\": [\n      \"1H100.80S.30V\",\n      \"1H100.80S.30V\"\n    ]\n  },\n  {\n    \"location_code\": \"FIN-01\",\n    \"availabilities\": [\n      \"1H100.80S.30V\",\n      \"1H100.80S.30V\"\n    ]\n  }\n]",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ccc34d5d-1e99-4864-997d-bcbc42fbf65c",
+          "name": "Check availability for a specific instance type",
+          "request": {
+            "name": "Check availability for a specific instance type",
+            "description": {},
+            "url": {
+              "path": [
+                "instance-availability",
+                ":instance_type"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "instance_type",
+                  "description": "(Required) "
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "5a244d14-3cfa-4d8d-8d03-a11157199fa9",
+              "name": "Availability flag for the instance type.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "instance-availability",
+                    ":instance_type"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "instance_type",
+                      "description": "(Required) "
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "false",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.datacrunch.io/v1",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "2ca71061-f66c-4952-9a70-2513fefad16e",
+    "name": "DataCrunch Public Balance Instance Availability API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.\n\nContact Support:\n Name: DataCrunch Support",
+      "type": "text/plain"
+    }
+  }
+}

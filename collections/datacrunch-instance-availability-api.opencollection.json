@@ -1,0 +1,65 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Instance Availability API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Instance Availability",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Check availability across all locations",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/instance-availability",
+            "params": [
+              {
+                "name": "is_spot",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "location_code",
+                "value": "",
+                "type": "query"
+              }
+            ]
+          },
+          "docs": "Check availability across all locations"
+        },
+        {
+          "info": {
+            "name": "Check availability for a specific instance type",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/instance-availability/:instance_type",
+            "params": [
+              {
+                "name": "instance_type",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Check availability for a specific instance type"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

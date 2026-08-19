@@ -1,0 +1,83 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "DataCrunch Public Balance Startup Scripts API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Startup Scripts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List startup scripts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/scripts"
+          },
+          "docs": "List startup scripts"
+        },
+        {
+          "info": {
+            "name": "Create a startup script",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.datacrunch.io/v1/scripts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a startup script"
+        },
+        {
+          "info": {
+            "name": "Delete startup scripts by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.datacrunch.io/v1/scripts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Delete startup scripts by id"
+        },
+        {
+          "info": {
+            "name": "Get a startup script by id",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.datacrunch.io/v1/scripts/:script_id",
+            "params": [
+              {
+                "name": "script_id",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get a startup script by id"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
