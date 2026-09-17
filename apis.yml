@@ -173,28 +173,6 @@ apis:
     url: collections/datacrunch.opencollection.json
   - type: Documentation
     url: https://docs.datacrunch.io/containers/overview
-- aid: datacrunch:datacrunch-oauth-api
-  name: DataCrunch OAuth API
-  description: The OAuth API from DataCrunch — 1 operation(s) for oauth.
-  humanURL: https://api.datacrunch.io/v1/docs
-  baseURL: https://api.datacrunch.io/v1
-  tags:
-  - Authentication
-  tags_raw:
-  - OAuth
-  properties:
-  - type: OpenAPI
-    url: openapi/datacrunch-oauth-api-openapi.yml
-  - type: Documentation
-    url: https://docs.datacrunch.io/
-  - type: APIReference
-    url: https://api.datacrunch.io/v1/docs
-  - type: PostmanCollection
-    url: collections/datacrunch.postman_collection.json
-  - type: OpenCollection
-    url: collections/datacrunch.opencollection.json
-  - type: Documentation
-    url: https://docs.datacrunch.io/containers/overview
 - aid: datacrunch:datacrunch-serverless-containers-api
   name: DataCrunch Serverless Containers API
   description: >-
@@ -266,6 +244,26 @@ apis:
   properties:
   - type: OpenAPI
     url: openapi/datacrunch-volumes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-oauth-api
+  name: DataCrunch O Auth API
+  description: The OAuth API from DataCrunch — 1 operation(s) for oauth.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-oauth-api-openapi.yml
   - type: Documentation
     url: https://docs.datacrunch.io/
   - type: APIReference
