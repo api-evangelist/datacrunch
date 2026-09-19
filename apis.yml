@@ -159,6 +159,8 @@ apis:
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
+  - Location
+  tags_raw:
   - Locations
   properties:
   - type: OpenAPI
@@ -260,6 +262,8 @@ apis:
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
+  - Authentication
+  tags_raw:
   - OAuth
   properties:
   - type: OpenAPI
