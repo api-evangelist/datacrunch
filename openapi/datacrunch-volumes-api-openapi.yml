@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: DataCrunch Public Balance Volumes API
+  title: DataCrunch Public Volumes API
   description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
   termsOfService: https://datacrunch.io/legal/terms-of-service
   contact:
@@ -139,34 +139,7 @@ paths:
                 items:
                   type: object
 components:
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    CreateVolumeRequest:
-      type: object
-      required:
-      - type
-      - name
-      - size
-      properties:
-        type:
-          type: string
-          example: NVMe
-        name:
-          type: string
-        size:
-          type: integer
-          description: Size in GB.
-        instance_id:
-          type: string
-          description: Optional instance to attach to on creation.
-        location_code:
-          type: string
     Error:
       type: object
       properties:
@@ -174,6 +147,32 @@ components:
           type: string
         message:
           type: string
+    Volume:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          example: NVMe
+        size:
+          type: integer
+          description: Size in GB.
+        status:
+          type: string
+        is_os_volume:
+          type: boolean
+        target:
+          type: string
+        location_code:
+          type: string
+        instance_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
     VolumeActionRequest:
       type: object
       required:
@@ -203,32 +202,33 @@ components:
           type: integer
         is_permanent:
           type: boolean
-    Volume:
+    CreateVolumeRequest:
       type: object
+      required:
+      - type
+      - name
+      - size
       properties:
-        id:
-          type: string
-        name:
-          type: string
         type:
           type: string
           example: NVMe
+        name:
+          type: string
         size:
           type: integer
           description: Size in GB.
-        status:
-          type: string
-        is_os_volume:
-          type: boolean
-        target:
-          type: string
-        location_code:
-          type: string
         instance_id:
           type: string
-        created_at:
+          description: Optional instance to attach to on creation.
+        location_code:
           type: string
-          format: date-time
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

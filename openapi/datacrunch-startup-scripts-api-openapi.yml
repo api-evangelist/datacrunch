@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: DataCrunch Public Balance Startup Scripts API
+  title: DataCrunch Public Startup Scripts API
   description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
   termsOfService: https://datacrunch.io/legal/terms-of-service
   contact:
@@ -83,14 +83,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
     IdListRequest:
       type: object
       required:
@@ -102,6 +102,15 @@ components:
           - type: array
             items:
               type: string
+    StartupScript:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        script:
+          type: string
     CreateStartupScriptRequest:
       type: object
       required:
@@ -112,22 +121,13 @@ components:
           type: string
         script:
           type: string
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    StartupScript:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        script:
-          type: string
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

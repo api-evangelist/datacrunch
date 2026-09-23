@@ -1,6 +1,6 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
-  title: DataCrunch Public Balance SSH Keys API
+  title: DataCrunch Public SSH Keys API
   description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
   termsOfService: https://datacrunch.io/legal/terms-of-service
   contact:
@@ -83,25 +83,14 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    AddSSHKeyRequest:
+    Error:
       type: object
-      required:
-      - name
-      - key
       properties:
-        name:
+        code:
           type: string
-        key:
+        message:
           type: string
-          description: SSH public key material.
     IdListRequest:
       type: object
       required:
@@ -113,13 +102,17 @@ components:
           - type: array
             items:
               type: string
-    Error:
+    AddSSHKeyRequest:
       type: object
+      required:
+      - name
+      - key
       properties:
-        code:
+        name:
           type: string
-        message:
+        key:
           type: string
+          description: SSH public key material.
     SSHKey:
       type: object
       properties:
@@ -129,6 +122,13 @@ components:
           type: string
         fingerprint:
           type: string
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

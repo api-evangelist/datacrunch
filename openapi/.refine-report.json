@@ -1,17 +1,7 @@
 {
   "provider": "datacrunch",
   "sources": [
-    "datacrunch-balance-api-openapi.yml",
-    "datacrunch-images-api-openapi.yml",
-    "datacrunch-instance-availability-api-openapi.yml",
-    "datacrunch-instance-types-api-openapi.yml",
-    "datacrunch-instances-api-openapi.yml",
-    "datacrunch-locations-api-openapi.yml",
-    "datacrunch-oauth-api-openapi.yml",
-    "datacrunch-serverless-containers-api-openapi.yml",
-    "datacrunch-ssh-keys-api-openapi.yml",
-    "datacrunch-startup-scripts-api-openapi.yml",
-    "datacrunch-volumes-api-openapi.yml"
+    "_original/datacrunch-openapi.yml"
   ],
   "outputs": [
     "datacrunch-balance-api-openapi.yml",
@@ -21,14 +11,33 @@
     "datacrunch-instances-api-openapi.yml",
     "datacrunch-locations-api-openapi.yml",
     "datacrunch-oauth-api-openapi.yml",
-    "datacrunch-serverless-containers-api-openapi.yml",
     "datacrunch-ssh-keys-api-openapi.yml",
+    "datacrunch-serverless-containers-api-openapi.yml",
     "datacrunch-startup-scripts-api-openapi.yml",
     "datacrunch-volumes-api-openapi.yml"
   ],
-  "archived": [],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "datacrunch-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
+    "superseded outputs removed: datacrunch-o-auth-api-openapi.yml",
+    "apis.yml register: written (+1 apis, 11 total)"
+  ],
+  "skipped": [
+    "datacrunch-balance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-images-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-instance-availability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-instance-types-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-instances-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-o-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-serverless-containers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-ssh-keys-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-startup-scripts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "datacrunch-volumes-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }
