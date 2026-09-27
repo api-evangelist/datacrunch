@@ -140,12 +140,25 @@ paths:
                   type: object
 components:
   schemas:
-    Error:
+    CreateVolumeRequest:
       type: object
+      required:
+      - type
+      - name
+      - size
       properties:
-        code:
+        type:
           type: string
-        message:
+          example: NVMe
+        name:
+          type: string
+        size:
+          type: integer
+          description: Size in GB.
+        instance_id:
+          type: string
+          description: Optional instance to attach to on creation.
+        location_code:
           type: string
     Volume:
       type: object
@@ -202,25 +215,12 @@ components:
           type: integer
         is_permanent:
           type: boolean
-    CreateVolumeRequest:
+    Error:
       type: object
-      required:
-      - type
-      - name
-      - size
       properties:
-        type:
+        code:
           type: string
-          example: NVMe
-        name:
-          type: string
-        size:
-          type: integer
-          description: Size in GB.
-        instance_id:
-          type: string
-          description: Optional instance to attach to on creation.
-        location_code:
+        message:
           type: string
   responses:
     NotFound:

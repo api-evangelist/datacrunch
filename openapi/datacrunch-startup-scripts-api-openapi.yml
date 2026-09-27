@@ -83,7 +83,33 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
+    CreateStartupScriptRequest:
+      type: object
+      required:
+      - name
+      - script
+      properties:
+        name:
+          type: string
+        script:
+          type: string
+    StartupScript:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        script:
+          type: string
     Error:
       type: object
       properties:
@@ -102,32 +128,6 @@ components:
           - type: array
             items:
               type: string
-    StartupScript:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        script:
-          type: string
-    CreateStartupScriptRequest:
-      type: object
-      required:
-      - name
-      - script
-      properties:
-        name:
-          type: string
-        script:
-          type: string
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

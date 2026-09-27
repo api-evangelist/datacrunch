@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public O Auth API
+  title: DataCrunch Public OAuth API
   description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
   termsOfService: https://datacrunch.io/legal/terms-of-service
   contact:
@@ -38,14 +38,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
     TokenResponse:
       type: object
       properties:
@@ -62,13 +62,6 @@ components:
         expires_in:
           type: integer
           example: 3600
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
     TokenRequest:
       type: object
       required:
@@ -84,6 +77,13 @@ components:
           type: string
         client_secret:
           type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

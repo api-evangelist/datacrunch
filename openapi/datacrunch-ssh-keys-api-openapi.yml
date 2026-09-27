@@ -83,6 +83,13 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       type: object
@@ -91,17 +98,15 @@ components:
           type: string
         message:
           type: string
-    IdListRequest:
+    SSHKey:
       type: object
-      required:
-      - id
       properties:
         id:
-          oneOf:
-          - type: string
-          - type: array
-            items:
-              type: string
+          type: string
+        name:
+          type: string
+        fingerprint:
+          type: string
     AddSSHKeyRequest:
       type: object
       required:
@@ -113,22 +118,17 @@ components:
         key:
           type: string
           description: SSH public key material.
-    SSHKey:
+    IdListRequest:
       type: object
+      required:
+      - id
       properties:
         id:
-          type: string
-        name:
-          type: string
-        fingerprint:
-          type: string
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
   securitySchemes:
     bearerAuth:
       type: http
