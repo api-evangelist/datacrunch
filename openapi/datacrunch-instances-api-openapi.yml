@@ -102,26 +102,70 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 components:
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    BadRequest:
-      description: Invalid request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    InstanceActionRequest:
+      type: object
+      required:
+      - id
+      - action
+      properties:
+        id:
+          oneOf:
+          - type: string
+          - type: array
+            items:
+              type: string
+        action:
+          type: string
+          enum:
+          - boot
+          - start
+          - shutdown
+          - hibernate
+          - restore
+          - delete
+          - force_shutdown
+        volume_ids:
+          type: array
+          items:
+            type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Instance:
+      type: object
+      properties:
+        id:
+          type: string
+        instance_type:
+          type: string
+          example: 1H100.80S.30V
+        status:
+          type: string
+          example: running
+        hostname:
+          type: string
+        ip:
+          type: string
+        location_code:
+          type: string
+          example: FIN-01
+        image:
+          type: string
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        price_per_hour:
+          type: number
+          format: float
+        created_at:
+          type: string
+          format: date-time
     DeployInstanceRequest:
       type: object
       required:
@@ -162,69 +206,25 @@ components:
           type: array
           items:
             type: string
-    Instance:
-      type: object
-      properties:
-        id:
-          type: string
-        instance_type:
-          type: string
-          example: 1H100.80S.30V
-        status:
-          type: string
-          example: running
-        hostname:
-          type: string
-        ip:
-          type: string
-        location_code:
-          type: string
-          example: FIN-01
-        image:
-          type: string
-        ssh_key_ids:
-          type: array
-          items:
-            type: string
-        price_per_hour:
-          type: number
-          format: float
-        created_at:
-          type: string
-          format: date-time
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    InstanceActionRequest:
-      type: object
-      required:
-      - id
-      - action
-      properties:
-        id:
-          oneOf:
-          - type: string
-          - type: array
-            items:
-              type: string
-        action:
-          type: string
-          enum:
-          - boot
-          - start
-          - shutdown
-          - hibernate
-          - restore
-          - delete
-          - force_shutdown
-        volume_ids:
-          type: array
-          items:
-            type: string
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

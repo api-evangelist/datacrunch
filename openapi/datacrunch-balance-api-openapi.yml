@@ -37,14 +37,14 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
     Balance:
       type: object
       properties:
@@ -54,13 +54,13 @@ components:
         currency:
           type: string
           example: usd
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
   securitySchemes:
     bearerAuth:
       type: http

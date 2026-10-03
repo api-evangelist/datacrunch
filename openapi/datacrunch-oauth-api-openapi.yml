@@ -38,6 +38,13 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
     Error:
       type: object
@@ -45,6 +52,21 @@ components:
         code:
           type: string
         message:
+          type: string
+    TokenRequest:
+      type: object
+      required:
+      - grant_type
+      - client_id
+      - client_secret
+      properties:
+        grant_type:
+          type: string
+          enum:
+          - client_credentials
+        client_id:
+          type: string
+        client_secret:
           type: string
     TokenResponse:
       type: object
@@ -62,28 +84,6 @@ components:
         expires_in:
           type: integer
           example: 3600
-    TokenRequest:
-      type: object
-      required:
-      - grant_type
-      - client_id
-      - client_secret
-      properties:
-        grant_type:
-          type: string
-          enum:
-          - client_credentials
-        client_id:
-          type: string
-        client_secret:
-          type: string
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

@@ -140,6 +140,13 @@ paths:
                   type: object
 components:
   schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
     CreateVolumeRequest:
       type: object
       required:
@@ -160,32 +167,6 @@ components:
           description: Optional instance to attach to on creation.
         location_code:
           type: string
-    Volume:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-          example: NVMe
-        size:
-          type: integer
-          description: Size in GB.
-        status:
-          type: string
-        is_os_volume:
-          type: boolean
-        target:
-          type: string
-        location_code:
-          type: string
-        instance_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
     VolumeActionRequest:
       type: object
       required:
@@ -215,13 +196,32 @@ components:
           type: integer
         is_permanent:
           type: boolean
-    Error:
+    Volume:
       type: object
       properties:
-        code:
+        id:
           type: string
-        message:
+        name:
           type: string
+        type:
+          type: string
+          example: NVMe
+        size:
+          type: integer
+          description: Size in GB.
+        status:
+          type: string
+        is_os_volume:
+          type: boolean
+        target:
+          type: string
+        location_code:
+          type: string
+        instance_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
   responses:
     NotFound:
       description: Resource not found.
