@@ -38,14 +38,23 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 components:
-  responses:
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+          example: Bearer
+        scope:
+          type: string
+          example: cloud-api-v1
+        expires_in:
+          type: integer
+          example: 3600
     Error:
       type: object
       properties:
@@ -68,22 +77,13 @@ components:
           type: string
         client_secret:
           type: string
-    TokenResponse:
-      type: object
-      properties:
-        access_token:
-          type: string
-        refresh_token:
-          type: string
-        token_type:
-          type: string
-          example: Bearer
-        scope:
-          type: string
-          example: cloud-api-v1
-        expires_in:
-          type: integer
-          example: 3600
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

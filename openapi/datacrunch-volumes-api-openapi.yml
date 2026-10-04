@@ -140,6 +140,32 @@ paths:
                   type: object
 components:
   schemas:
+    Volume:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          example: NVMe
+        size:
+          type: integer
+          description: Size in GB.
+        status:
+          type: string
+        is_os_volume:
+          type: boolean
+        target:
+          type: string
+        location_code:
+          type: string
+        instance_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
     Error:
       type: object
       properties:
@@ -196,32 +222,6 @@ components:
           type: integer
         is_permanent:
           type: boolean
-    Volume:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-          example: NVMe
-        size:
-          type: integer
-          description: Size in GB.
-        status:
-          type: string
-        is_os_volume:
-          type: boolean
-        target:
-          type: string
-        location_code:
-          type: string
-        instance_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
   responses:
     NotFound:
       description: Resource not found.

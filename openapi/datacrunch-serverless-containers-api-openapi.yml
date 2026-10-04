@@ -190,13 +190,41 @@ paths:
                   type: object
 components:
   schemas:
-    Error:
+    DeploymentStatus:
       type: object
       properties:
-        code:
+        status:
           type: string
-        message:
-          type: string
+          example: healthy
+        replicas:
+          type: integer
+        target_replicas:
+          type: integer
+    ScalingOptions:
+      type: object
+      properties:
+        min_replica_count:
+          type: integer
+        max_replica_count:
+          type: integer
+        scale_down_policy:
+          type: object
+          properties:
+            delay_seconds:
+              type: integer
+        queue_message_ttl_seconds:
+          type: integer
+        concurrent_requests_per_replica:
+          type: integer
+        scaling_triggers:
+          type: object
+          properties:
+            queue_load:
+              type: object
+            cpu_utilization:
+              type: object
+            gpu_utilization:
+              type: object
     ContainerDeployment:
       type: object
       properties:
@@ -223,65 +251,13 @@ components:
         created_at:
           type: string
           format: date-time
-    CreateContainerDeploymentRequest:
+    Error:
       type: object
-      required:
-      - name
-      - containers
-      - compute
       properties:
-        name:
+        code:
           type: string
-        containers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Container'
-        compute:
-          type: object
-          properties:
-            name:
-              type: string
-            size:
-              type: integer
-        scaling:
-          $ref: '#/components/schemas/ScalingOptions'
-        is_spot:
-          type: boolean
-    ScalingOptions:
-      type: object
-      properties:
-        min_replica_count:
-          type: integer
-        max_replica_count:
-          type: integer
-        scale_down_policy:
-          type: object
-          properties:
-            delay_seconds:
-              type: integer
-        queue_message_ttl_seconds:
-          type: integer
-        concurrent_requests_per_replica:
-          type: integer
-        scaling_triggers:
-          type: object
-          properties:
-            queue_load:
-              type: object
-            cpu_utilization:
-              type: object
-            gpu_utilization:
-              type: object
-    DeploymentStatus:
-      type: object
-      properties:
-        status:
+        message:
           type: string
-          example: healthy
-        replicas:
-          type: integer
-        target_replicas:
-          type: integer
     Container:
       type: object
       properties:
@@ -314,13 +290,30 @@ components:
           type: array
           items:
             type: string
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    CreateContainerDeploymentRequest:
+      type: object
+      required:
+      - name
+      - containers
+      - compute
+      properties:
+        name:
+          type: string
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Container'
+        compute:
+          type: object
+          properties:
+            name:
+              type: string
+            size:
+              type: integer
+        scaling:
+          $ref: '#/components/schemas/ScalingOptions'
+        is_spot:
+          type: boolean
   parameters:
     DeploymentName:
       name: deployment_name
@@ -328,6 +321,13 @@ components:
       required: true
       schema:
         type: string
+  responses:
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
