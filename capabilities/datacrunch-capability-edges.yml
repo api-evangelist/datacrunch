@@ -1,0 +1,76 @@
+slug: datacrunch
+provider: DataCrunch
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 6
+edges:
+- tag: Instances
+  spec_file: datacrunch-instances-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.9
+  evidence: POST /instances — "Deploy a new instance"; PUT /instances — "Perform an action on one or more
+    instances"
+  reason: Lifecycle operations over GPU/CPU cloud compute instances (deploy, act on, list, get) are squarely
+    compute/cloud infrastructure management.
+- tag: Volumes
+  spec_file: datacrunch-volumes-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.82
+  evidence: 'GET /volumes listVolumes ''List volumes''; POST /volumes createVolume ''Create a volume'';
+    GET /volume-types listVolumeTypes; description: ''block storage volumes'''
+  reason: Operations create, attach-act on, and delete block storage volumes in a GPU cloud — plainly
+    storage infrastructure provisioning, which maps to IT Infrastructure Management (compute, storage,
+    network, cloud infrastructure).
+- tag: Images
+  spec_file: datacrunch-images-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.75
+  evidence: GET /images — "List available OS images for instances"; GET /images/cluster — "List available
+    OS images for clusters"
+  reason: Catalogue of OS images used to provision GPU/CPU compute — cloud infrastructure management reference
+    data. Read-only catalogue lookups keep this short of near-certainty on the sub-capability.
+- tag: Instance Availability
+  spec_file: datacrunch-instance-availability-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.75
+  evidence: GET /instance-availability — "Check availability across all locations"
+  reason: Queries real-time availability of GPU/CPU compute capacity by type and location, which supports
+    provisioning of cloud compute infrastructure. Could arguably be read as capacity management, hence
+    not higher confidence.
+- tag: Instance Types
+  spec_file: datacrunch-instance-types-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.7
+  evidence: 'GET /instance-types — "List available instance types"; schema: InstanceType'
+  reason: Reference catalogue of compute/GPU instance shapes available for deployment — cloud infrastructure
+    management. Generic catalogue read, so moderate confidence.
+- tag: Serverless Containers
+  spec_file: datacrunch-serverless-containers-api-openapi.yml
+  capability_id: BC-600.50
+  capability_id_l1: BC-600
+  capability_name: IT Infrastructure Management
+  confidence: 0.7
+  evidence: POST /container-deployments — "Create a serverless container deployment"; PATCH /container-deployments/{deployment_name}/scaling
+    — "Update deployment scaling options"
+  reason: Provisioning, scaling, pausing and deleting serverless container workloads on a GPU cloud —
+    managed cloud compute infrastructure. Ambiguity with deployment orchestration / inference serving
+    keeps confidence moderate.

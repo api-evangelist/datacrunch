@@ -282,6 +282,9 @@ apis:
   - type: Documentation
     url: https://docs.datacrunch.io/containers/overview
 common:
+- type: CapabilityMap
+  url: capabilities/datacrunch-capability-edges.yml
+  name: DataCrunch Business Capability Map
 - type: AgenticAccess
   url: agentic-access/datacrunch-agentic-access.yml
 - type: VulnerabilityDisclosure
