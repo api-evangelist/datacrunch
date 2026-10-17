@@ -39,6 +39,21 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 components:
   schemas:
+    TokenRequest:
+      type: object
+      required:
+      - grant_type
+      - client_id
+      - client_secret
+      properties:
+        grant_type:
+          type: string
+          enum:
+          - client_credentials
+        client_id:
+          type: string
+        client_secret:
+          type: string
     TokenResponse:
       type: object
       properties:
@@ -61,21 +76,6 @@ components:
         code:
           type: string
         message:
-          type: string
-    TokenRequest:
-      type: object
-      required:
-      - grant_type
-      - client_id
-      - client_secret
-      properties:
-        grant_type:
-          type: string
-          enum:
-          - client_credentials
-        client_id:
-          type: string
-        client_secret:
           type: string
   responses:
     Unauthorized:
