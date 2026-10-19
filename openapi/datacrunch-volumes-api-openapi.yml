@@ -1,157 +1,604 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public Volumes API
-  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
-  termsOfService: https://datacrunch.io/legal/terms-of-service
+  title: Verda Cloud Public Volumes API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
   contact:
-    name: DataCrunch Support
-    url: https://docs.datacrunch.io/
-  version: '1.0'
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
 servers:
-- url: https://api.datacrunch.io/v1
+- url: https://api.verda.com
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Volumes
 paths:
-  /volumes:
+  /v1/volumes:
     get:
-      operationId: listVolumes
-      tags:
-      - Volumes
-      summary: List volumes
+      operationId: VolumesController_getVolumes
       parameters:
       - name: status
-        in: query
         required: false
+        in: query
+        description: Get volumes with this status. Optional
         schema:
+          example: attached
           type: string
+          enum:
+          - ordered
+          - attached
+          - attaching
+          - detached
+          - deleted
+          - cloning
+          - detaching
+          - deleting
+          - restoring
+          - created
+          - exported
+          - canceled
+          - canceling
       responses:
         '200':
-          description: A list of volumes.
+          description: 'Returns a list of all volumes
+
+
+            ### Rate limits
+
+
+            This endpoint is rate limited to 120 requests per minute per project.'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Volume'
+                  $ref: '#/components/schemas/GetVolumePublicResponseDto'
+      security:
+      - bearer: []
+      summary: Get all volumes
+      tags:
+      - Volumes
     post:
-      operationId: createVolume
-      tags:
-      - Volumes
-      summary: Create a volume
+      operationId: VolumesController_createVolume
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateVolumeRequest'
-      responses:
-        '201':
-          description: Volume created; returns its id.
-          content:
-            application/json:
-              schema:
-                type: string
-    put:
-      operationId: volumeAction
-      tags:
-      - Volumes
-      summary: Perform a volume action
-      description: Run an action against one or more volumes (attach, detach, delete, resize, clone, rename).
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VolumeActionRequest'
+              $ref: '#/components/schemas/CreateVolumePublicDto'
       responses:
         '202':
-          description: Action accepted.
-  /volumes/{volume_id}:
-    get:
-      operationId: getVolume
+          description: Volume ID
+          content:
+            application/json:
+              example: be236392-e6ab-48a9-b8cc-d0e8b9ca9559
+        '403':
+          description: One or more of the specified instances is not shut down
+      security:
+      - bearer: []
+      summary: Create volume
       tags:
       - Volumes
-      summary: Get a volume by id
-      parameters:
-      - name: volume_id
-        in: path
+    put:
+      operationId: VolumesController_performActions
+      parameters: []
+      requestBody:
         required: true
-        schema:
-          type: string
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformVolumeActionPublicDto'
+      responses:
+        '202':
+          description: ''
+      security:
+      - bearer: []
+      summary: Perform action on a volume or multiple volumes
+      tags:
+      - Volumes
+  /v1/volumes/trash:
+    get:
+      operationId: VolumesController_getVolumesInTrash
+      parameters: []
       responses:
         '200':
-          description: Volume details.
+          description: Returns a list of all volumes in trash
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Volume'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetVolumeInTrashPublicResponseDto'
+      security:
+      - bearer: []
+      summary: Get all volumes that are in trash
+      tags:
+      - Volumes
+  /v1/volumes/{volume_id}:
+    get:
+      operationId: VolumesController_getVolumeById
+      parameters:
+      - name: volume_id
+        required: true
+        in: path
+        schema:
+          example: be349e5a-89c8-4be7-9683-c435e4ea892b
+          type: string
+      responses:
+        '200':
+          description: Returns volume details
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/GetVolumePublicResponseDto'
+                - $ref: '#/components/schemas/GetVolumeInTrashPublicResponseDto'
+      security:
+      - bearer: []
+      summary: Get volume by id
+      tags:
+      - Volumes
     delete:
-      operationId: deleteVolume
-      tags:
-      - Volumes
-      summary: Delete a volume
+      operationId: VolumesController_deleteVolumeById
       parameters:
       - name: volume_id
-        in: path
         required: true
+        in: path
+        schema:
+          example: c1a9c098-7eca-44eb-8608-57d3e848622f
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteVolumePublicDto'
+      responses:
+        '202':
+          description: ''
+      security:
+      - bearer: []
+      summary: Delete volume by id
+      tags:
+      - Volumes
+  /v1/volumes/{volume_id}/tags:
+    post:
+      description: Add one key-value tag. Maximum 10 tags per volume. Omit `value` for a freeform tag. Keys are lowercased. A matching project tag is reused; adding one already linked to this volume returns 409.
+      operationId: VolumesController_addTag
+      parameters:
+      - name: volume_id
+        required: true
+        in: path
+        schema:
+          example: be349e5a-89c8-4be7-9683-c435e4ea892b
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagDto'
+      responses:
+        '201':
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponseDto'
+        '403':
+          description: Forbidden
+        '409':
+          description: The matching tag is already linked to the volume
+      security:
+      - bearer: []
+      summary: Add a tag to a volume
+      tags:
+      - Volumes
+  /v1/volumes/{volume_id}/tags/{tagId}:
+    delete:
+      operationId: VolumesController_deleteTag
+      parameters:
+      - name: volume_id
+        required: true
+        in: path
         schema:
           type: string
-      - name: is_permanent
-        in: query
-        required: false
+      - name: tagId
+        required: true
+        in: path
         schema:
-          type: boolean
+          maxLength: 26
+          example: tag_01jxy0b6w4gx8n6se2x8mz2kdv
+          type: string
       responses:
-        '200':
-          description: Volume deleted.
-  /volumes/trash:
-    get:
-      operationId: listTrashedVolumes
+        '204':
+          description: Tag removed
+        '403':
+          description: Forbidden
+        '404':
+          description: Volume or tag not found
+      security:
+      - bearer: []
+      summary: Remove a tag from a volume
       tags:
       - Volumes
-      summary: List soft-deleted volumes
-      responses:
-        '200':
-          description: A list of volumes in trash.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Volume'
-  /volume-types:
-    get:
-      operationId: listVolumeTypes
-      tags:
-      - Volumes
-      summary: List volume types
-      responses:
-        '200':
-          description: A list of volume types.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
 components:
   schemas:
-    VolumeActionRequest:
+    DeleteVolumePublicDto:
       type: object
+      properties:
+        is_permanent:
+          type: boolean
+          example: false
+          default: false
+          description: If true, the volume will be removed permanently
+    CreateVolumePublicDto:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+          description: Volume type
+          example: NVMe
+        location_code:
+          type: string
+          example: FIN-01
+          description: Location code
+        size:
+          type: number
+          example: 50
+          description: Volume size in GB
+        instance_id:
+          type: string
+          example: ce7b4c1f-a160-4036-96a0-4c96689969d5
+          description: Instance ID to attach the volume to
+        instance_ids:
+          example:
+          - ad92413b-5adf-4320-8984-1c832c0b05c7
+          - ab10ae4a-bed7-4a68-8e1a-c406d2df60fa
+          description: Array of instance IDs to attach the volume to
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+          example: my-volume
+          description: Volume name
+        tags:
+          description: Key-value tags for the new volume. Maximum 10. Omit `value` for a freeform tag. Keys are lowercased.
+          example:
+          - key: environment
+            value: production
+          type: array
+          items:
+            $ref: '#/components/schemas/TagDto'
       required:
-      - id
-      - action
+      - type
+      - location_code
+      - size
+      - name
+    GetVolumeInTrashPublicResponseDto:
+      type: object
       properties:
         id:
-          oneOf:
-          - type: string
-          - type: array
-            items:
-              type: string
+          type: string
+          example: 1ba91e2a-6ea6-4095-9e8a-dab7d0be7091
+          description: Volume ID
+        instance_id:
+          type: object
+          example: 5742632a-ab26-4f23-9daf-b8582be589e7
+          description: Instance ID
+        instances:
+          description: Instance info the volume is attached to
+          example:
+          - id: 5742632a-ab26-4f23-9daf-b8582be589e7
+            auto_rental_extension: null
+            ip: 123.123.123.123
+            instance_type: 4A100.88V
+            status: running
+            os_volume_id: 2a22d360-2db0-49f9-b98c-8cfabce5f1d4
+            hostname: hazy-star-swims-fin-01
+            instance_template:
+              instance_type: 4A100.88V
+              cpu_cores: 128
+              gpu_number: 4
+              gpu_vram_gb: 80
+              ram_gb: 512
+            instance_model:
+              code: A100_80G
+              manufacturer: NVIDIA
+              category: GPU
+              cluster_model_code: null
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+          example: OS-NVMe-84Ca37Jf
+          description: Volume name
+        created_at:
+          type: string
+          example: '2024-07-08T19:19:54.247Z'
+          description: Volume creation date
+        status:
+          type: string
+          example: attached
+          description: Volume status
+          enum:
+          - ordered
+          - attached
+          - attaching
+          - detached
+          - deleted
+          - cloning
+          - detaching
+          - deleting
+          - restoring
+          - created
+          - exported
+          - canceled
+          - canceling
+        size:
+          type: number
+          example: 100
+          description: Volume size in GB
+        is_os_volume:
+          type: boolean
+          example: true
+          description: Is OS volume
+        target:
+          type: object
+          example: vda
+          description: Volume target
+        type:
+          type: string
+          example: NVMe
+          description: Volume type
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+        location:
+          type: string
+          example: FIN-01
+          description: Volume location
+        ssh_key_ids:
+          example:
+          - bbf3d540-4652-42b2-992f-d48f375899ce
+          description: Array of SSH key IDs that are linked to the volume if it is an OS volume
+          type: array
+          items:
+            type: string
+        contract:
+          type: string
+          examples:
+          - LONG_TERM
+          - PAY_AS_YOU_GO
+          description: Volume contract type
+        base_hourly_cost:
+          type: number
+          example: 0.0273972602739726
+          description: Volume base hourly cost
+        monthly_price:
+          type: number
+          example: 20
+          description: Volume monthly price
+        currency:
+          type: string
+          example: eur
+          description: Volume currency
+          enum:
+          - usd
+          - eur
+        tags:
+          example:
+          - id: tag_0aB1cD2eF3gH4iJ5kL6mN7
+            key: environment
+            value: production
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponseDto'
+        deleted_at:
+          type: object
+          example: '2025-01-10T11:35:47.633Z'
+          description: Volume deletion date
+        is_permanently_deleted:
+          type: boolean
+          example: false
+          description: Is volume permanently deleted
+      required:
+      - id
+      - instance_id
+      - instances
+      - name
+      - created_at
+      - status
+      - size
+      - is_os_volume
+      - target
+      - type
+      - location
+      - ssh_key_ids
+      - contract
+      - base_hourly_cost
+      - monthly_price
+      - currency
+      - tags
+      - deleted_at
+      - is_permanently_deleted
+    PerformVolumeActionPublicDto:
+      type: object
+      properties:
         action:
           type: string
           enum:
@@ -160,78 +607,274 @@ components:
           - delete
           - rename
           - resize
+          - restore
           - clone
+          - cancel
+          - create
+          - export
+          - transfer
+          description: 'Action to perform on the volume(s)
+
+
+            The `clone` action returns its destination volume ID: `{"id":"..."}`. Send a `cancel` action with that same ID to interrupt a cross-datacenter clone.'
+          example: detach
+        id:
+          example:
+          - 7179f1ef-2212-4497-a138-c6335186170a
+          description: Volume ID(s) to perform the action on. Single volume id or an array of volume ids
+          oneOf:
+          - type: string
+            format: uuid
+          - type: array
+            items:
+              type: string
+              format: uuid
+        size:
+          type: number
+          example: 100
+          description: New volume size in GB. Can't be lower than current size
         instance_id:
           type: string
+          example: c4e1698c-608c-4877-aee0-0b0916276dd7
+          description: Instance ID to attach the volume to, if the action is attach
+        instance_ids:
+          example:
+          - 90571076-4091-4479-b533-809f67ce9e22
+          - 5c5e8b8c-1975-4823-95f6-d74547652b7c
+          description: Array of instance IDs to attach the volume to, if the action is attach
+          type: array
+          items:
+            type: string
         name:
           type: string
-        size:
-          type: integer
-        is_permanent:
-          type: boolean
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    CreateVolumeRequest:
-      type: object
-      required:
-      - type
-      - name
-      - size
-      properties:
+          example: volume-name
+          description: New volume name
         type:
           type: string
           example: NVMe
-        name:
-          type: string
-        size:
-          type: integer
-          description: Size in GB.
-        instance_id:
-          type: string
-          description: Optional instance to attach to on creation.
+          description: Target volume type
+        is_permanent:
+          type: boolean
+          example: true
+          description: If deleting volume(s), delete them permanently
         location_code:
           type: string
-    Volume:
+          example: FIN-01
+          description: Target location code if cloning the volume
+      required:
+      - action
+      - id
+    TagDto:
+      type: object
+      properties:
+        key:
+          type: string
+          example: environment
+          maxLength: 63
+        value:
+          type: string
+          example: production
+          maxLength: 127
+          description: Omit for a freeform tag with no value
+      required:
+      - key
+    TagResponseDto:
       type: object
       properties:
         id:
           type: string
+          example: tag_0aB1cD2eF3gH4iJ5kL6mN7
+        key:
+          type: string
+          example: environment
+        value:
+          type: string
+          example: production
+          description: Empty string for a freeform tag
+      required:
+      - id
+      - key
+      - value
+    GetVolumePublicResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1ba91e2a-6ea6-4095-9e8a-dab7d0be7091
+          description: Volume ID
+        instance_id:
+          type: object
+          example: 5742632a-ab26-4f23-9daf-b8582be589e7
+          description: Instance ID
+        instances:
+          description: Instance info the volume is attached to
+          example:
+          - id: 5742632a-ab26-4f23-9daf-b8582be589e7
+            auto_rental_extension: null
+            ip: 123.123.123.123
+            instance_type: 4A100.88V
+            status: running
+            os_volume_id: 2a22d360-2db0-49f9-b98c-8cfabce5f1d4
+            hostname: hazy-star-swims-fin-01
+            instance_template:
+              instance_type: 4A100.88V
+              cpu_cores: 128
+              gpu_number: 4
+              gpu_vram_gb: 80
+              ram_gb: 512
+            instance_model:
+              code: A100_80G
+              manufacturer: NVIDIA
+              category: GPU
+              cluster_model_code: null
+          type: array
+          items:
+            type: string
         name:
           type: string
+          example: OS-NVMe-84Ca37Jf
+          description: Volume name
+        created_at:
+          type: string
+          example: '2024-07-08T19:19:54.247Z'
+          description: Volume creation date
+        created_by_user_id:
+          type: object
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+        status:
+          type: string
+          example: attached
+          description: Volume status
+          enum:
+          - ordered
+          - attached
+          - attaching
+          - detached
+          - deleted
+          - cloning
+          - detaching
+          - deleting
+          - restoring
+          - created
+          - exported
+          - canceled
+          - canceling
+        size:
+          type: number
+          example: 100
+          description: Volume size in GB
+        is_os_volume:
+          type: boolean
+          example: true
+          description: Is OS volume
+        target:
+          type: object
+          example: vda
+          description: Volume target
         type:
           type: string
           example: NVMe
-        size:
-          type: integer
-          description: Size in GB.
-        status:
+          description: Volume type
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+        location:
           type: string
-        is_os_volume:
-          type: boolean
-        target:
+          example: FIN-01
+          description: Volume location
+        ssh_key_ids:
+          example:
+          - bbf3d540-4652-42b2-992f-d48f375899ce
+          description: Array of SSH key IDs that are linked to the volume if it is an OS volume
+          type: array
+          items:
+            type: string
+        pseudo_path:
+          type: object
+          example: volume-84Ca37Jf
+          description: Volume pseudo path. Unique identifier for your filesystem
+        create_directory_command:
+          type: object
+          example: mkdir -p /mnt/volume
+          description: Create directory command
+        mount_command:
+          type: object
+          example: mount -t nfs -o nconnect=16 nfs.fin-01.datacrunch.io:volume-88eb67d0 /mnt/volume
+          description: Mount command
+        filesystem_to_fstab_command:
+          type: object
+          example: grep -qxF 'nfs.fin-01.datacrunch.io:volume-88eb67d0 /mnt/volume nfs defaults 0 0' /etc/fstab || echo 'nfs.fin-01.datacrunch.io:volume-88eb67d0 /mnt/volume nfs defaults 0 0' | sudo tee -a /etc/fstab
+          description: Filesystem to fstab command
+        contract:
           type: string
-        location_code:
+          examples:
+          - LONG_TERM
+          - PAY_AS_YOU_GO
+          description: Volume contract type
+        base_hourly_cost:
+          type: number
+          example: 0.0273972602739726
+          description: Volume base hourly cost
+        monthly_price:
+          type: number
+          example: 20
+          description: Volume monthly price
+        currency:
           type: string
-        instance_id:
-          type: string
-        created_at:
-          type: string
-          format: date-time
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+          example: eur
+          description: Volume currency
+          enum:
+          - usd
+          - eur
+        long_term:
+          type: object
+          example:
+            end_date: '2025-01-08T19:34:16.663Z'
+            long_term_period: 3 months
+            discount_percentage: 14
+            auto_rental_extension: false
+            next_period_price: 49.93356
+            current_period_price: 49.93356
+          description: Long term contract details
+        tags:
+          example:
+          - id: tag_0aB1cD2eF3gH4iJ5kL6mN7
+            key: environment
+            value: production
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponseDto'
+      required:
+      - id
+      - instance_id
+      - instances
+      - name
+      - created_at
+      - status
+      - size
+      - is_os_volume
+      - target
+      - type
+      - location
+      - ssh_key_ids
+      - pseudo_path
+      - create_directory_command
+      - mount_command
+      - filesystem_to_fstab_command
+      - contract
+      - base_hourly_cost
+      - monthly_price
+      - currency
+      - long_term
+      - tags
   securitySchemes:
-    bearerAuth:
-      type: http
+    bearer:
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

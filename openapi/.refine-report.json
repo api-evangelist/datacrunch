@@ -1,19 +1,30 @@
 {
   "provider": "datacrunch",
   "sources": [
-    "_original/datacrunch-openapi.yml"
+    "_original/datacrunch-openapi.json"
   ],
   "outputs": [
+    "datacrunch-authentication-api-openapi.yml",
     "datacrunch-balance-api-openapi.yml",
+    "datacrunch-clusters-api-openapi.yml",
+    "datacrunch-container-registry-api-openapi.yml",
+    "datacrunch-container-types-api-openapi.yml",
     "datacrunch-images-api-openapi.yml",
     "datacrunch-instance-availability-api-openapi.yml",
     "datacrunch-instance-types-api-openapi.yml",
+    "datacrunch-instance-groups-api-openapi.yml",
     "datacrunch-instances-api-openapi.yml",
+    "datacrunch-journal-api-openapi.yml",
     "datacrunch-locations-api-openapi.yml",
-    "datacrunch-oauth-api-openapi.yml",
+    "datacrunch-long-term-api-openapi.yml",
+    "datacrunch-managed-endpoints-api-openapi.yml",
+    "datacrunch-object-storage-api-openapi.yml",
+    "datacrunch-private-networks-internal-api-openapi.yml",
     "datacrunch-ssh-keys-api-openapi.yml",
     "datacrunch-serverless-containers-api-openapi.yml",
+    "datacrunch-serverless-jobs-api-openapi.yml",
     "datacrunch-startup-scripts-api-openapi.yml",
+    "datacrunch-volume-types-api-openapi.yml",
     "datacrunch-volumes-api-openapi.yml"
   ],
   "archived": [],
@@ -21,20 +32,25 @@
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "datacrunch-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "apis.yml register: already-registered"
+    "datacrunch-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "datacrunch-openapi.json: declared missing tag: Authentication",
+    "datacrunch-openapi.json: declared missing tag: Balance",
+    "datacrunch-openapi.json: declared missing tag: Container Registry",
+    "datacrunch-openapi.json: declared missing tag: Container Types",
+    "datacrunch-openapi.json: declared missing tag: Images",
+    "datacrunch-openapi.json: declared missing tag: Instance Availability",
+    "datacrunch-openapi.json: declared missing tag: Instance Types",
+    "datacrunch-openapi.json: declared missing tag: Instance groups",
+    "datacrunch-openapi.json: declared missing tag: Instances",
+    "datacrunch-openapi.json: declared missing tag: Locations",
+    "datacrunch-openapi.json: declared missing tag: Long Term",
+    "datacrunch-openapi.json: declared missing tag: Managed Endpoints",
+    "datacrunch-openapi.json: declared missing tag: Private Networks (internal)",
+    "datacrunch-openapi.json: declared missing tag: Serverless Containers",
+    "datacrunch-openapi.json: declared missing tag: Serverless Jobs",
+    "datacrunch-openapi.json: declared missing tag: Volume Types",
+    "datacrunch-openapi.json: declared missing tag: Volumes",
+    "apis.yml register: written (+12 apis, 22 total)"
   ],
-  "skipped": [
-    "datacrunch-balance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-images-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-instance-availability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-instance-types-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-instances-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-oauth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-serverless-containers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-ssh-keys-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-startup-scripts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "datacrunch-volumes-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

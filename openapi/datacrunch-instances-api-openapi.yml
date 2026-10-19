@@ -1,233 +1,914 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public Instances API
-  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
-  termsOfService: https://datacrunch.io/legal/terms-of-service
+  title: Verda Cloud Public Instances API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
   contact:
-    name: DataCrunch Support
-    url: https://docs.datacrunch.io/
-  version: '1.0'
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
 servers:
-- url: https://api.datacrunch.io/v1
+- url: https://api.verda.com
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Instances
 paths:
-  /instances:
+  /v1/instances:
     get:
-      operationId: listInstances
-      tags:
-      - Instances
-      summary: List instances
-      description: Retrieve all instances, optionally filtered by status.
+      description: 'Return all instances of the project, optionally filtered by status and/or tags.
+
+
+        Tag filters: `tag=key` matches instances carrying the key with any value, `tag=key=value` matches the value exactly (split at the first `=`). Repeat the parameter to require multiple tags at once.
+
+
+        ### Rate limits
+
+
+        This endpoint is rate limited to 120 requests per minute per project.'
+      operationId: InstancesController_getInstances
       parameters:
       - name: status
-        in: query
         required: false
+        in: query
+        description: Get compute deployments with selected status. Optional
         schema:
           type: string
-          example: running
+          enum:
+          - running
+          - provisioning
+          - offline
+          - discontinued
+          - unknown
+          - ordered
+          - notfound
+          - new
+          - error
+          - deleting
+          - validating
+          - no_capacity
+          - installation_failed
+      - name: computeId
+        required: false
+        in: query
+        description: Get one compute by computeId. Optional
+        schema:
+          type: string
+      - name: tag
+        required: false
+        in: query
+        description: 'Return only deployments carrying every listed tag: `key` matches any value, `key=value` matches the value exactly (split at the first `=`). Repeat the parameter to require multiple tags.'
+        schema:
+          example:
+          - environment=production
+          - benchmark
+          type: array
+          items:
+            type: string
       responses:
         '200':
-          description: A list of instances.
+          description: Instance or a list of instances
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Instance'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    post:
-      operationId: deployInstance
+                  $ref: '#/components/schemas/GetInstanceResponsePublicApiDto'
+      security:
+      - bearer: []
+      summary: Get instances
       tags:
       - Instances
-      summary: Deploy a new instance
+    post:
+      description: 'Deploy a new instance.
+
+
+        Before deploying an instance, you need to add at least ssh key to be able to access your instance.
+
+
+        Instance types can be listed using the `GET /instance-types` endpoint.
+
+
+        Available images can be listed using the `GET /images` endpoint, using the `image_type` value from the result.
+
+
+        Existing detached OS volumes could be used as an image, put the volume ID as the `image` value.
+
+
+        It''s also possible to define new volumes that will be created and attached to the new instance. New volumes location will be the same as the instance.
+
+
+        Existing detached volumes can be attached to the deployed instance by adding their IDs to the `existing_volumes` property.'
+      operationId: InstancesController_deployInstance
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeployInstanceRequest'
+              $ref: '#/components/schemas/DeployInstancePublicDto'
       responses:
         '202':
-          description: Instance deployment accepted; returns the new instance id.
+          description: Instance ID
+          content:
+            application/json:
+              example: d1df295c-1100-4401-b345-dcbaf4f60edd
+        '503':
+          description: The requested instance type has no capacity in the selected location
+          content:
+            application/json:
+              example:
+                code: service_unavailable
+                message: No capacity available
+      security:
+      - bearer: []
+      summary: Deploy instance
+      tags:
+      - Instances
+    put:
+      description: 'Perform an action on a single or multiple instances.
+
+
+        Note: to `hibernate` an instance, you must first `shutdown` it. All instance volumes would be detached and the instance will be deleted.
+
+
+        **Important**: To remove an instance and stop charging your account, you must `delete` it. Using `shutdown` will keep charging your account.
+
+
+        When deleting an instance, you can specify which of its'' attached volumes will be deleted by providing `volume_ids` array. Any attached volumes that are not specified in the array would be detached.
+
+
+        Note: If not providing a `volume_ids` array, only the OS volume will be deleted and the rest detached.'
+      operationId: InstancesController_performActions
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformInstanceActionPublicDto'
+      responses:
+        '202':
+          description: All actions completed successfully
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceActionResultDto'
+        '204':
+          description: Instance is already in the requested state (single action only)
+        '207':
+          description: Some actions failed - returns per-action results with individual statuses and errors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceActionResultDto'
         '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-    put:
-      operationId: instanceAction
+          description: Invalid request or action not allowed (single action only)
+        '404':
+          description: Instance not found (single action only)
+      security:
+      - bearer: []
+      summary: Perform action on an instance or multiple instances
       tags:
       - Instances
-      summary: Perform an action on one or more instances
-      description: Execute an action (boot, start, shutdown, hibernate, restore, delete, force_shutdown) against a single instance id or a list of instance ids.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/InstanceActionRequest'
-      responses:
-        '202':
-          description: Action accepted.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-  /instances/{instance_id}:
+  /v1/instances/types:
     get:
-      operationId: getInstance
+      deprecated: true
+      operationId: InstancesController_getInstanceTypesDeprecated
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      security:
+      - bearer: []
+      summary: Get instance types - deprecated
       tags:
       - Instances
-      summary: Get an instance by id
+  /v1/instances/{instance_id}:
+    get:
+      operationId: InstancesController_getInstanceById
       parameters:
       - name: instance_id
-        in: path
         required: true
+        in: path
+        schema:
+          example: ed0a70f0-e648-471a-b5cf-226ef15c29df
+          type: string
+      responses:
+        '200':
+          description: Instance details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetInstanceResponsePublicApiDto'
+      security:
+      - bearer: []
+      summary: Get instance by id
+      tags:
+      - Instances
+  /v1/instances/availability/{instanceType}:
+    get:
+      deprecated: true
+      operationId: InstancesController_checkAvailabilityDeprecated
+      parameters:
+      - name: instanceType
+        required: true
+        in: path
         schema:
           type: string
       responses:
         '200':
-          description: Instance details.
+          description: ''
+      security:
+      - bearer: []
+      summary: Check instance type availability - deprecated
+      tags:
+      - Instances
+  /v1/instances/action:
+    post:
+      deprecated: true
+      operationId: InstancesController_performActionDeprecated
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformInstanceActionPublicDto'
+      responses:
+        '202':
+          description: ''
+      security:
+      - bearer: []
+      summary: Perform action - deprecated
+      tags:
+      - Instances
+  /v1/instances/{instance_id}/tags:
+    post:
+      description: Add one key-value tag. Maximum 10 tags per instance. Omit `value` for a freeform tag. Keys are lowercased. A matching project tag is reused; adding one already linked to this instance returns 409.
+      operationId: InstancesController_addTag
+      parameters:
+      - name: instance_id
+        required: true
+        in: path
+        schema:
+          example: ed0a70f0-e648-471a-b5cf-226ef15c29df
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagDto'
+      responses:
+        '201':
+          description: Tag created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Instance'
+                $ref: '#/components/schemas/TagResponseDto'
+        '403':
+          description: Forbidden
+        '409':
+          description: The matching tag is already linked to the instance
+      security:
+      - bearer: []
+      summary: Add a tag to an instance
+      tags:
+      - Instances
+  /v1/instances/{instance_id}/tags/{tagId}:
+    delete:
+      operationId: InstancesController_deleteTag
+      parameters:
+      - name: instance_id
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: tagId
+        required: true
+        in: path
+        schema:
+          maxLength: 26
+          example: tag_01jxy0b6w4gx8n6se2x8mz2kdv
+          type: string
+      responses:
+        '204':
+          description: Tag removed
+        '403':
+          description: Forbidden
         '404':
-          $ref: '#/components/responses/NotFound'
+          description: Instance or tag not found
+      security:
+      - bearer: []
+      summary: Remove a tag from an instance
+      tags:
+      - Instances
 components:
   schemas:
-    Instance:
+    DeployInstancePublicDto:
       type: object
       properties:
-        id:
+        instance_group_id:
           type: string
+          example: 5af462f4-c10f-477a-9ea4-6f30e90dc029
+          description: Create this instance in the given instance group.
         instance_type:
           type: string
           example: 1H100.80S.30V
-        status:
-          type: string
-          example: running
-        hostname:
-          type: string
-        ip:
-          type: string
-        location_code:
-          type: string
-          example: FIN-01
+          description: Required unless `instance_group_id` is set, in which case the group supplies it.
         image:
           type: string
+          description: 'Required unless `instance_group_id` is set, in which case the group''s template supplies the default (a group instance may override it).
+
+
+            OS image specification for the created instance. There are two options:
+
+
+            1. OS image type or UUID. For a list of advertised images, check `GET /images`. Hidden images can also be deployed directly. The image must be enabled or explicitly enabled for the project owner. To set the name and size, use `"os_volume"` property.
+
+            2. Previously customized OS volume ID. (To create an OS volume, first make an instance with existing `"image"` type.
+
+            To customize the volume content, ssh into that instance. Finally, delete the instance but keep the volume.)'
+          examples:
+          - ubuntu-22.04-cuda-12.4-docker
+          - 3f47f218-465a-4ab7-9d24-1d6310bb5528
         ssh_key_ids:
-          type: array
-          items:
-            type: string
-        price_per_hour:
-          type: number
-          format: float
-        created_at:
-          type: string
-          format: date-time
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    InstanceActionRequest:
-      type: object
-      required:
-      - id
-      - action
-      properties:
-        id:
+          example:
+          - db43cfda-6d1c-488d-b2db-3774b7107507
           oneOf:
           - type: string
+            format: uuid
           - type: array
             items:
               type: string
+              format: uuid
+        startup_script_id:
+          type: string
+          example: 71fa84f7-3c84-4389-a155-f8988a586235
+        hostname:
+          type: string
+          example: my-instance-hostname
+        description:
+          type: string
+          description: Optional instance description.
+        tags:
+          description: Key-value tags for the new instance. Maximum 10. Omit `value` for a freeform tag. Keys are lowercased.
+          example:
+          - key: environment
+            value: production
+          - key: benchmark
+          type: array
+          items:
+            $ref: '#/components/schemas/TagDto'
+        location_code:
+          type: string
+          example: FIN-01
+          description: Location code for the instance and any newly created volumes. Required unless `instance_group_id` is set, in which case the group supplies it.
+        os_volume:
+          description: "Newly created OS volume name and size (in GB). Use when `\"image\"` property is an OS image type. For a group instance, the size must be at least the group's OS volume size.\n\nObject properties:\n  * `name` - Name of the OS volume\n  * `size` - Size of the OS volume in GB\n  * `on_spot_discontinue` - Removal policy for the OS volume for spot instances. Optional, by default, nothing is deleted. Allowed values: `keep_detached` (default behavior), `move_to_trash` (will be deleted after 96 hours and counts towards the storage volume quota), `delete_permanently` (will be deleted immediately).\n    "
+          example:
+            name: custom-os-volume-name
+            size: 100
+            on_spot_discontinue: keep_detached
+          allOf:
+          - $ref: '#/components/schemas/OsVolumeDto'
+        is_spot:
+          type: boolean
+          description: Create a spot instance. Spot instances may be evicted by Verda at any time without warning.
+        coupon:
+          type: string
+          example: COUPON-CODE-2026
+        volumes:
+          description: "Additional (**non-OS**) volumes to create and attach to this new instance.\n    \n  (To configure **OS** volume, use `\"image\"` and `\"os_volume\"` properties.)"
+          example:
+          - name: additional-volume-name
+            size: 1000
+            type: NVMe
+          type: array
+          items:
+            $ref: '#/components/schemas/VolumeDto'
+        existing_volumes:
+          description: 'IDs of additional existing detached volumes to attach to this new instance when its created.
+
+
+            (To configure instance **OS** volume, use `"image"` and `"os_volume"` properties.)'
+          example:
+          - 50231127-ccc2-4d0d-9d24-6a6eafd1fcae
+          type: array
+          items:
+            type: string
+        contract:
+          type: string
+          example: PAY_AS_YOU_GO
+          enum:
+          - LONG_TERM
+          - PAY_AS_YOU_GO
+          - SPOT
+        pricing:
+          type: string
+          deprecated: true
+          example: FIXED_PRICE
+          enum:
+          - DYNAMIC_PRICE
+          - FIXED_PRICE
+          description: This field is deprecated as DYNAMIC_PRICE is removed. Only FIXED_PRICE is supported now.
+      required:
+      - hostname
+    PerformInstanceActionPublicDto:
+      type: object
+      properties:
         action:
           type: string
           enum:
           - boot
           - start
           - shutdown
-          - hibernate
-          - restore
           - delete
+          - discontinue
+          - hibernate
+          - configure_spot
           - force_shutdown
+          - delete_stuck
+          - deploy
+          - transfer
+        id:
+          example:
+          - 8dbd3922-80a0-40a6-8abb-a45af8c1c569
+          description: Instance ID or list of instance IDs
+          oneOf:
+          - type: string
+            format: uuid
+          - type: array
+            items:
+              type: string
+              format: uuid
         volume_ids:
+          example:
+          - bf2c5b9b-84e3-4365-a00c-ad3f975dbff0
+          description: Volume IDs to delete. Specify empty array to indicate no volumes should be deleted (previously known as "hibernate")
           type: array
           items:
             type: string
-    DeployInstanceRequest:
-      type: object
+        delete_permanently:
+          type: boolean
+          description: Delete the volumes permanently. Only applicable for delete (or discontinue) action, when volume IDs to delete are also provided.
+          default: false
       required:
-      - instance_type
-      - image
-      - ssh_key_ids
+      - action
+      - id
+    VolumeDto:
+      type: object
       properties:
-        instance_type:
+        name:
           type: string
-          example: 1H100.80S.30V
-        image:
+          example: custom-os-volume-name
+        size:
+          type: number
+          example: '100'
+        on_spot_discontinue:
           type: string
-          description: OS image id or name.
-        ssh_key_ids:
+          enum:
+          - keep_detached
+          - move_to_trash
+          - delete_permanently
+          description: "Optional, by default, nothing is deleted. Should we automatically delete, if instance is deleted because of spot?\nAllowed values:\n\n * `keep_detached` (default behavior, volume will be detached),\n * `move_to_trash` (will be deleted after 96 hours and counts towards the storage volume quota),\n * `delete_permanently` (will be deleted immediately)."
+        tags:
+          example:
+          - key: environment
+            value: production
+          description: Key-value tags for the new volume. Maximum 10. Omit `value` for a freeform tag. Keys are lowercased.
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/TagDto'
+        type:
+          type: string
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+      required:
+      - name
+      - size
+      - type
+    InstanceActionResultDto:
+      type: object
+      properties:
+        instanceId:
+          type: string
+          description: Instance ID
+          format: uuid
+        action:
+          type: string
+          enum:
+          - boot
+          - start
+          - shutdown
+          - delete
+          - discontinue
+          - hibernate
+          - configure_spot
+          - force_shutdown
+          - delete_stuck
+          - deploy
+          - transfer
+          description: Action that was requested
+        status:
+          type: string
+          enum:
+          - success
+          - error
+          description: Whether the action succeeded or failed
+        error:
+          type: string
+          description: Error message if the action failed
+        statusCode:
+          type: number
+          description: HTTP status code of the error
+          example: 400
+      required:
+      - instanceId
+      - action
+      - status
+    TagDto:
+      type: object
+      properties:
+        key:
+          type: string
+          example: environment
+          maxLength: 63
+        value:
+          type: string
+          example: production
+          maxLength: 127
+          description: Omit for a freeform tag with no value
+      required:
+      - key
+    TagResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: tag_0aB1cD2eF3gH4iJ5kL6mN7
+        key:
+          type: string
+          example: environment
+        value:
+          type: string
+          example: production
+          description: Empty string for a freeform tag
+      required:
+      - id
+      - key
+      - value
+    GetInstanceResponsePublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 76ef282f-6df8-4e7b-b49e-ff307fdc56f2
+        ip:
+          type: object
+          example: 1.2.3.4
+          description: Public address; `null` when the instance is not reachable from the internet
+          nullable: true
+        status:
+          type: string
+          enum:
+          - running
+          - provisioning
+          - offline
+          - discontinued
+          - unknown
+          - ordered
+          - notfound
+          - new
+          - error
+          - deleting
+          - validating
+          - no_capacity
+          - installation_failed
+          example: running
+        created_at:
+          type: string
+          example: '2023-07-15T14:10:26.654Z'
+        created_by_user_id:
+          type: object
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+        cpu:
+          type: object
+          example:
+            description: 176 CPU
+            number_of_cores: 176
+            model: AMD Genoa
+        gpu:
+          type: object
+          example:
+            description: 8x A100
+            number_of_gpus: 8
+        gpu_memory:
+          type: object
+          example:
+            description: 80GB GPU RAM
+            size_in_gigabytes: 80
+        memory:
+          type: object
+          example:
+            description: 640GB RAM
+            size_in_gigabytes: 640
+        storage:
+          type: object
+          example:
+            description: dynamic
         hostname:
           type: string
+          example: hazy-star-swims-fin-01
         description:
           type: string
-        location_code:
+          example: ubuntu-22-04-cuda-12-0-docker-fin-01
+          description: Instance description; an empty string when none was supplied.
+        tags:
+          example:
+          - id: tag_0aB1cD2eF3gH4iJ5kL6mN7
+            key: environment
+            value: production
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponseDto'
+        location:
           type: string
           example: FIN-01
-        startup_script_id:
-          type: string
+        price_per_hour:
+          type: number
+          example: 2.481
         is_spot:
           type: boolean
-        os_volume:
+          example: false
+        instance_type:
+          type: string
+          example: 8A100.176V
+        image:
           type: object
-          properties:
-            name:
-              type: string
-            size:
-              type: integer
-              description: Size in GB.
-        existing_volumes:
+          example: ubuntu-22-04-cuda-12-0-docker
+        os_name:
+          type: object
+          example: Ubuntu 22.04
+        startup_script_id:
+          type: object
+          example: 95cec4c3-af69-42eb-a790-fcacebfdfcea
+        ssh_key_ids:
+          example:
+          - dd50b622-1c36-48c2-a485-f4d4937a3ea1
           type: array
           items:
             type: string
-  responses:
-    BadRequest:
-      description: Invalid request.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+        os_volume_id:
+          type: object
+          example: 95cec4c3-af69-42eb-a790-fcacebfdfcea
+        jupyter_token:
+          type: object
+          example: b9e6d8517db3a722ccfb309ca599a35f
+        contract:
+          type: string
+          enum:
+          - LONG_TERM
+          - PAY_AS_YOU_GO
+          - SPOT
+          example: PAY_AS_YOU_GO
+        pricing:
+          type: string
+          enum:
+          - DYNAMIC_PRICE
+          - FIXED_PRICE
+          example: FIXED_PRICE
+        volume_ids:
+          example:
+          - 95cec4c3-af69-42eb-a790-fcacebfdfcea
+          - dd50b622-1c36-48c2-a485-f4d4937a3ea1
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - ip
+      - status
+      - created_at
+      - cpu
+      - gpu
+      - gpu_memory
+      - memory
+      - storage
+      - hostname
+      - description
+      - tags
+      - location
+      - price_per_hour
+      - is_spot
+      - instance_type
+      - image
+      - os_name
+      - startup_script_id
+      - ssh_key_ids
+      - os_volume_id
+      - jupyter_token
+      - contract
+      - pricing
+      - volume_ids
+    OsVolumeDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: custom-os-volume-name
+        size:
+          type: number
+          example: '100'
+        on_spot_discontinue:
+          type: string
+          enum:
+          - keep_detached
+          - move_to_trash
+          - delete_permanently
+          description: "Optional, by default, nothing is deleted. Should we automatically delete, if instance is deleted because of spot?\nAllowed values:\n\n * `keep_detached` (default behavior, volume will be detached),\n * `move_to_trash` (will be deleted after 96 hours and counts towards the storage volume quota),\n * `delete_permanently` (will be deleted immediately)."
+        tags:
+          example:
+          - key: environment
+            value: production
+          description: Key-value tags for the new volume. Maximum 10. Omit `value` for a freeform tag. Keys are lowercased.
+          type: array
+          items:
+            $ref: '#/components/schemas/TagDto'
+      required:
+      - name
+      - size
   securitySchemes:
-    bearerAuth:
-      type: http
+    bearer:
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

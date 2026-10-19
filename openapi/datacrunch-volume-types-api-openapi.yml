@@ -1,0 +1,264 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Volume Types API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Volume Types
+paths:
+  /v1/volume-types:
+    get:
+      operationId: VolumeTypesController_getVolumeTypes
+      parameters:
+      - name: currency
+        required: false
+        in: query
+        description: Currency to get the price for volume types
+        schema:
+          default: usd
+          example: usd
+          type: string
+          enum:
+          - usd
+          - eur
+      responses:
+        '200':
+          description: Returns the list of available volume types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VolumeType'
+      security: []
+      summary: Get volume types
+      tags:
+      - Volume Types
+components:
+  schemas:
+    VolumeType:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Volume type
+          example: NVMe
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+        price:
+          type: object
+          description: Price details
+          example:
+            price_per_month_per_gb: 0.2
+            cps_per_gb: 7.6103500761035e-08
+            currency: usd
+        is_shared_fs:
+          type: boolean
+          description: Is shared file system
+          example: false
+        burst_bandwidth:
+          type: number
+          description: Burst bandwidth
+          example: 2500
+        continuous_bandwidth:
+          type: number
+          description: Continuous bandwidth
+          example: 2000
+        internal_network_speed:
+          type: number
+          description: Internal network speed
+          example: 50
+        iops:
+          type: string
+          description: IOPS
+          example: 100k
+        throughput_gbps:
+          type: number
+          description: Throughput in GB/s
+          example: 4
+      required:
+      - type
+      - price
+      - is_shared_fs
+      - burst_bandwidth
+      - continuous_bandwidth
+      - internal_network_speed
+      - iops
+      - throughput_gbps
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

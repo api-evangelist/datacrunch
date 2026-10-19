@@ -1,336 +1,2393 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public Serverless Containers API
-  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
-  termsOfService: https://datacrunch.io/legal/terms-of-service
+  title: Verda Cloud Public Serverless Containers API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
   contact:
-    name: DataCrunch Support
-    url: https://docs.datacrunch.io/
-  version: '1.0'
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
 servers:
-- url: https://api.datacrunch.io/v1
+- url: https://api.verda.com
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Serverless Containers
 paths:
-  /container-deployments:
+  /v1/container-deployments/{deployment_name}/logs:
     get:
-      operationId: listContainerDeployments
-      tags:
-      - Serverless Containers
-      summary: List serverless container deployments
-      responses:
-        '200':
-          description: A list of deployments.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ContainerDeployment'
-    post:
-      operationId: createContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Create a serverless container deployment
-      requestBody:
+      description: Fetch log lines from the replicas of a deployment.
+      operationId: DeploymentLogsPublicApiController_getLogs
+      parameters:
+      - name: deployment_name
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
-      responses:
-        '201':
-          description: Deployment created.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContainerDeployment'
-  /container-deployments/{deployment_name}:
-    get:
-      operationId: getContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Get a deployment by name
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Deployment details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContainerDeployment'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    patch:
-      operationId: updateContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Update a deployment
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateContainerDeploymentRequest'
-      responses:
-        '200':
-          description: Deployment updated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ContainerDeployment'
-    delete:
-      operationId: deleteContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Delete a deployment
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Deployment deleted.
-  /container-deployments/{deployment_name}/status:
-    get:
-      operationId: getContainerDeploymentStatus
-      tags:
-      - Serverless Containers
-      summary: Get deployment status
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Deployment status.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DeploymentStatus'
-  /container-deployments/{deployment_name}/scaling:
-    get:
-      operationId: getContainerDeploymentScaling
-      tags:
-      - Serverless Containers
-      summary: Get deployment scaling options
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Scaling options.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScalingOptions'
-    patch:
-      operationId: updateContainerDeploymentScaling
-      tags:
-      - Serverless Containers
-      summary: Update deployment scaling options
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ScalingOptions'
-      responses:
-        '200':
-          description: Scaling updated.
-  /container-deployments/{deployment_name}/pause:
-    post:
-      operationId: pauseContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Pause a deployment
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Deployment paused.
-  /container-deployments/{deployment_name}/resume:
-    post:
-      operationId: resumeContainerDeployment
-      tags:
-      - Serverless Containers
-      summary: Resume a deployment
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Deployment resumed.
-  /container-deployments/{deployment_name}/purge-queue:
-    post:
-      operationId: purgeContainerDeploymentQueue
-      tags:
-      - Serverless Containers
-      summary: Purge the deployment request queue
-      parameters:
-      - $ref: '#/components/parameters/DeploymentName'
-      responses:
-        '200':
-          description: Queue purged.
-  /container-types:
-    get:
-      operationId: listContainerTypes
-      tags:
-      - Serverless Containers
-      summary: List serverless container compute types and pricing
-      responses:
-        '200':
-          description: A list of container compute types.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        code:
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
           type: string
-        message:
+      - name: container_name
+        required: false
+        in: query
+        description: Filter by container name. If omitted, the endpoint returns the logs of all user containers of the deployment. A name that is not a container of this deployment returns no log lines.
+        schema:
+          example: app
           type: string
-    ContainerDeployment:
-      type: object
-      properties:
-        name:
-          type: string
-        container_registry_settings:
-          type: object
-        containers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Container'
-        compute:
-          type: object
-          properties:
-            name:
-              type: string
-              example: General Compute
-            size:
-              type: integer
-        scaling:
-          $ref: '#/components/schemas/ScalingOptions'
-        is_spot:
-          type: boolean
-        created_at:
-          type: string
-          format: date-time
-    ScalingOptions:
-      type: object
-      properties:
-        min_replica_count:
-          type: integer
-        max_replica_count:
-          type: integer
-        scale_down_policy:
-          type: object
-          properties:
-            delay_seconds:
-              type: integer
-        queue_message_ttl_seconds:
-          type: integer
-        concurrent_requests_per_replica:
-          type: integer
-        scaling_triggers:
-          type: object
-          properties:
-            queue_load:
-              type: object
-            cpu_utilization:
-              type: object
-            gpu_utilization:
-              type: object
-    CreateContainerDeploymentRequest:
-      type: object
-      required:
-      - name
-      - containers
-      - compute
-      properties:
-        name:
-          type: string
-        containers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Container'
-        compute:
-          type: object
-          properties:
-            name:
-              type: string
-            size:
-              type: integer
-        scaling:
-          $ref: '#/components/schemas/ScalingOptions'
-        is_spot:
-          type: boolean
-    Container:
-      type: object
-      properties:
-        name:
-          type: string
-        image:
-          type: string
-        exposed_port:
-          type: integer
-          example: 8080
-        healthcheck:
-          type: object
-          properties:
-            enabled:
-              type: boolean
-            port:
-              type: integer
-            path:
-              type: string
-        env:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              value_or_reference_to_secret:
-                type: string
-        command:
+      - name: pod
+        required: false
+        in: query
+        description: Filter by replica (pod) name. Repeat the parameter for multiple values.
+        schema:
+          example: my-deployment-6f9c8b7d5-x2abc
           type: array
           items:
             type: string
-    DeploymentStatus:
+      - name: search_text
+        required: false
+        in: query
+        description: Filter log lines containing the given text.
+        schema:
+          example: error
+          type: string
+      - name: since
+        required: false
+        in: query
+        description: Relative time window, for example 30s, 15m, 2h, 3d. Defaults to 15m. The time range cannot exceed 7 days.
+        schema:
+          example: 2h
+          type: string
+      - name: start
+        required: false
+        in: query
+        description: Start of the time range. ISO 8601 date or epoch time (s, ms, us, or ns). Overrides since. The time range cannot exceed 7 days.
+        schema:
+          example: '2026-06-01T12:00:00Z'
+          type: string
+      - name: end
+        required: false
+        in: query
+        description: End of the time range. ISO 8601 date, epoch time, or "now". Defaults to now.
+        schema:
+          example: now
+          type: string
+      - name: order
+        required: false
+        in: query
+        description: Order of the returned log lines by timestamp. The endpoint sorts the time range before it applies limit, so desc returns the newest lines of the range and asc returns the oldest. Defaults to desc.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        required: false
+        in: query
+        description: Maximum number of log lines to return. Narrow the time range or use the order parameter to reach lines outside the returned page.
+        schema:
+          minimum: 1
+          maximum: 1000
+          default: 50
+          type: number
+      responses:
+        '200':
+          description: List of log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeploymentLogEntryPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Deployment not found
+      summary: Get deployment replica logs
+      tags:
+      - Serverless Containers
+  /v1/container-deployments:
+    get:
+      operationId: PublicApiController_getDeploymentsList
+      parameters: []
+      responses:
+        '200':
+          description: Fetch a list of deployments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeploymentPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get all deployments
+      tags:
+      - Serverless Containers
+    post:
+      operationId: PublicApiController_createNewDeployment
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeploymentPublicApiDto'
+      responses:
+        '201':
+          description: Returns the created deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Create new deployment
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}:
+    get:
+      operationId: PublicApiController_getDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '200':
+          description: Fetch a deployment by name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get deployment by name
+      tags:
+      - Serverless Containers
+    patch:
+      operationId: PublicApiController_updateDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDeploymentPublicApiDto'
+      responses:
+        '200':
+          description: Returns the updated deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Update deployment
+      tags:
+      - Serverless Containers
+    delete:
+      operationId: PublicApiController_deleteDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      - name: timeout
+        required: false
+        in: query
+        description: Maximum time to wait for deployment deletion in milliseconds. Set to 0 to skip waiting.
+        schema:
+          minimum: 0
+          maximum: 300000
+          default: 60000
+          example: 60000
+          type: number
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Delete deployment
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/status:
+    get:
+      operationId: PublicApiController_getReplicasStatusByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDeploymentStatusResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get deployment status
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/restart:
+    post:
+      operationId: PublicApiController_restartDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Restart deployment
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/scaling:
+    get:
+      operationId: PublicApiController_getDeploymentScalingOptionsByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '200':
+          description: Scaling options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScalingOptionsPublicApiDto'
+        '401':
+          description: Unauthorized
+      summary: Get deployment scaling options by deployment name
+      tags:
+      - Serverless Containers
+    patch:
+      operationId: PublicApiController_updateDeploymentScalingOptionsByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchScalingOptionsPublicApiDto'
+      responses:
+        '200':
+          description: Returns the updated scaling options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScalingOptionsPublicApiDto'
+        '401':
+          description: Unauthorized
+      summary: Update deployment scaling options
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/replicas:
+    get:
+      operationId: PublicApiController_getDeploymentReplicasByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '200':
+          description: List of replicas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplicasPublicApiDto'
+        '401':
+          description: Unauthorized
+      summary: Get deployment replicas by deployment name
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/purge-queue:
+    post:
+      operationId: PublicApiController_purgeQueue
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Purge deployment queue
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/pause:
+    post:
+      operationId: PublicApiController_pauseDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Pause deployment
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/resume:
+    post:
+      operationId: PublicApiController_resumeDeploymentByName
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Resume deployment
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/environment-variables:
+    get:
+      operationId: PublicApiController_getDeploymentEnvironmentVariables
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      responses:
+        '200':
+          description: Returns the environment variables for all containers of the deployment
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetDeploymentEnvVariablesPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get deployment environment variables
+      tags:
+      - Serverless Containers
+    post:
+      operationId: PublicApiController_addEnvironmentVariablesToContainer
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrPatchEnvironmentVariablesDto'
+      responses:
+        '200':
+          description: Returns the environment variables for the container
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetDeploymentEnvVariablesPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Add environment variables to a container
+      tags:
+      - Serverless Containers
+    patch:
+      operationId: PublicApiController_updateEnvironmentVariablesOfContainer
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrPatchEnvironmentVariablesDto'
+      responses:
+        '200':
+          description: Returns the updated environment variables for the container
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetDeploymentEnvVariablesPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Update environment variables of a container.
+      tags:
+      - Serverless Containers
+    delete:
+      operationId: PublicApiController_deleteEnvironmentVariablesOfContainer
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteEnvironmentVariablesPublicApiDto'
+      responses:
+        '200':
+          description: Returns the remaining environment variables for the container
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetDeploymentEnvVariablesPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Delete environment variables of a container
+      tags:
+      - Serverless Containers
+  /v1/serverless-compute-resources:
+    get:
+      operationId: PublicApiController_getComputeAndAvailability
+      parameters: []
+      responses:
+        '200':
+          description: A list of compute resources and their availability
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetComputeResourcesPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get compute resource types and availability
+      tags:
+      - Serverless Containers
+  /v1/secrets:
+    get:
+      operationId: PublicApiController_getSecrets
+      parameters: []
+      responses:
+        '200':
+          description: A list of secrets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetSecretsPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get secrets
+      tags:
+      - Serverless Containers
+    post:
+      operationId: PublicApiController_addSecret
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSecretPublicApiDto'
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Create new secret
+      tags:
+      - Serverless Containers
+  /v1/secrets/{secret_name}:
+    delete:
+      description: Will error if the secret is used in a deployment
+      operationId: PublicApiController_deleteSecret
+      parameters:
+      - name: secret_name
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: force
+        required: false
+        in: query
+        description: Force delete the secret, even if it is used in deployments. Dangerous! may cause deployments to fail
+        schema:
+          example: true
+          type: boolean
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Delete secret
+      tags:
+      - Serverless Containers
+  /v1/file-secrets:
+    get:
+      description: File secrets can be used as a secret mount storage
+      operationId: PublicApiController_getFilesetSecrets
+      parameters: []
+      responses:
+        '200':
+          description: A list of fileset secrets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetFilesetSecretsPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get fileset secrets
+      tags:
+      - Serverless Containers
+    post:
+      description: File secrets can be used as a secret mount storage
+      operationId: PublicApiController_addFilesetSecret
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFilesetSecretPublicApiDto'
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Create new fileset secret
+      tags:
+      - Serverless Containers
+  /v1/file-secrets/{secret_name}:
+    delete:
+      description: Will error if the secret is used in a deployment
+      operationId: PublicApiController_deleteFilesetSecret
+      parameters:
+      - name: secret_name
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: force
+        required: false
+        in: query
+        description: Force delete the secret, even if it is used in deployments. Dangerous! may cause deployments to fail
+        schema:
+          example: true
+          type: boolean
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Delete fileset secret
+      tags:
+      - Serverless Containers
+  /v1/container-registry-credentials:
+    get:
+      operationId: PublicApiController_getRegistryCredentials
+      parameters: []
+      responses:
+        '200':
+          description: A list of registry credentials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetRegistryCredentialsPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get all registry credentials
+      tags:
+      - Serverless Containers
+    post:
+      operationId: PublicApiController_addRegistryCredentials
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRegistryCredentialsPublicApiDto'
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Add registry credentials
+      tags:
+      - Serverless Containers
+  /v1/container-registry-credentials/{credentials_name}:
+    delete:
+      operationId: PublicApiController_deleteRegistryCredentials
+      parameters:
+      - name: credentials_name
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: force
+        required: false
+        in: query
+        description: Force delete the registry credentials, even if it is used in deployments. Dangerous! may cause deployments to fail
+        schema:
+          example: true
+          type: boolean
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Delete registry credentials
+      tags:
+      - Serverless Containers
+  /v1/container-deployment-templates:
+    get:
+      operationId: ContainerDeploymentTemplatesPublicApiController_listTemplates
+      parameters: []
+      responses:
+        '200':
+          description: Curated models with a ready serving configuration
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContainerDeploymentTemplatePublicApiDto'
+        '401':
+          description: Unauthorized
+      summary: List container deployment templates
+      tags:
+      - Serverless Containers
+  /v1/container-deployment-templates/{template_id}:
+    get:
+      operationId: ContainerDeploymentTemplatesPublicApiController_getTemplate
+      parameters:
+      - name: template_id
+        required: true
+        in: path
+        description: Id of the template
+        schema:
+          example: qwen3-5-9b
+          type: string
+      responses:
+        '200':
+          description: The template with its variants and features
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerDeploymentTemplateDetailPublicApiDto'
+        '401':
+          description: Unauthorized
+      summary: Get a container deployment template
+      tags:
+      - Serverless Containers
+  /v1/container-deployment-templates/{template_id}/deployments:
+    post:
+      operationId: ContainerDeploymentTemplatesPublicApiController_deployTemplate
+      parameters:
+      - name: template_id
+        required: true
+        in: path
+        description: Id of the template
+        schema:
+          example: qwen3-5-9b
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployContainerDeploymentTemplatePublicApiDto'
+      responses:
+        '201':
+          description: Returns the created container deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeploymentPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Deploy a container deployment template
+      tags:
+      - Serverless Containers
+  /v1/container-deployments/{deployment_name}/system-logs:
+    get:
+      description: Fetch deployment system logs.
+      operationId: DeploymentSystemLogsPublicApiController_getLogs
+      parameters:
+      - name: deployment_name
+        required: true
+        in: path
+        description: Name of the deployment
+        schema:
+          maxLength: 63
+          example: my-deployment
+          type: string
+      - name: reason
+        required: false
+        in: query
+        description: Exact display reasons. An unknown reason returns no events.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: involved_object
+        required: false
+        in: query
+        description: Exact involved object names.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: search_text
+        required: false
+        in: query
+        description: Case-insensitive substring of the clean message, display reason and involved object. Whitespace is trimmed; blank search imposes no restriction.
+        schema:
+          type: string
+      - name: since
+        required: false
+        in: query
+        description: Relative window such as 15m or 1d. Maximum range is 7 days. Blank time parameters use their defaults.
+        schema:
+          default: 1d
+          type: string
+      - name: start
+        required: false
+        in: query
+        description: ISO 8601 or epoch time (s, ms, us or ns). Overrides since. Maximum range is 7 days.
+        schema:
+          type: string
+      - name: end
+        required: false
+        in: query
+        description: ISO 8601, epoch time (s, ms, us or ns), or now.
+        schema:
+          default: now
+      - name: order
+        required: false
+        in: query
+        description: Timestamp order of the returned entries. Ascending does not reach events the request did not read.
+        schema:
+          default: desc
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        required: false
+        in: query
+        description: 'Maximum number of entries to return. There is no paging: change the time range or the filters to reach other events.'
+        schema:
+          minimum: 1
+          maximum: 1000
+          default: 50
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemLogEntryPublicApiResponseDto'
+        '400':
+          description: Invalid query or deployment name
+        '401':
+          description: Unauthorized
+        '403':
+          description: Project access denied
+        '404':
+          description: Deployment not found
+      summary: Get deployment system logs
+      tags:
+      - Serverless Containers
+components:
+  schemas:
+    HealthcheckSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is healthcheck enabled for the container. It it used to check if the container is ready to accept traffic
+          example: true
+        port:
+          type: number
+          description: Port to be used for healthcheck
+          example: 8081
+        path:
+          type: string
+          description: Path to be used for healthcheck
+          example: /health
+      required:
+      - enabled
+      - port
+      - path
+    SystemLogEntryPublicApiResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          example: '2026-06-01T12:00:00.123456789Z'
+          description: Latest observed timestamp of the group, RFC3339 with nanosecond precision.
+        reason:
+          type: string
+          example: SchedulingFailed
+          description: Display reason of the event.
+        message:
+          type: string
+          example: Replica is waiting for its storage volume to be provisioned
+          description: Event message without an observation-count suffix.
+        involved_object:
+          type: string
+          example: my-deployment-6f9c8b7d5-x2abc
+          description: Workload or child object the event concerns; not necessarily a replica.
+        count:
+          type: number
+          minimum: 1
+          example: 3
+          description: Collected records grouped into this entry, not a Kubernetes occurrence count. May be partial at the raw scan cap.
+      required:
+      - timestamp
+      - reason
+      - message
+      - involved_object
+      - count
+    DeploymentPublicApiResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Deployment name
+          example: flux
+        containers:
+          description: Containers in the deployment
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerPublicApiResponseDto'
+        endpoint_base_url:
+          type: string
+          description: The base URL of the endpoint
+          example: https://containers.datacrunch.io/flux
+        created_at:
+          type: string
+          example: '2021-08-31T12:00:00.000Z'
+        compute:
+          description: Compute resource details
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        container_registry_settings:
+          description: Container registry settings
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistrySettingsPublicApiDto'
+        is_spot:
+          type: boolean
+          example: false
+      required:
+      - name
+      - containers
+      - endpoint_base_url
+      - created_at
+      - compute
+      - container_registry_settings
+      - is_spot
+    ContainerDeploymentTemplateDetailPublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Stable, URL-safe template identifier used in template paths
+          example: qwen3-5-9b
+        name:
+          type: string
+          description: Human-readable name of the model
+          example: Qwen3.5 9B
+        description:
+          type: string
+          description: Description of the model
+          example: Dense multimodal model with gated delta networks hybrid attention and 262K context. Single-GPU serving.
+        provider:
+          type: string
+          description: Provider of the model
+          example: Qwen
+        engine:
+          type: string
+          description: Serving engine used by the template
+          example: vllm
+        model_repository:
+          type: string
+          description: Hugging Face repository the default variant loads
+          example: Qwen/Qwen3.5-9B
+        parameters:
+          type: string
+          description: Parameter count of the model (display string)
+          example: 9B
+        context_length:
+          type: number
+          description: Maximum context length in tokens
+          example: 262144
+        input_modalities:
+          description: Accepted input modalities
+          example:
+          - text
+          - image
+          type: array
+          items:
+            type: string
+        output_modalities:
+          description: Produced output modalities
+          example:
+          - text
+          type: array
+          items:
+            type: string
+        tasks:
+          description: Coarse task labels
+          example:
+          - text
+          - multimodal
+          type: array
+          items:
+            type: string
+        requires_hugging_face_token:
+          type: boolean
+          description: Whether a Hugging Face token is required to deploy the model (gated checkpoint)
+          example: false
+        min_vram_gb:
+          type: number
+          description: Minimum total GPU memory in GB for the default variant
+          example: 22
+        recommended_compute:
+          description: Smallest compute configuration currently offered that fits the default variant. Null when nothing offered fits
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        revision:
+          type: object
+          description: Pinned Hugging Face revision of the default repository. Null tracks the main branch
+          example: c202236235762e1c871ad0ccb60c8ee5ba337b9a
+          nullable: true
+        variants:
+          description: Selectable weight variants. The first one is the default
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerDeploymentTemplateVariantPublicApiDto'
+        features:
+          description: Independently selectable serving features
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerDeploymentTemplateFeaturePublicApiDto'
+      required:
+      - id
+      - name
+      - description
+      - provider
+      - engine
+      - model_repository
+      - parameters
+      - context_length
+      - input_modalities
+      - output_modalities
+      - tasks
+      - requires_hugging_face_token
+      - min_vram_gb
+      - recommended_compute
+      - revision
+      - variants
+      - features
+    ScalingTriggers:
+      type: object
+      properties:
+        queue_load:
+          description: Scaling trigger based on queue load
+          allOf:
+          - $ref: '#/components/schemas/QueueLoadScalingTrigger'
+        cpu_utilization:
+          description: Scaling trigger based on CPU utilization by percentage
+          allOf:
+          - $ref: '#/components/schemas/UtilizationScalingTrigger'
+        gpu_utilization:
+          description: Scaling trigger based on GPU utilization by percentage
+          allOf:
+          - $ref: '#/components/schemas/UtilizationScalingTrigger'
+      required:
+      - queue_load
+      - cpu_utilization
+      - gpu_utilization
+    ContainerRegistryCredentials:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Credential name of the secret containing the credentials
+          example: dockerhub-credentials
+      required:
+      - name
+    GetDeploymentEnvVariablesPublicApiResponseDto:
+      type: object
+      properties:
+        container_name:
+          type: string
+          description: Container name
+          example: flux-0
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarPublicApi'
+      required:
+      - container_name
+      - env
+    ScalingPolicy:
+      type: object
+      properties:
+        delay_seconds:
+          type: number
+          description: Cooldown period in seconds before the deployment scales up or down
+          example: 300
+      required:
+      - delay_seconds
+    QueueLoadScalingTrigger:
+      type: object
+      properties:
+        threshold:
+          type: number
+          description: Threshold value for queue load. Queue item to replica ratio
+          example: 2
+      required:
+      - threshold
+    EntrypointOverridesSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is the default docker start command and arguments overridden
+          example: true
+        entrypoint:
+          description: Entrypoint command to start the container
+          example:
+          - python3
+          - main.py
+          type: array
+          items:
+            type: string
+        cmd:
+          description: Arguments to the entrypoint command
+          example:
+          - --port
+          - '8080'
+          type: array
+          items:
+            type: string
+      required:
+      - enabled
+    CreateScalingOptionsPublicApiDto:
+      type: object
+      properties:
+        min_replica_count:
+          type: number
+          description: Minimum number of replicas
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+        scale_down_policy:
+          description: Policy for scaling down replicas
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        scale_up_policy:
+          description: Policy for scaling up replicas
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+        concurrent_requests_per_replica:
+          type: number
+          description: Number of requests each replica can process concurrently. Set this number higher for LLM endpoints, and to 1 for image generation endpoints.
+        scaling_triggers:
+          description: Triggers for scaling up and down
+          allOf:
+          - $ref: '#/components/schemas/ScalingTriggers'
+      required:
+      - min_replica_count
+      - max_replica_count
+      - scale_down_policy
+      - scale_up_policy
+      - queue_message_ttl_seconds
+      - concurrent_requests_per_replica
+      - scaling_triggers
+    DeploymentLogEntryPublicApiResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: Log line timestamp, ISO 8601 with nanosecond precision.
+          example: '2026-06-01T12:00:00.123456789Z'
+        container_name:
+          type: string
+          description: Name of the container that produced the log line.
+          example: app
+        replica:
+          type: string
+          description: Name of the replica (pod) that produced the log line.
+          example: my-deployment-6f9c8b7d5-x2abc
+        message:
+          type: string
+          description: The log line content.
+          example: GET /healthz 200
+      required:
+      - timestamp
+      - container_name
+      - replica
+      - message
+    UtilizationScalingTrigger:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is the trigger enabled
+          example: true
+        threshold:
+          type: number
+          description: Threshold value for utilization, in percent
+          example: 80
+      required:
+      - enabled
+      - threshold
+    GetDeploymentStatusResponseDto:
       type: object
       properties:
         status:
           type: string
+          description: Status of the deployment
           example: healthy
-        replicas:
-          type: integer
-        target_replicas:
-          type: integer
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-  parameters:
-    DeploymentName:
-      name: deployment_name
-      in: path
-      required: true
-      schema:
-        type: string
+          enum:
+          - initializing
+          - healthy
+          - degraded
+          - unhealthy
+          - paused
+          - quota_reached
+          - image_pulling
+          - updating
+          - terminating
+      required:
+      - status
+    ScalingOptionsPublicApiDto:
+      type: object
+      properties:
+        min_replica_count:
+          type: number
+          description: Minimum number of replicas
+          example: 1
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+          example: 50
+        scale_down_policy:
+          description: Policy for scaling down replicas
+          example:
+            delay_seconds: 300
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        scale_up_policy:
+          description: Policy for scaling up replicas
+          example:
+            delay_seconds: 300
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+          example: 500
+        concurrent_requests_per_replica:
+          type: number
+          description: Number of requests each replica can process concurrently.
+          example: 1
+        scaling_triggers:
+          description: Triggers for scaling up and down
+          allOf:
+          - $ref: '#/components/schemas/ScalingTriggers'
+      required:
+      - min_replica_count
+      - max_replica_count
+      - scale_down_policy
+      - scale_up_policy
+      - queue_message_ttl_seconds
+      - concurrent_requests_per_replica
+      - scaling_triggers
+    DeleteEnvironmentVariablesPublicApiDto:
+      type: object
+      properties:
+        container_name:
+          type: string
+          description: Container name
+          example: flux-0
+        env:
+          description: List of environment variable names to delete
+          example:
+          - MY_ENV_VAR
+          - MY_OTHER_ENV_VAR
+          type: array
+          items:
+            type: string
+      required:
+      - container_name
+      - env
+    GetComputeResourcesPublicApiResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the compute resource
+          example: H100
+        size:
+          type: number
+          description: Number of compute units (e.g. 4 GPUs). Default is 1
+          examples:
+          - 1
+          - 2
+          - 4
+          - 8
+          - 16
+          - 32
+          default: 1
+        is_available:
+          type: boolean
+          description: Is the compute resource available
+          example: true
+      required:
+      - name
+      - size
+      - is_available
+    ContainerDeploymentTemplateVariantPublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Variant identifier, passed as `variant` when deploying
+          example: fp8
+        precision:
+          type: string
+          description: Weight precision
+          example: fp8
+        model_repository:
+          type: string
+          description: Hugging Face repository this variant loads
+          example: Qwen/Qwen3.5-9B-FP8
+        min_vram_gb:
+          type: number
+          description: Minimum total GPU memory in GB
+          example: 12
+        is_default:
+          type: boolean
+          description: Whether this variant is used when no variant is given
+          example: true
+        description:
+          type: string
+          description: What sets this variant apart
+          example: FP8 weights and KV cache, fits a single 16 GB GPU
+        recommended_compute:
+          description: Smallest compute configuration currently offered that fits this variant. Null when nothing offered fits
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+      required:
+      - id
+      - precision
+      - model_repository
+      - min_vram_gb
+      - is_default
+      - recommended_compute
+    GetRegistryCredentialsPublicApiResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name given to the registry credential
+          example: dockerhub-credentials
+        created_at:
+          type: string
+          description: The date when the registry credential was created
+          example: '2020-08-12T12:00:00.000Z'
+      required:
+      - name
+      - created_at
+    ContainerPublicApiResponseDto:
+      type: object
+      properties:
+        should_use_cached_image:
+          type: boolean
+          description: Pull the image through the platform image cache. Applies only to public Docker Hub images. Has no effect for images from other registries, or when registry credentials are set. When the cache is used, registry credentials are not needed to avoid Docker Hub rate limits, because the cache pulls with a platform account. Without the cache, this does not apply.
+          example: true
+          default: true
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/HealthcheckSettings'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/EntrypointOverridesSettings'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarPublicApi'
+        volume_mounts:
+          type: array
+          description: Volume mounts for the container
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/ScratchVolumeMountDto'
+              description: Scratch volume mount
+            - $ref: '#/components/schemas/SecretVolumeMountDto'
+              description: Secret volume mount
+            - $ref: '#/components/schemas/SharedVolumeMountDto'
+              description: Shared filesystem volume mount
+            - $ref: '#/components/schemas/MemoryVolumeMountDto'
+              description: Memory volume mount
+        image:
+          type: object
+          description: Image details
+          example:
+            image: registry-1.docker.io/chentex/random-logger:v1.0.1
+            last_updated_at: '2026-10-19T07:54:29.900Z'
+        name:
+          type: string
+          description: Container name
+          example: random-logger-0
+      required:
+      - exposed_port
+      - image
+      - name
+    PatchDeploymentPublicApiDto:
+      type: object
+      properties:
+        container_registry_settings:
+          description: Container registry settings. Private registries require saving the credentials via datacrunch cloud UI
+          example:
+            is_private: true
+            credentials:
+              name: dockerhub-credentials
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistrySettingsPublicApiDto'
+        containers:
+          description: Containers properties to be updated
+          type: array
+          items:
+            $ref: '#/components/schemas/PatchContainerPublicApiDto'
+        compute:
+          description: Change compute settings for the deployment
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        is_spot:
+          type: boolean
+          description: Spot instance settings for the deployment
+          example: false
+    PatchScalingTriggers:
+      type: object
+      properties:
+        queue_load:
+          description: Scaling trigger based on queue load
+          allOf:
+          - $ref: '#/components/schemas/QueueLoadScalingTrigger'
+        cpu_utilization:
+          description: Scaling trigger based on CPU utilization by percentage
+          allOf:
+          - $ref: '#/components/schemas/UtilizationScalingTrigger'
+        gpu_utilization:
+          description: Scaling trigger based on GPU utilization by percentage
+          allOf:
+          - $ref: '#/components/schemas/UtilizationScalingTrigger'
+    DeployContainerDeploymentTemplatePublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the deployment. Immutable after creation
+          example: qwen3-5-9b
+        variant:
+          type: string
+          description: Variant id from the template detail. Defaults to the first variant
+          example: fp8
+        features:
+          description: Feature ids to enable. Defaults to the features marked is_default
+          example:
+          - tool_calling
+          - reasoning
+          type: array
+          items:
+            type: string
+        compute:
+          description: Compute to deploy on. Defaults to the smallest offered configuration that fits the variant
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        hf_token_secret_name:
+          type: string
+          description: Name of an existing secret (POST /secrets) holding a Hugging Face token. Required for gated models
+          example: hf-token
+        shm_size_mb:
+          type: number
+          description: 'Size of the /dev/shm memory volume in MiB. Defaults to a size based on the GPU count (1 GPU: 1024, 2: 4096, 4: 8192, 8: 16384) or the template default'
+          enum:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+          example: 8192
+        scaling:
+          description: Scaling options. Omitted fields use the platform defaults
+          allOf:
+          - $ref: '#/components/schemas/PatchScalingOptionsPublicApiDto'
+      required:
+      - name
+    AutoupdateSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is autoupdate enabled for the container
+          example: true
+        mode:
+          type: string
+          description: Autoupdate mode for the container
+          example: latest
+          enum:
+          - latest
+          - semantic
+        tag_filter:
+          type: string
+          description: Tag filter for the autoupdate. Supports regex
+          example: ^v?1.0.d+$
+      required:
+      - enabled
+      - mode
+    CreateRegistryCredentialsPublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the registry credential
+          example: dockerhub-credentials
+        type:
+          type: string
+          description: Type of the container registry
+          enum:
+          - verda
+          - gcr
+          - dockerhub
+          - ghcr
+          - aws-ecr
+          - scaleway
+          - custom
+          example: dockerhub
+        username:
+          type: string
+          description: Username for the Docker Hub registry, if selected type is DockerHub
+          example: JADES-GS-z14-0
+        access_token:
+          type: string
+          description: Access token for the registry, if selected type is DockerHub or Github
+          example: REDACTED_DOCKER_PAT
+        service_account_key:
+          type: string
+          description: Service account key for the Google Cloud Registry (Google Artifact Registry), if selected type is GCR
+          example: "{\n  \"type\": \"service_account\",\n  \"project_id\": \"clever-overview-111111-b1\",\n  \"private_key_id\": \"5434a8e7108656c582b4567890b77e9eaa7501c5\",\n  \"private_key\": \"REDACTED_PRIVATE_KEY_EXAMPLE\n\",\n  \"client_email\": \"test-account@clever-overview-111111-b1.iam.gserviceaccount.com\",\n  \"client_id\": \"107932416123456636077\",\n  \"auth_uri\": \"https://accounts.google.com/o/oauth2/auth\",\n  \"token_uri\": \"https://oauth2.googleapis.com/token\",\n  \"auth_provider_x509_cert_url\": \"https://www.googleapis.com/oauth2/v1/certs\",\n  \"client_x509_cert_url\": \"https://www.googleapis.com/robot/v1/metadata/x509/test-account%40clever-overview-111111-b1.iam.gserviceaccount.com\",\n  \"universe_domain\": \"googleapis.com\"\n}"
+        docker_config_json:
+          type: string
+          description: Docker config JSON for the custom registry, if selected type is Custom
+          example: "{\n  \"auths\": {\n    \"ghcr.io\": {\n      \"auth\": \"dXNlcjpwYXNzd29yZA==\"\n    }\n  }\n}"
+        access_key_id:
+          type: string
+          description: Access key ID for the AWS Elastic Container Registry, if selected type is AWSECR
+          example: AKIAEXAMPLE123456
+        secret_access_key:
+          type: string
+          description: Secret access key for the AWS Elastic Container Registry, if selected type is AWSECR
+          example: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+        region:
+          type: string
+          description: Region for the AWS Elastic Container Registry, if selected type is AWSECR
+          example: eu-north-1
+        ecr_repo:
+          type: string
+          description: Repository for the AWS Elastic Container Registry, if selected type is AWSECR
+          example: 887841266746.dkr.ecr.eu-north-1.amazonaws.com
+        scaleway_domain:
+          type: string
+          description: Region-specific domain, if selected type is Scaleway
+          example: rg.nl-ams.scw.cloud
+        scaleway_uuid:
+          type: string
+          description: API secret key, if selected type is Scaleway
+          example: ea55b6d2-c789-4b31-88b1-f77ba6ff7cd6
+      required:
+      - name
+      - type
+    PatchContainerPublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the container to update
+          example: random-logger-0
+        image:
+          type: string
+          description: Image to be deployed in the container
+          example: registry-1.docker.io/chentex/random-logger:v1.0.1
+        should_use_cached_image:
+          type: boolean
+          description: Pull the image through the platform image cache. Applies only to public Docker Hub images. Has no effect for images from other registries, or when registry credentials are set. When the cache is used, registry credentials are not needed to avoid Docker Hub rate limits, because the cache pulls with a platform account. Without the cache, this does not apply. If `image` is not sent, the setting applies to the current image. If `image` is sent without this field, the current setting is kept.
+          example: true
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/HealthcheckSettings'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/EntrypointOverridesSettings'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarPublicApi'
+        autoupdate:
+          description: Container image autoupdate settings for the container
+          allOf:
+          - $ref: '#/components/schemas/AutoupdateSettings'
+        volume_mounts:
+          type: array
+          description: Volume mounts for the container
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/ScratchVolumeMountDto'
+              description: Scratch volume mount
+            - $ref: '#/components/schemas/SecretVolumeMountDto'
+              description: Secret volume mount
+            - $ref: '#/components/schemas/SharedVolumeMountDto'
+              description: Shared filesystem volume mount
+            - $ref: '#/components/schemas/MemoryVolumeMountDto'
+              description: Memory volume mount
+      required:
+      - name
+    ScratchVolumeMountDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - scratch
+          enum:
+          - scratch
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted
+          example: /data
+      required:
+      - type
+      - mount_path
+    ContainerDeploymentTemplatePublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Stable, URL-safe template identifier used in template paths
+          example: qwen3-5-9b
+        name:
+          type: string
+          description: Human-readable name of the model
+          example: Qwen3.5 9B
+        description:
+          type: string
+          description: Description of the model
+          example: Dense multimodal model with gated delta networks hybrid attention and 262K context. Single-GPU serving.
+        provider:
+          type: string
+          description: Provider of the model
+          example: Qwen
+        engine:
+          type: string
+          description: Serving engine used by the template
+          example: vllm
+        model_repository:
+          type: string
+          description: Hugging Face repository the default variant loads
+          example: Qwen/Qwen3.5-9B
+        parameters:
+          type: string
+          description: Parameter count of the model (display string)
+          example: 9B
+        context_length:
+          type: number
+          description: Maximum context length in tokens
+          example: 262144
+        input_modalities:
+          description: Accepted input modalities
+          example:
+          - text
+          - image
+          type: array
+          items:
+            type: string
+        output_modalities:
+          description: Produced output modalities
+          example:
+          - text
+          type: array
+          items:
+            type: string
+        tasks:
+          description: Coarse task labels
+          example:
+          - text
+          - multimodal
+          type: array
+          items:
+            type: string
+        requires_hugging_face_token:
+          type: boolean
+          description: Whether a Hugging Face token is required to deploy the model (gated checkpoint)
+          example: false
+        min_vram_gb:
+          type: number
+          description: Minimum total GPU memory in GB for the default variant
+          example: 22
+        recommended_compute:
+          description: Smallest compute configuration currently offered that fits the default variant. Null when nothing offered fits
+          nullable: true
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+      required:
+      - id
+      - name
+      - description
+      - provider
+      - engine
+      - model_repository
+      - parameters
+      - context_length
+      - input_modalities
+      - output_modalities
+      - tasks
+      - requires_hugging_face_token
+      - min_vram_gb
+      - recommended_compute
+    ReplicaInfo:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Replica ID
+          example: v4cb4
+        status:
+          type: string
+          description: Replica status
+          example: running
+          enum:
+          - unavailable
+          - initializing
+          - running
+          - terminating
+          - error
+          - imagepulling
+        started_at:
+          type: string
+          description: Time when the replica was started, ISO 8601 string format
+          example: '2021-06-14T12:00:00Z'
+        image:
+          type: string
+          description: Full container image reference
+          example: docker.io/library/nginx:1.21
+        image_name:
+          type: string
+          description: Container image name
+          example: nginx
+        image_tag:
+          type: string
+          description: Container image tag
+          example: '1.21'
+      required:
+      - id
+      - status
+      - started_at
+    PatchScalingOptionsPublicApiDto:
+      type: object
+      properties:
+        min_replica_count:
+          type: number
+          description: Minimum number of replicas
+          example: 1
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+          example: 50
+        scale_down_policy:
+          description: Policy for scaling down replicas
+          example:
+            delay_seconds: 300
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        scale_up_policy:
+          description: Policy for scaling up replicas
+          example:
+            delay_seconds: 300
+          allOf:
+          - $ref: '#/components/schemas/ScalingPolicy'
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+          example: 500
+        concurrent_requests_per_replica:
+          type: number
+          description: Number of requests each replica can process concurrently.
+          example: 1
+        scaling_triggers:
+          description: Triggers for scaling up and down
+          allOf:
+          - $ref: '#/components/schemas/PatchScalingTriggers'
+    GetSecretsPublicApiResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the secret
+          example: api-token
+        created_at:
+          type: string
+          description: The date when the secret was created
+          example: '2020-08-12T12:00:00.000Z'
+        secret_type:
+          type: string
+          description: Type of the secret
+          example: generic
+          enum:
+          - generic
+          - file-secret
+      required:
+      - name
+      - created_at
+      - secret_type
+    CreateOrPatchEnvironmentVariablesDto:
+      type: object
+      properties:
+        container_name:
+          type: string
+          description: Container name
+          example: flux-0
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarPublicApi'
+      required:
+      - container_name
+      - env
+    GetFilesetSecretsPublicApiResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the secret
+          example: api-token
+        created_at:
+          type: string
+          description: The date when the secret was created
+          example: '2020-08-12T12:00:00.000Z'
+        secret_type:
+          type: string
+          description: Type of the secret
+          example: file-secret
+          enum:
+          - file-secret
+        file_names:
+          description: Names of the files contained in the fileset secret
+          example:
+          - tokens.txt
+          - config.json
+          type: array
+          items:
+            type: string
+      required:
+      - name
+      - created_at
+      - secret_type
+      - file_names
+    CreateSecretPublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the secret
+          example: api-token
+        value:
+          type: string
+          description: Value of the secret
+          example: tk_1234567890-secret
+      required:
+      - name
+      - value
+    SharedVolumeMountDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - shared
+          enum:
+          - shared
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted.
+          example: /shared
+        volume_id:
+          type: string
+          description: ID of the shared volume to be mounted
+          example: b94cf73c-33ee-472f-8aaa-23590dfcf570
+      required:
+      - type
+      - mount_path
+      - volume_id
+    SecretVolumeMountDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - secret
+          enum:
+          - secret
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted.
+          example: /secret-files
+        secret_name:
+          type: string
+          description: Name of the fileset secret to be mounted
+          example: my-secret
+      required:
+      - type
+      - mount_path
+      - secret_name
+    ContainerRegistrySettingsPublicApiDto:
+      type: object
+      properties:
+        is_private:
+          type: boolean
+          description: Privacy mode of the container registry - is it public or private
+          example: true
+        credentials:
+          description: Credential details for the registry if it is private. Required if privacy mode is private
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistryCredentials'
+      required:
+      - is_private
+      - credentials
+    ReplicasPublicApiDto:
+      type: object
+      properties:
+        list:
+          description: List of replicas for the deployment
+          type: array
+          items:
+            $ref: '#/components/schemas/ReplicaInfo'
+      required:
+      - list
+    ComputeResource:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the compute resource
+          example: H100
+        size:
+          type: number
+          description: Number of compute units (e.g. 4 GPUs). Default is 1
+          examples:
+          - 1
+          - 2
+          - 4
+          - 8
+          - 16
+          - 32
+          default: 1
+      required:
+      - name
+      - size
+    MemoryVolumeMountDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - memory
+          enum:
+          - memory
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted. This setting is fixed for now and cannot be changed
+          example: /dev/shm
+          default: /dev/shm
+        size_in_mb:
+          type: number
+          description: Size of memory volume in MiB
+          enum:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+          examples:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+      required:
+      - type
+      - mount_path
+      - size_in_mb
+    ContainerDeploymentTemplateFeaturePublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Feature identifier, passed in `features` when deploying
+          example: tool_calling
+        name:
+          type: string
+          description: Human-readable name
+          example: Tool calling
+        description:
+          type: string
+          description: What the feature enables
+          example: Enables tool calling with the Qwen chat template
+        is_default:
+          type: boolean
+          description: Whether the feature is on when no features are given
+          example: true
+        conflicts_with:
+          description: Feature ids that cannot be enabled together with this one
+          example: []
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - name
+      - is_default
+      - conflicts_with
+    CreateFilesetSecretPublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the files secret
+          example: secret-files
+        files:
+          description: List of files to store in the secret
+          type: array
+          items:
+            $ref: '#/components/schemas/SecretFilePublicApiDto'
+      required:
+      - name
+      - files
+    ContainerPublicApiDto:
+      type: object
+      properties:
+        image:
+          type: string
+          description: Image to be deployed in the container
+          example: registry-1.docker.io/chentex/random-logger:v1.0.1
+        should_use_cached_image:
+          type: boolean
+          description: Pull the image through the platform image cache. Applies only to public Docker Hub images. Has no effect for images from other registries, or when registry credentials are set. When the cache is used, registry credentials are not needed to avoid Docker Hub rate limits, because the cache pulls with a platform account. Without the cache, this does not apply.
+          example: true
+          default: true
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/HealthcheckSettings'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/EntrypointOverridesSettings'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarPublicApi'
+        volume_mounts:
+          type: array
+          description: Volume mounts for the container
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/ScratchVolumeMountDto'
+              description: Scratch volume mount
+            - $ref: '#/components/schemas/SecretVolumeMountDto'
+              description: Secret volume mount
+            - $ref: '#/components/schemas/SharedVolumeMountDto'
+              description: Shared filesystem volume mount
+            - $ref: '#/components/schemas/MemoryVolumeMountDto'
+              description: Memory volume mount
+      required:
+      - image
+      - exposed_port
+    CreateDeploymentPublicApiDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the deployment. Immutable after creation
+          example: llm-inference
+        container_registry_settings:
+          description: Container registry settings. Private registries require saving the credentials via datacrunch cloud UI
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistrySettingsPublicApiDto'
+        containers:
+          description: Containers to be deployed
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerPublicApiDto'
+        compute:
+          description: Compute settings for the deployment
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        scaling:
+          description: Scaling settings for the deployment
+          allOf:
+          - $ref: '#/components/schemas/CreateScalingOptionsPublicApiDto'
+        is_spot:
+          type: boolean
+          description: Is the deployment a spot deployment
+          example: false
+          default: false
+        is_verda_io:
+          type: boolean
+          description: Declare the workload is a verda-io image (built by `verda-io build`).
+          example: false
+          default: false
+      required:
+      - name
+      - container_registry_settings
+      - containers
+      - compute
+      - scaling
+    EnvVarPublicApi:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the environment variable
+          example: MY_ENV_VAR
+        value_or_reference_to_secret:
+          type: string
+          description: Value of the environment variable, or a reference to the secret
+          example: my-value
+        type:
+          type: string
+          description: Type of the environment variable
+          example: plain
+          enum:
+          - plain
+          - secret
+      required:
+      - name
+      - value_or_reference_to_secret
+      - type
+    SecretFilePublicApiDto:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: Name of the file
+          example: file.txt
+        base64_content:
+          type: string
+          description: Base64 encoded content of the file
+          example: dGVzdCBmaWxl
+      required:
+      - file_name
+      - base64_content
   securitySchemes:
-    bearerAuth:
-      type: http
+    bearer:
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

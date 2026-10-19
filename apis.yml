@@ -259,18 +259,246 @@ apis:
     url: collections/datacrunch.opencollection.json
   - type: Documentation
     url: https://docs.datacrunch.io/containers/overview
-- aid: datacrunch:datacrunch-oauth-api
-  name: DataCrunch O Auth API
-  description: The OAuth API from DataCrunch — 1 operation(s) for oauth.
+- aid: datacrunch:datacrunch-authentication-api
+  name: DataCrunch Authentication API
+  description: The Authentication API from DataCrunch — 1 operation(s) for authentication.
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
   - Authentication
-  tags_raw:
-  - OAuth
   properties:
   - type: OpenAPI
-    url: openapi/datacrunch-oauth-api-openapi.yml
+    url: openapi/datacrunch-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-clusters-api
+  name: DataCrunch Clusters API
+  description: "Deploy and manage clusters.\n      \n**Beta:** Clusters API is under active development\
+    \ and may change without notice."
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Clusters
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-clusters-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-container-registry-api
+  name: DataCrunch Container Registry API
+  description: The Container Registry API from DataCrunch — 1 operation(s) for container registry.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Container Registry
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-container-registry-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-container-types-api
+  name: DataCrunch Container Types API
+  description: The Container Types API from DataCrunch — 1 operation(s) for container types.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Container Types
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-container-types-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-instance-groups-api
+  name: DataCrunch Instance groups API
+  description: The Instance groups API from DataCrunch — 2 operation(s) for instance groups.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Instance groups
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-instance-groups-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-journal-api
+  name: DataCrunch Journal API
+  description: "Operations related to activity journal and audit log for cloud resources.\n\n**Beta:**\
+    \ Journal and audit log API is under active development and may change without notice. \n\n\nShows\
+    \ history of actions performed on resources, such as instance deployment, volume creation, deletion,\
+    \ etc, via public API, Console UI or internally (e.g. spot discontinue)."
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Journal
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-journal-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-long-term-api
+  name: DataCrunch Long Term API
+  description: The Long Term API from DataCrunch — 3 operation(s) for long term.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Long Term
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-long-term-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-managed-endpoints-api
+  name: DataCrunch Managed Endpoints API
+  description: The Managed Endpoints API from DataCrunch — 1 operation(s) for managed endpoints.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Managed Endpoints
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-managed-endpoints-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-object-storage-api
+  name: DataCrunch Object Storage API
+  description: >-
+    S3-compatible object storage. Manage access keys, and buckets. Read more about our object storage
+    support [here](https://docs.verda.com/storage/object-storage).
+
+
+    **Beta:** Object Storage API is under active development and may change without notice.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Object Storage
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-object-storage-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-private-networks-internal-api
+  name: DataCrunch Private Networks (internal) API
+  description: >-
+    The Private Networks (internal) API from DataCrunch — 4 operation(s) for private networks (internal).
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Private Networks (internal)
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-private-networks-internal-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-serverless-jobs-api
+  name: DataCrunch Serverless Jobs API
+  description: The Serverless Jobs API from DataCrunch — 9 operation(s) for serverless jobs.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Serverless Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-serverless-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.datacrunch.io/
+  - type: APIReference
+    url: https://api.datacrunch.io/v1/docs
+  - type: PostmanCollection
+    url: collections/datacrunch.postman_collection.json
+  - type: OpenCollection
+    url: collections/datacrunch.opencollection.json
+  - type: Documentation
+    url: https://docs.datacrunch.io/containers/overview
+- aid: datacrunch:datacrunch-volume-types-api
+  name: DataCrunch Volume Types API
+  description: The Volume Types API from DataCrunch — 1 operation(s) for volume types.
+  humanURL: https://api.datacrunch.io/v1/docs
+  baseURL: https://api.datacrunch.io/v1
+  tags:
+  - Volume Types
+  properties:
+  - type: OpenAPI
+    url: openapi/datacrunch-volume-types-api-openapi.yml
   - type: Documentation
     url: https://docs.datacrunch.io/
   - type: APIReference

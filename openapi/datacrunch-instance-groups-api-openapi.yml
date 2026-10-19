@@ -1,0 +1,424 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Instance groups API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Instance groups
+paths:
+  /v1/instance-groups:
+    get:
+      description: Returns this project’s live instance groups, oldest first.
+      operationId: InstanceGroupsPublicController_list
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InstanceGroupResponseDto'
+      security:
+      - bearer: []
+      summary: List instance groups
+      tags:
+      - Instance groups
+    post:
+      description: Creates a project-scoped group with a name, description, location, instance type and template.
+      operationId: InstanceGroupsPublicController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInstanceGroupDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceGroupResponseDto'
+      security:
+      - bearer: []
+      summary: Create an instance group
+      tags:
+      - Instance groups
+  /v1/instance-groups/{instance_group_id}:
+    get:
+      operationId: InstanceGroupsPublicController_get
+      parameters:
+      - name: instance_group_id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceGroupResponseDto'
+      security:
+      - bearer: []
+      summary: Get an instance group
+      tags:
+      - Instance groups
+    patch:
+      description: Name, description, and template SSH keys or startup script can change. Location, instance type, image and OS volume are immutable.
+      operationId: InstanceGroupsPublicController_update
+      parameters:
+      - name: instance_group_id
+        required: true
+        in: path
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstanceGroupDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceGroupResponseDto'
+        '400':
+          description: The patch contains an immutable or invalid field.
+        '409':
+          description: The update conflicts with the current group state.
+      security:
+      - bearer: []
+      summary: Update an instance group
+      tags:
+      - Instance groups
+    delete:
+      description: Removes the group from caller-facing reads while retaining its historical row and allowing its name to be reused.
+      operationId: InstanceGroupsPublicController_remove
+      parameters:
+      - name: instance_group_id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      security:
+      - bearer: []
+      summary: Delete an instance group
+      tags:
+      - Instance groups
+components:
+  schemas:
+    InstanceGroupResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        project_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: object
+          nullable: true
+        location_code:
+          type: string
+        instance_type:
+          type: string
+        template:
+          type: object
+          description: The instance template stored by the group.
+        created_at:
+          format: date-time
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        deleted_at:
+          type: object
+          nullable: true
+          description: Non-null only on a tombstoned group. Public and internal reads return live groups only.
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupInstanceResponseDto'
+        size:
+          type: number
+          description: Number of live instances in the group.
+      required:
+      - id
+      - project_id
+      - name
+      - description
+      - location_code
+      - instance_type
+      - template
+      - created_at
+      - updated_at
+      - deleted_at
+      - instances
+      - size
+    MutableInstanceGroupTemplateDto:
+      type: object
+      properties:
+        ssh_key_ids:
+          type: array
+          items:
+            type: string
+        startup_script_id:
+          type: object
+          nullable: true
+    InstanceGroupTemplateDto:
+      type: object
+      properties:
+        image:
+          type: string
+          example: ubuntu-24.04-cuda-12.8-docker
+        os_volume:
+          $ref: '#/components/schemas/InstanceGroupOsVolumeDto'
+        ssh_key_ids:
+          description: Default SSH keys for instances created from this group.
+          type: array
+          items:
+            type: string
+        startup_script_id:
+          type: string
+          description: Default startup script for instances created from this group.
+      required:
+      - image
+    UpdateInstanceGroupDto:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: object
+          nullable: true
+        template:
+          description: Mutable template defaults.
+          allOf:
+          - $ref: '#/components/schemas/MutableInstanceGroupTemplateDto'
+    CreateInstanceGroupDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: hive-b300-pool-1
+        description:
+          type: string
+        location_code:
+          type: string
+          example: FIN-02
+        instance_type:
+          type: string
+          example: 8B300.640S.176V
+          description: A known instance type code. Fixed for the life of the group.
+        template:
+          $ref: '#/components/schemas/InstanceGroupTemplateDto'
+      required:
+      - name
+      - location_code
+      - instance_type
+      - template
+    InstanceGroupOsVolumeDto:
+      type: object
+      properties:
+        size:
+          type: number
+          example: 200
+          description: Default and minimum OS volume size in GB for instances created in this group.
+      required:
+      - size
+    GroupInstanceResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        hostname:
+          type: string
+        status:
+          type: string
+      required:
+      - id
+      - hostname
+      - status
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

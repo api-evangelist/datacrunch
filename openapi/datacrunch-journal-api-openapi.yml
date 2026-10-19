@@ -1,0 +1,1017 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Journal API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Journal
+  description: 'Operations related to activity journal and audit log for cloud resources.
+
+
+    **Beta:** Journal and audit log API is under active development and may change without notice.
+
+
+    Shows history of actions performed on resources, such as instance deployment, volume creation, deletion, etc, via public API, Console UI or internally (e.g. spot discontinue).'
+paths:
+  /v1/audit/log:
+    get:
+      description: Retrieves all events for the project, for all resources matching the filter criteria. The format to generate audit log is based on CloudEvents specification.
+      operationId: AuditLogController_getAuditLog
+      parameters:
+      - name: action
+        required: false
+        in: query
+        description: Filter by action type
+        schema:
+          type: string
+          enum:
+          - other
+          - create
+          - start
+          - start_complete
+          - shutdown_complete
+          - shutdown
+          - delete
+          - delete_complete
+          - attach
+          - attach_complete
+          - detach
+          - detach_complete
+          - clone
+          - resize
+          - rename
+          - transfer
+          - trash
+          - trash_complete
+          - restore
+          - cancel
+          - provisioning
+          - running
+          - configure_spot
+          - authenticate
+          - expire
+          - accept
+          - update_role
+          - revoke
+          - login
+          - logout
+          - login_failed
+          - auth_mfa_enable
+          - auth_mfa_disable
+          - auth_mfa_challenge
+          - auth_mfa_verify
+          - password_reset
+          - complete
+          - redeem
+          - suspend
+          - unsuspend
+          - approve
+          - decline
+          - update
+          - rotate_secret
+          - disable
+          - enable
+      - name: object_type
+        required: false
+        in: query
+        description: Filter by object type
+        schema:
+          type: string
+          enum:
+          - compute
+          - volume
+          - ssh_key
+          - invite
+          - user
+          - member
+          - cloud_api_credential
+          - object_storage_bucket
+          - object_storage_key_pair
+          - custom_image
+          - startup_script
+          - topup
+          - coupon
+          - bank_transfer
+          - bank_transfer_account
+          - balance
+          - other
+          - object_storage
+          - quota_request
+          - webhook
+          - auto_top_up
+      - name: start_date
+        required: false
+        in: query
+        description: Return events created at or after this timestamp. Cannot be earlier than 90 days ago. Default is 90 days ago.
+        schema:
+          example: '2026-01-01T00:00:00.000Z'
+          type: string
+      - name: end_date
+        required: false
+        in: query
+        description: Return events created at or before this timestamp. Cannot be before the start date.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of items per page, default 20 maximum 100
+        schema:
+          default: 20
+          type: number
+      - name: cursor
+        required: false
+        in: query
+        description: Cursor to start from, as specified by the previous response
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAuditLogResponseListDto'
+        '403':
+          description: The API credentials belong to a `developer` member rather than the project owner or an `admin` member.
+      security:
+      - bearer: []
+      summary: Retrieve audit log for the project
+      tags:
+      - Journal
+  /v1/audit/log/download:
+    post:
+      description: Streams the full audit log (matching the given filters, within the retention window) to object storage and returns a short-lived pre-signed download URL.
+      operationId: AuditLogController_downloadAuditLog
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DownloadAuditLogParamsDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DownloadAuditLogResponseDto'
+        '403':
+          description: The API credentials belong to a `developer` member rather than the project owner or an `admin` member.
+      security:
+      - bearer: []
+      summary: Export project audit log as a JSON file
+      tags:
+      - Journal
+  /v1/journal:
+    get:
+      operationId: JournalController_getJournal
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Page number, starting from 1
+        schema:
+          default: '1'
+          type: number
+      - name: pageSize
+        required: false
+        in: query
+        description: Number of items per page, default 10 maximum 100
+        schema:
+          default: '10'
+          type: number
+      - name: compute_id
+        required: false
+        in: query
+        description: Specify either compute_id or volume_id
+        schema:
+          type: string
+      - name: volume_id
+        required: false
+        in: query
+        description: Specify either volume_id or compute_id
+        schema:
+          type: string
+      - name: action_code
+        required: false
+        in: query
+        description: Filter by action code
+        schema:
+          type: string
+          enum:
+          - create
+          - start
+          - start:complete
+          - shutdown:complete
+          - shutdown
+          - delete
+          - delete:complete
+          - attach
+          - attach:complete
+          - detach
+          - detach:complete
+          - clone
+          - resize
+          - rename
+          - restore
+          - transfer
+          - trash
+          - trash:complete
+          - configure_spot
+          - cancel
+          - provisioning
+          - running
+          - installation:failed
+          - validating
+          - deleting
+          - error
+      - name: object_type
+        required: false
+        in: query
+        description: Filter by object type
+        schema:
+          type: string
+          enum:
+          - compute
+          - volume
+      - name: hydrate
+        required: false
+        in: query
+        description: Hydrate every event with user, instance and volume objects
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetActivityJournalResponseDto'
+      security:
+      - bearer: []
+      summary: Get activity journal for a compute or volume
+      tags:
+      - Journal
+  /v1/journal/compute/{computeId}:
+    get:
+      description: Get all events for a compute (instance or cluster). Includes also associated volume or shared storage attach / detach events.
+      operationId: JournalController_getComputeJournal
+      parameters:
+      - name: computeId
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Page number, starting from 1
+        schema:
+          default: '1'
+          type: number
+      - name: pageSize
+        required: false
+        in: query
+        description: Number of items per page, default 10 maximum 100
+        schema:
+          default: '10'
+          type: number
+      - name: compute_id
+        required: false
+        in: query
+        description: Specify either compute_id or volume_id
+        schema:
+          type: string
+      - name: volume_id
+        required: false
+        in: query
+        description: Specify either volume_id or compute_id
+        schema:
+          type: string
+      - name: action_code
+        required: false
+        in: query
+        description: Filter by action code
+        schema:
+          type: string
+          enum:
+          - create
+          - start
+          - start:complete
+          - shutdown:complete
+          - shutdown
+          - delete
+          - delete:complete
+          - attach
+          - attach:complete
+          - detach
+          - detach:complete
+          - clone
+          - resize
+          - rename
+          - restore
+          - transfer
+          - trash
+          - trash:complete
+          - configure_spot
+          - cancel
+          - provisioning
+          - running
+          - installation:failed
+          - validating
+          - deleting
+          - error
+      - name: object_type
+        required: false
+        in: query
+        description: Filter by object type
+        schema:
+          type: string
+          enum:
+          - compute
+          - volume
+      - name: hydrate
+        required: false
+        in: query
+        description: Hydrate every event with user, instance and volume objects
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetActivityJournalResponseDto'
+      security:
+      - bearer: []
+      summary: Get activity journal for a compute
+      tags:
+      - Journal
+  /v1/journal/volume/{volumeId}:
+    get:
+      description: Get all events for a volume. Does not include compute-related events.
+      operationId: JournalController_getVolumeJournal
+      parameters:
+      - name: volumeId
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: Page number, starting from 1
+        schema:
+          default: '1'
+          type: number
+      - name: pageSize
+        required: false
+        in: query
+        description: Number of items per page, default 10 maximum 100
+        schema:
+          default: '10'
+          type: number
+      - name: compute_id
+        required: false
+        in: query
+        description: Specify either compute_id or volume_id
+        schema:
+          type: string
+      - name: volume_id
+        required: false
+        in: query
+        description: Specify either volume_id or compute_id
+        schema:
+          type: string
+      - name: action_code
+        required: false
+        in: query
+        description: Filter by action code
+        schema:
+          type: string
+          enum:
+          - create
+          - start
+          - start:complete
+          - shutdown:complete
+          - shutdown
+          - delete
+          - delete:complete
+          - attach
+          - attach:complete
+          - detach
+          - detach:complete
+          - clone
+          - resize
+          - rename
+          - restore
+          - transfer
+          - trash
+          - trash:complete
+          - configure_spot
+          - cancel
+          - provisioning
+          - running
+          - installation:failed
+          - validating
+          - deleting
+          - error
+      - name: object_type
+        required: false
+        in: query
+        description: Filter by object type
+        schema:
+          type: string
+          enum:
+          - compute
+          - volume
+      - name: hydrate
+        required: false
+        in: query
+        description: Hydrate every event with user, instance and volume objects
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetActivityJournalResponseDto'
+      security:
+      - bearer: []
+      summary: Get activity journal for a volume
+      tags:
+      - Journal
+components:
+  schemas:
+    ActivityVolumeDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: ded19b3b-8c85-47fe-ad6c-bc9878a02f43
+        name:
+          type: string
+          example: volume-1
+        created_at:
+          type: string
+          example: '2026-03-17T14:15:52.872Z'
+        gb:
+          type: number
+          example: 100
+        is_shared_fs:
+          type: boolean
+          example: false
+        template_type:
+          type: string
+          enum:
+          - HDD
+          - NVMe
+          - HDD_Shared
+          - NVMe_Shared
+          - NVMe_Local_Storage
+          - NVMe_Shared_Cluster
+          - NVMe_OS_Cluster
+          example: NVMe
+        location_code:
+          type: string
+          example: FIN-01
+      required:
+      - id
+      - name
+      - created_at
+      - gb
+      - is_shared_fs
+      - template_type
+      - location_code
+    ActivityComputeDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 30444e9e-efdb-44d1-885b-e940e561281c
+        hostname:
+          type: string
+          example: example-fin-01
+        compute_type:
+          type: string
+          example: 4A100.88V
+        is_cluster:
+          type: boolean
+          example: false
+        ip:
+          type: object
+          example: 1.2.3.4
+          nullable: true
+        os_volume_id:
+          type: object
+          example: e819fcd3-9fe3-454b-b366-6aa9409f0a64
+          nullable: true
+        location_code:
+          type: object
+          example: FIN-01
+          nullable: true
+      required:
+      - id
+      - hostname
+      - compute_type
+      - is_cluster
+    GetActivityJournalResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: instance-log-123
+          description: Event ID, unique within the project. Please note that it is not UUID but a combined string to identify the event.
+        object_id:
+          type: string
+          example: 572a5cfe-e104-4eb5-83fd-8dccfc95c784
+          description: ID of the object that the event is related to.
+        object_type:
+          type: string
+          enum:
+          - compute
+          - volume
+          example: compute
+          description: Object type that the event is related to.
+        action_code:
+          type: string
+          enum:
+          - create
+          - start
+          - start:complete
+          - shutdown:complete
+          - shutdown
+          - delete
+          - delete:complete
+          - attach
+          - attach:complete
+          - detach
+          - detach:complete
+          - clone
+          - resize
+          - rename
+          - restore
+          - transfer
+          - trash
+          - trash:complete
+          - configure_spot
+          - cancel
+          - provisioning
+          - running
+          - installation:failed
+          - validating
+          - deleting
+          - error
+          example: start
+          description: Action that was performed on the object.
+        actor_id:
+          type: object
+          example: dd65adb9-50c5-426e-b258-adb1fc9080b6
+          nullable: true
+          description: ID of the actor that performed the action. For some actions, such as spot discontinue, the actor is not available and assumed to be system.
+        actor_email:
+          type: object
+          example: user@datacrunch.io
+          nullable: true
+          description: Email of the actor that performed the action.
+        project_id:
+          type: string
+          example: b0ca6ac7-243d-4d86-b123-e45f4f64fa0b
+          description: ID of the project that the event is related to.
+        timestamp:
+          type: string
+          example: '2026-03-17T14:15:52.872Z'
+          description: When the event happened.
+        location_code:
+          type: string
+          example: FIN-01
+          description: Datacenter location code where the event happened or this object is located.
+        request_origin:
+          type: string
+          example: public-api-v1
+          description: Origin of the request that caused the event. For example, public API, Console UI, or undefined for the internal system.
+        request_ip:
+          type: string
+          example: 127.0.0.1
+          description: IP address of the request that caused the event.
+        error_message:
+          type: string
+          example: GPU_QUOTA_EXCEEDED
+          description: For error events, the error message
+        parent_id:
+          type: string
+          example: compute-log-123
+          description: For some events, for example attach volume during instance provisioning, the ID of the parent event.
+        service:
+          type: string
+          example: VolumeProvider
+          description: For some events, the internal service that caused the event.
+        target_location_code:
+          type: string
+          example: ICE-01
+          description: For cross-datacenter events, the location code of the target location.
+        volume:
+          description: Associated volume object, if the object is a volume.
+          allOf:
+          - $ref: '#/components/schemas/ActivityVolumeDto'
+        compute:
+          description: Detailed compute object, if the object type is a compute.
+          allOf:
+          - $ref: '#/components/schemas/ActivityComputeDto'
+        target_volume_id:
+          type: string
+          example: 5c2841cd-336d-4331-b32f-a1bc3869f68f
+          description: For some events, the ID of the target volume.
+        target_volume:
+          nullable: true
+          description: Associated target volume object
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/ActivityVolumeDto'
+        target_compute_id:
+          type: string
+          example: 69467793-74b7-4142-9edd-44d22604655b
+          description: For some events, the ID of the target compute.
+        target_compute:
+          nullable: true
+          description: Associated target compute object
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/ActivityComputeDto'
+        source_volume_id:
+          type: string
+          example: 16ffc732-0b75-4a16-91b7-b061918c687f
+          description: For some events, the ID of the source volume.
+        source_volume:
+          nullable: true
+          description: Associated source volume object
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/ActivityVolumeDto'
+        source_compute_id:
+          type: string
+          example: 918e630a-11c9-4123-b5ed-8f8fabadc72e
+          description: For some events, the ID of the source compute.
+        source_compute:
+          nullable: true
+          description: Associated source compute object
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/ActivityComputeDto'
+        properties:
+          type: object
+          example:
+            delete_reason: evicted_by_on_demand
+          additionalProperties: true
+          description: Additional properties of the event.
+      required:
+      - id
+      - object_id
+      - object_type
+      - action_code
+      - project_id
+      - timestamp
+      - location_code
+    GetAuditLogResponseListDto:
+      type: object
+      properties:
+        data:
+          description: List of audit log events
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditLogResponseDto'
+        cursor:
+          type: string
+          example: log_033FNaNcc0AtphhH71DLBW
+          description: Cursor for next page, if there are more results
+      required:
+      - data
+    DownloadAuditLogResponseDto:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Pre-signed URL to download the exported audit log JSON file. Short-lived; request a new export once it expires.
+          example: https://object.storage.com/project-id/audit-log-20260317-141552-uuid.json?X-Amz-Signature=...
+        expires_at:
+          type: string
+          description: ISO timestamp after which the download URL expires.
+          example: '2026-03-17T14:30:52.872Z'
+      required:
+      - url
+      - expires_at
+    DownloadAuditLogParamsDto:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - other
+          - create
+          - start
+          - start_complete
+          - shutdown_complete
+          - shutdown
+          - delete
+          - delete_complete
+          - attach
+          - attach_complete
+          - detach
+          - detach_complete
+          - clone
+          - resize
+          - rename
+          - transfer
+          - trash
+          - trash_complete
+          - restore
+          - cancel
+          - provisioning
+          - running
+          - configure_spot
+          - authenticate
+          - expire
+          - accept
+          - update_role
+          - revoke
+          - login
+          - logout
+          - login_failed
+          - auth_mfa_enable
+          - auth_mfa_disable
+          - auth_mfa_challenge
+          - auth_mfa_verify
+          - password_reset
+          - complete
+          - redeem
+          - suspend
+          - unsuspend
+          - approve
+          - decline
+          - update
+          - rotate_secret
+          - disable
+          - enable
+          description: Filter by action type
+        object_type:
+          type: string
+          enum:
+          - compute
+          - volume
+          - ssh_key
+          - invite
+          - user
+          - member
+          - cloud_api_credential
+          - object_storage_bucket
+          - object_storage_key_pair
+          - custom_image
+          - startup_script
+          - topup
+          - coupon
+          - bank_transfer
+          - bank_transfer_account
+          - balance
+          - other
+          - object_storage
+          - quota_request
+          - webhook
+          - auto_top_up
+          description: Filter by object type
+        start_date:
+          type: string
+          description: Return events created at or after this timestamp. Cannot be earlier than 90 days ago. Default is 90 days ago.
+          example: '2026-01-01T00:00:00.000Z'
+        end_date:
+          type: string
+          description: Return events created at or before this timestamp. Cannot be before the start date.
+    AuditLogResponseDto:
+      type: object
+      properties:
+        specversion:
+          type: string
+          example: '1.0'
+          description: The version of the CloudEvents specification that the event uses.
+        id:
+          type: string
+          example: log_033FNaNcc0AtphhH71DLBW
+        source:
+          type: string
+          example: https://api.verda.com/project/d6e7f8a9-b0c1-2345-defa-456789012345
+        type:
+          type: string
+          example: com.verda.api.cloud.compute.create.v1
+          description: The type of event that occurred, as `com.verda.api.<producer>.<object_type>.<action>.v1`.
+        subject:
+          type: string
+          example: 7bdb4161-c7d2-478c-9850-05719adc8381
+          description: This identifies the subject of the event in the context of the event producer. Typically it is ID of the object that the event is related to.
+        time:
+          type: string
+          example: '2026-03-17T14:15:52.872Z'
+          description: The time the event occurred.
+        data:
+          type: object
+          description: The data of the event, varies for different object types. For the subject of the event, the corresponding object is embedded; other related objects are referenced by ID.
+          example:
+            location_code: FIN-01
+            request_origin: console-11.17.0
+            actor_id: 5bbb59cb-fced-44a4-85c6-5005e7480a8f
+            compute:
+              id: 7bdb4161-c7d2-478c-9850-05719adc8381
+              hostname: tiny-tree-unfolds-fin-01
+              instance_type: CPU.4V.16G
+              is_cluster: false
+              ip: 1.1.1.1
+              os_volume_id: a6e77869-5012-42c0-b98e-792b4ba2cad9
+              location_code: FIN-01
+      required:
+      - specversion
+      - id
+      - source
+      - type
+      - subject
+      - time
+      - data
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

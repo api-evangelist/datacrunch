@@ -1,0 +1,1011 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Clusters API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Clusters
+  description: 'Deploy and manage clusters.
+
+
+    **Beta:** Clusters API is under active development and may change without notice.'
+paths:
+  /v1/images/cluster:
+    get:
+      operationId: ImagesController_getClusterImageTypes
+      parameters:
+      - name: instance_type
+        required: false
+        in: query
+        description: Filter OS images by instance type. Default is all cluster images.
+        schema:
+          example: 16B200
+      responses:
+        '200':
+          description: Returns available image types for cluster
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Os'
+              example:
+              - id: e79a91e9-8750-44cb-af19-bf6ab83121ee
+                image_type: ubuntu-22.04-cuda-12.4-cluster
+                name: Ubuntu 24.04
+                is_default: false
+                is_cluster: true
+                details:
+                - Ubuntu 22.04
+                - CUDA 12.4
+        '404':
+          description: Instance type not found
+      security:
+      - bearer: []
+      summary: Get images types for cluster
+      tags:
+      - Clusters
+  /v1/clusters:
+    get:
+      description: Return all clusters of the project
+      operationId: ClustersController_getInstances
+      parameters: []
+      responses:
+        '200':
+          description: List of clusters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetClusterResponsePublicApiDto'
+      security:
+      - bearer: []
+      summary: Get clusters
+      tags:
+      - Clusters
+    post:
+      description: 'Deploy a new cluster.
+
+
+        Before deploying add at least one SSH key to enable access to your cluster.
+
+
+        Cluster types can be listed using the `GET /v1/cluster-types` endpoint. Image types can be listed using the `GET /v1/images/cluster` endpoint.'
+      operationId: ClustersController_deployCluster
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeployClusterPublicDto'
+      responses:
+        '202':
+          description: Cluster deployed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeployClusterResponsePublicApiDto'
+      security:
+      - bearer: []
+      summary: Deploy cluster
+      tags:
+      - Clusters
+    put:
+      description: 'Perform actions on one or more clusters.
+
+
+        Note: Only `discontinue` action is allowed for clusters.
+
+
+        **Important**: Local OS storage will be deleted. Shared volumes will be detached and should be deleted manually.'
+      operationId: ClustersController_performActions
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformClusterActionsBulkDto'
+      responses:
+        '202':
+          description: ''
+      security:
+      - bearer: []
+      summary: Perform action on clusters
+      tags:
+      - Clusters
+  /v1/clusters/{id}:
+    get:
+      operationId: ClustersController_getClusterById
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          example: d67f686e-3227-4ae6-9e0c-c7c122427c17
+          type: string
+      responses:
+        '200':
+          description: Cluster details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClusterResponsePublicApiDto'
+      security:
+      - bearer: []
+      summary: Get cluster by id
+      tags:
+      - Clusters
+  /v1/clusters/{clusterId}/nodes/{nodeId}/actions:
+    post:
+      description: 'Start or shut down a single node inside a cluster (worker, jumphost, or CPU service node).
+
+
+        Supported `action` values:
+
+        - `boot` — start the node
+
+        - `shutdown` — graceful shutdown
+
+        - `force_shutdown` — force the node off'
+      operationId: ClustersController_performClusterNodeAction
+      parameters:
+      - name: clusterId
+        required: true
+        in: path
+        schema:
+          example: 44f2a634-3a65-4955-a939-eb67ec867ffa
+          type: string
+      - name: nodeId
+        required: true
+        in: path
+        schema:
+          example: b704ad6d-7352-4263-943c-583a146a381c
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformClusterNodeActionPublicDto'
+      responses:
+        '202':
+          description: Action dispatched
+        '400':
+          description: Invalid action
+        '404':
+          description: Cluster or node not found
+      security:
+      - bearer: []
+      summary: Perform action on a cluster node
+      tags:
+      - Clusters
+  /v1/clusters/{id}/tags:
+    post:
+      description: Add one key-value tag. Maximum 10 tags per cluster. Omit `value` for a freeform tag. Keys are lowercased. A matching project tag is reused; adding one already linked to this cluster returns 409.
+      operationId: ClustersController_addTag
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          example: d67f686e-3227-4ae6-9e0c-c7c122427c17
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagDto'
+      responses:
+        '201':
+          description: Tag created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponseDto'
+        '403':
+          description: Forbidden
+        '409':
+          description: The matching tag is already linked to the cluster
+      security:
+      - bearer: []
+      summary: Add a tag to a cluster
+      tags:
+      - Clusters
+  /v1/clusters/{id}/tags/{tagId}:
+    delete:
+      operationId: ClustersController_deleteTag
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: tagId
+        required: true
+        in: path
+        schema:
+          maxLength: 26
+          example: tag_01jxy0b6w4gx8n6se2x8mz2kdv
+          type: string
+      responses:
+        '204':
+          description: Tag removed
+        '403':
+          description: Forbidden
+        '404':
+          description: Cluster or tag not found
+      security:
+      - bearer: []
+      summary: Remove a tag from a cluster
+      tags:
+      - Clusters
+  /v1/cluster-availability:
+    get:
+      operationId: ClusterAvailabilityController_getAllAvailabilities
+      parameters:
+      - name: location_code
+        required: false
+        in: query
+        description: Check availability for a specific location code. By default, all locations are checked.
+        schema:
+          example: FIN-03
+          type: string
+      responses:
+        '200':
+          description: Returns the cluster type availabilities for specific location
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClusterAvailabilityResponseDto'
+      security:
+      - bearer: []
+      summary: Get all cluster types availability
+      tags:
+      - Clusters
+  /v1/cluster-availability/{cluster_type}:
+    get:
+      operationId: ClusterAvailabilityController_checkAvailability
+      parameters:
+      - name: cluster_type
+        required: true
+        in: path
+        description: The type of cluster to check
+        schema:
+          example: 16B200
+          type: string
+      - name: location_code
+        required: false
+        in: query
+        description: Check availability for a specific location code. By default, all locations are checked.
+        schema:
+          example: FIN-03
+          type: string
+      responses:
+        '200':
+          description: Returns the cluster type availability
+          content:
+            application/json:
+              schema:
+                type: boolean
+              example: true
+      security:
+      - bearer: []
+      summary: Get specific cluster type availability
+      tags:
+      - Clusters
+  /v1/cluster-types:
+    get:
+      operationId: ClusterTypesController_getInstanceTypes
+      parameters:
+      - name: currency
+        required: false
+        in: query
+        description: Currency to get the price for cluster types
+        schema:
+          default: usd
+          example: usd
+          type: string
+          enum:
+          - usd
+          - eur
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClusterType'
+      summary: Get cluster types
+      tags:
+      - Clusters
+      security: []
+components:
+  schemas:
+    ClusterAvailabilityResponseDto:
+      type: object
+      properties:
+        location_code:
+          type: string
+          description: Location code
+          example: FIN-01
+        availabilities:
+          description: Array of available cluster types
+          example:
+          - 16H200
+          - 32H200
+          type: array
+          items:
+            type: string
+      required:
+      - location_code
+      - availabilities
+    PerformClusterActionsBulkDto:
+      type: object
+      properties:
+        actions:
+          description: Array of cluster actions, one per each cluster
+          example:
+          - action: discontinue
+            id: 48724822-92b6-4763-8733-1139a1193d76
+          - action: discontinue
+            id: bdcc0cd9-71f9-49be-ab5d-f3242d0f02fa
+          type: array
+          items:
+            $ref: '#/components/schemas/PerformClusterActionPublicDto'
+      required:
+      - actions
+    PerformClusterNodeActionPublicDto:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - boot
+          - shutdown
+          - force_shutdown
+          example: shutdown
+      required:
+      - action
+    ExistingSharedVolumeDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2816e153-a1c3-46dd-8b01-2eeb1c763e93
+          description: Existing shared volume ID
+      required:
+      - id
+    GetClusterResponsePublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 53f2e1d0-3504-4ee9-af2b-749a25c38b38
+        ip:
+          type: object
+          example: 1.2.3.4
+          description: Jump host IP address
+        status:
+          type: string
+          enum:
+          - running
+          - provisioning
+          - offline
+          - discontinued
+          - unknown
+          - ordered
+          - notfound
+          - new
+          - error
+          - deleting
+          - validating
+          - no_capacity
+          - installation_failed
+          example: running
+        created_at:
+          type: string
+          example: '2023-07-15T14:10:26.654Z'
+        created_by_user_id:
+          type: object
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+        cpu:
+          type: object
+          example:
+            description: 176 CPU
+            number_of_cores: 176
+            model: AMD Genoa
+        gpu:
+          type: object
+          example:
+            description: 8x A100
+            number_of_gpus: 8
+        gpu_memory:
+          type: object
+          example:
+            description: 80GB GPU RAM
+            size_in_gigabytes: 80
+        memory:
+          type: object
+          example:
+            description: 640GB RAM
+            size_in_gigabytes: 640
+        hostname:
+          type: string
+          example: hazy-star-swims-fin-01
+        description:
+          type: string
+          example: ubuntu-22-04-cuda-12-0-docker-fin-01
+          description: Cluster description; an empty string when none was supplied.
+        tags:
+          example:
+          - id: tag_0aB1cD2eF3gH4iJ5kL6mN7
+            key: environment
+            value: production
+          type: array
+          items:
+            $ref: '#/components/schemas/TagResponseDto'
+        location:
+          type: string
+          example: FIN-01
+        price_per_hour:
+          type: number
+          example: 2.481
+        cluster_type:
+          type: string
+          example: 16H200
+        image:
+          type: object
+          example: ubuntu-22-04-cuda-12-0-docker
+          description: OS image used to deploy the cluster nodes
+        os_name:
+          type: object
+          example: Ubuntu 22.04
+        startup_script_id:
+          type: object
+          example: 95cec4c3-af69-42eb-a790-fcacebfdfcea
+        ssh_key_ids:
+          example:
+          - dd50b622-1c36-48c2-a485-f4d4937a3ea1
+          description: SSH key IDs used to access the cluster jump host
+          type: array
+          items:
+            type: string
+        contract:
+          type: string
+          description: Contract type used for this cluster
+          enum:
+          - LONG_TERM
+          - PAY_AS_YOU_GO
+          example: LONG_TERM
+        auto_rental_extension:
+          type: boolean
+          example: false
+          deprecated: true
+          description: 'Deprecated: use extension_settings instead.'
+        turn_to_pay_as_you_go:
+          type: boolean
+          example: false
+          deprecated: true
+          description: 'Deprecated: use extension_settings instead.'
+        extension_settings:
+          type: string
+          enum:
+          - auto_renew
+          - pay_as_you_go
+          - end_contract
+          description: Extension settings for long-term contracts
+        long_term_period:
+          type: string
+          example: 1 week
+          description: Long-term rental period for this cluster, e.g. 1 week etc.
+        worker_nodes:
+          description: Worker nodes of this cluster. You can access them from the jump host by executing `ssh <hostname>`
+          example:
+          - id: '1'
+            hostname: worker-1
+            public_ip: 1.2.3.4
+            private_ip: 1.2.3.4
+            status: running
+          type: array
+          items:
+            type: string
+        shared_volumes:
+          description: Shared volumes attached to this cluster. There is always one shared volume mounted as /home.
+          example:
+          - id: '1'
+            name: shared-volume-1
+            mount_point: /home
+            size_in_gigabytes: 100
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - ip
+      - status
+      - created_at
+      - cpu
+      - gpu
+      - gpu_memory
+      - memory
+      - hostname
+      - description
+      - tags
+      - location
+      - price_per_hour
+      - cluster_type
+      - image
+      - os_name
+      - ssh_key_ids
+      - contract
+    DeployClusterPublicDto:
+      type: object
+      properties:
+        cluster_type:
+          type: string
+          description: Cluster instance type. Can be listed using the `GET /v1/cluster-types` endpoint.
+          example: 16H200
+        image:
+          type: string
+          description: OS image type or UUID for the cluster. For a list of advertised images, check `GET /v1/images/cluster`. Hidden images can also be deployed directly. The image must be enabled or explicitly enabled for the project owner and compatible with the cluster type.
+          examples:
+          - ubuntu-22.04-cuda-12.4-cluster
+          - 1adb8ab7-830d-4b9c-9b53-3fb92322e9eb
+        ssh_key_ids:
+          example:
+          - 7c18e558-a394-4a57-a0b0-2aa6ff2c3958
+          description: SSH key IDs to attach to the cluster. Required if image is an OS image type.
+          oneOf:
+          - type: string
+            format: uuid
+          - type: array
+            items:
+              type: string
+              format: uuid
+        startup_script_id:
+          type: string
+          example: 285e8b7b-5d40-43b5-a509-cbd8b63d5f3a
+          description: Startup script ID to run on cluster initialization
+        hostname:
+          type: string
+          example: dark-vm-shrinks-fin-01
+        description:
+          type: string
+          example: ubuntu-22-04-cuda-12-4-16b200-fin-01
+          description: Optional cluster description. Omit or pass null to use an empty string.
+        tags:
+          description: Key-value tags for the new cluster. Maximum 10. Omit `value` for a freeform tag. Keys are lowercased.
+          example:
+          - key: environment
+            value: production
+          - key: benchmark
+          type: array
+          items:
+            $ref: '#/components/schemas/TagDto'
+        location_code:
+          type: string
+          example: FIN-01
+          description: Location code for the cluster and its shared volume
+        contract:
+          type: string
+          enum:
+          - PAY_AS_YOU_GO
+          - LONG_TERM
+          example: PAY_AS_YOU_GO
+          description: Contract type. For clusters, only PAY_AS_YOU_GO currently supported.
+        extension_settings:
+          type: string
+          enum:
+          - auto_renew
+          - pay_as_you_go
+          - end_contract
+          description: Extension settings for long-term contracts. Takes priority over auto_rental_extension and turn_to_pay_as_you_go.
+        auto_rental_extension:
+          type: boolean
+          deprecated: true
+          description: 'Deprecated: use extension_settings instead. Enable automatic rental extension for long-term contracts.'
+        turn_to_pay_as_you_go:
+          type: boolean
+          deprecated: true
+          description: 'Deprecated: use extension_settings instead. Automatically convert to pay-as-you-go after the long-term period ends.'
+        shared_volume:
+          description: 'Shared cluster volume (SFS) specification. Clusters have one shared volume mounted as /home. The OS volume is ephemeral and created automatically by the system. '
+          example:
+            name: cluster-volume-name
+            size: 30000
+          allOf:
+          - $ref: '#/components/schemas/SharedVolumeDto'
+        existing_volumes:
+          description: Existing shared volumes to attach to the cluster. Should be in the same location as the cluster. Must be previously created and attached to the cluster.
+          example: []
+          type: array
+          items:
+            $ref: '#/components/schemas/ExistingSharedVolumeDto'
+      required:
+      - cluster_type
+      - image
+      - hostname
+      - location_code
+      - shared_volume
+    ClusterType:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Instance type ID
+          example: c01dd00d-0000-4972-ae4e-d429115d055b
+        model:
+          type: string
+          description: GPU model
+          example: B200 Cluster
+        name:
+          type: string
+          description: GPU model name
+          example: H100 SXM5 80GB
+        cluster_type:
+          type: string
+          description: Instance type
+          example: 16H200
+        cpu:
+          type: object
+          description: CPU details
+          example:
+            description: 128 CPU
+            number_of_cores: 128
+            model: AMD Turin
+        gpu:
+          type: object
+          description: GPU details
+          example:
+            description: 1x H100 SXM5 80GB
+            number_of_gpus: 1
+        gpu_memory:
+          type: object
+          description: GPU memory details
+          example:
+            description: 80GB GPU RAM
+            size_in_gigabytes: 80
+        memory:
+          type: object
+          description: Memory details
+          example:
+            description: 187GB RAM
+            size_in_gigabytes: 187
+        price_per_hour:
+          type: string
+          description: Price per hour
+          example: '3.17'
+        currency:
+          type: string
+          enum:
+          - usd
+          - eur
+          description: Currency type
+          example: usd
+        manufacturer:
+          type: string
+          description: Manufacturer
+          example: NVIDIA
+        node_details:
+          description: Node details
+          example:
+          - GPU VRAM: 1536 GB
+          - AMD Turin CPU: 128 cores
+          - InfiniBand: 3200 Gbit/s
+          - Ethernet: 100 Gbit/s
+          - Uplink: 5 Gbit/s
+          type: array
+          items:
+            type: string
+        supported_os:
+          description: Supported OS image types
+          example:
+          - ubuntu-22.04-cuda-12.3
+          - ubuntu-24.04
+          type: array
+          items:
+            type: string
+      required:
+      - id
+      - model
+      - name
+      - cluster_type
+      - cpu
+      - gpu
+      - gpu_memory
+      - memory
+      - price_per_hour
+      - currency
+      - manufacturer
+      - node_details
+      - supported_os
+    DeployClusterResponsePublicApiDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 66e523aa-33a7-4619-9d88-6573ff70ee8a
+      required:
+      - id
+    SharedVolumeDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: SFS-pmAna3o2
+          description: Name of the shared cluster volume
+        size:
+          type: number
+          example: 30000
+          description: Size of the shared cluster volume in GB
+      required:
+      - name
+      - size
+    TagDto:
+      type: object
+      properties:
+        key:
+          type: string
+          example: environment
+          maxLength: 63
+        value:
+          type: string
+          example: production
+          maxLength: 127
+          description: Omit for a freeform tag with no value
+      required:
+      - key
+    TagResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: tag_0aB1cD2eF3gH4iJ5kL6mN7
+        key:
+          type: string
+          example: environment
+        value:
+          type: string
+          example: production
+          description: Empty string for a freeform tag
+      required:
+      - id
+      - key
+      - value
+    Os:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Image id
+          example: f4993ebd-9d9d-4bde-b95e-8a9995a42f81
+        image_type:
+          type: string
+          description: Image type
+          example: ubuntu-24.04
+        name:
+          type: string
+          description: Image name
+          example: Ubuntu 24.04
+        is_default:
+          type: boolean
+          description: Is default image
+          example: false
+        details:
+          description: Image details
+          example:
+          - Ubuntu 24.04
+          - Minimal Image
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+          description: Image category
+          example: ubuntu
+        is_cluster:
+          type: boolean
+          description: Is cluster
+          example: false
+      required:
+      - id
+      - image_type
+      - name
+      - is_default
+      - details
+      - category
+      - is_cluster
+    PerformClusterActionPublicDto:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+          - discontinue
+          example: discontinue
+        id:
+          type: string
+          example: e206db97-30bd-4ecc-bef5-1af736e87672
+          description: Cluster ID
+      required:
+      - action
+      - id
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

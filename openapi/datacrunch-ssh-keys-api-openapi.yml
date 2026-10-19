@@ -1,137 +1,439 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public SSH Keys API
-  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
-  termsOfService: https://datacrunch.io/legal/terms-of-service
+  title: Verda Cloud Public SSH Keys API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
   contact:
-    name: DataCrunch Support
-    url: https://docs.datacrunch.io/
-  version: '1.0'
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
 servers:
-- url: https://api.datacrunch.io/v1
+- url: https://api.verda.com
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: SSH Keys
+  description: 'Manage SSH keys to access your instances and clusters.
+
+
+    **Note**: `/v1/sshkeys` endpoints are deprecated. Use `/v1/ssh-keys` instead.'
 paths:
-  /sshkeys:
+  /v1/ssh-keys:
     get:
-      operationId: listSSHKeys
-      tags:
-      - SSH Keys
-      summary: List SSH keys
+      operationId: SshkeysController_getKeys
+      parameters: []
       responses:
         '200':
-          description: A list of SSH keys.
+          description: Returns a list of the project's SSH keys
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SSHKey'
-    post:
-      operationId: addSSHKey
+                  $ref: '#/components/schemas/GetKeysResponseDto'
+      security:
+      - bearer: []
+      summary: Get SSH keys
       tags:
       - SSH Keys
-      summary: Add an SSH key
+    post:
+      operationId: SshkeysController_addKey
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddSSHKeyRequest'
+              $ref: '#/components/schemas/AddKeyDto'
       responses:
         '201':
-          description: SSH key added; returns its id.
+          description: Returns the ID of the newly created SSH key
           content:
             application/json:
-              schema:
-                type: string
-    delete:
-      operationId: deleteSSHKeys
+              example: 39479972-f06d-4a94-8027-75a0b42dcf6b
+      security:
+      - bearer: []
+      summary: Add new SSH key
       tags:
       - SSH Keys
-      summary: Delete SSH keys by id
+    delete:
+      operationId: SshkeysController_deleteKeys
+      parameters: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IdListRequest'
+              $ref: '#/components/schemas/DeleteKeysPublicDto'
       responses:
         '200':
-          description: SSH keys deleted.
-  /sshkeys/{sshkey_id}:
-    get:
-      operationId: getSSHKey
+          description: ''
+      security:
+      - bearer: []
+      summary: Delete ssh keys
       tags:
       - SSH Keys
-      summary: Get an SSH key by id
+  /v1/ssh-keys/{sshKeyId}:
+    get:
+      operationId: SshkeysController_getKey
       parameters:
-      - name: sshkey_id
-        in: path
+      - name: sshKeyId
         required: true
+        in: path
         schema:
+          example: 20c20f33-041e-46e3-b3cf-f044a9515716
           type: string
       responses:
         '200':
-          description: SSH key details.
+          description: Returns the SSH key
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SSHKey'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                $ref: '#/components/schemas/GetKeysResponseDto'
+      security:
+      - bearer: []
+      summary: Get single SSH key by ID
+      tags:
+      - SSH Keys
+    delete:
+      operationId: SshkeysController_deleteKey
+      parameters:
+      - name: sshKeyId
+        required: true
+        in: path
+        schema:
+          example: db00722c-2736-4c2d-8b03-c187e5ffc2ef
+          type: string
+      responses:
+        '200':
+          description: ''
+      security:
+      - bearer: []
+      summary: Delete single SSH key by ID
+      tags:
+      - SSH Keys
+  /v1/sshkeys:
+    get:
+      deprecated: true
+      operationId: DeprecatedSshkeysController_getKeys
+      parameters: []
+      responses:
+        '200':
+          description: Returns a list of the project's SSH keys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetKeysResponseDto'
+      security:
+      - bearer: []
+      - bearer: []
+      summary: Get SSH keys
+      tags:
+      - SSH Keys
+    post:
+      deprecated: true
+      operationId: DeprecatedSshkeysController_addKey
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddKeyDto'
+      responses:
+        '201':
+          description: Returns the ID of the newly created SSH key
+          content:
+            application/json:
+              example: 39479972-f06d-4a94-8027-75a0b42dcf6b
+      security:
+      - bearer: []
+      - bearer: []
+      summary: Add new SSH key
+      tags:
+      - SSH Keys
+    delete:
+      deprecated: true
+      operationId: DeprecatedSshkeysController_deleteKeys
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteKeysPublicDto'
+      responses:
+        '200':
+          description: ''
+      security:
+      - bearer: []
+      - bearer: []
+      summary: Delete ssh keys
+      tags:
+      - SSH Keys
+  /v1/sshkeys/{sshKeyId}:
+    get:
+      deprecated: true
+      operationId: DeprecatedSshkeysController_getKey
+      parameters:
+      - name: sshKeyId
+        required: true
+        in: path
+        schema:
+          example: 20c20f33-041e-46e3-b3cf-f044a9515716
+          type: string
+      responses:
+        '200':
+          description: Returns the SSH key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetKeysResponseDto'
+      security:
+      - bearer: []
+      - bearer: []
+      summary: Get single SSH key by ID
+      tags:
+      - SSH Keys
+    delete:
+      deprecated: true
+      operationId: DeprecatedSshkeysController_deleteKey
+      parameters:
+      - name: sshKeyId
+        required: true
+        in: path
+        schema:
+          example: db00722c-2736-4c2d-8b03-c187e5ffc2ef
+          type: string
+      responses:
+        '200':
+          description: ''
+      security:
+      - bearer: []
+      - bearer: []
+      summary: Delete single SSH key by ID
+      tags:
+      - SSH Keys
 components:
   schemas:
-    IdListRequest:
-      type: object
-      required:
-      - id
-      properties:
-        id:
-          oneOf:
-          - type: string
-          - type: array
-            items:
-              type: string
-    Error:
-      type: object
-      properties:
-        code:
-          type: string
-        message:
-          type: string
-    SSHKey:
+    GetKeysResponseDto:
       type: object
       properties:
         id:
           type: string
+          description: SSH key id
+          example: f7b3b3b3-1b3b-4b3b-8b3b-3b3b3b3b3b3b
         name:
           type: string
+          description: Name of the SSH key
+          example: my-key
+        key:
+          type: string
+          description: Public SSH key
+          example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...
         fingerprint:
           type: string
-    AddSSHKeyRequest:
+          description: MD5 fingerprint of the public key as colon-separated hex (matches `ssh-keygen -E md5`). `null` if the stored key cannot be parsed.
+          example: 9b:11:74:af:5c:04:48:31:40:ef:b5:ef:e3:dc:33:81
+          nullable: true
+        created_by_user_id:
+          type: string
+          description: ID of the user who added this SSH key record to the project. `null` when the creator is unknown or no longer exists.
+          format: uuid
+          nullable: true
+      required:
+      - id
+      - name
+      - key
+      - fingerprint
+      - created_by_user_id
+    DeleteKeysPublicDto:
       type: object
+      properties:
+        keys:
+          example:
+          - 4dda5d2b-5425-42b6-93d7-e3f00c683805
+          type: array
+          items:
+            type: string
+      required:
+      - keys
+    AddKeyDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the SSH key
+          example: my-key
+        key:
+          type: string
+          description: Public SSH key
+          example: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD...
       required:
       - name
       - key
-      properties:
-        name:
-          type: string
-        key:
-          type: string
-          description: SSH public key material.
-  responses:
-    NotFound:
-      description: Resource not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   securitySchemes:
-    bearerAuth:
-      type: http
+    bearer:
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

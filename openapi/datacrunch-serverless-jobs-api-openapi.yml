@@ -1,0 +1,1291 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Serverless Jobs API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Serverless Jobs
+paths:
+  /v1/job-deployments/{jobName}/logs:
+    get:
+      description: Fetch log lines from the replicas of a job deployment.
+      operationId: JobLogsPublicApiController_getLogs
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      - name: container_name
+        required: false
+        in: query
+        description: Filter by container name. If omitted, the endpoint returns the logs of all user containers of the deployment. A name that is not a container of this deployment returns no log lines.
+        schema:
+          example: app
+          type: string
+      - name: pod
+        required: false
+        in: query
+        description: Filter by replica (pod) name. Repeat the parameter for multiple values.
+        schema:
+          example: my-deployment-6f9c8b7d5-x2abc
+          type: array
+          items:
+            type: string
+      - name: search_text
+        required: false
+        in: query
+        description: Filter log lines containing the given text.
+        schema:
+          example: error
+          type: string
+      - name: since
+        required: false
+        in: query
+        description: Relative time window, for example 30s, 15m, 2h, 3d. Defaults to 15m. The time range cannot exceed 7 days.
+        schema:
+          example: 2h
+          type: string
+      - name: start
+        required: false
+        in: query
+        description: Start of the time range. ISO 8601 date or epoch time (s, ms, us, or ns). Overrides since. The time range cannot exceed 7 days.
+        schema:
+          example: '2026-06-01T12:00:00Z'
+          type: string
+      - name: end
+        required: false
+        in: query
+        description: End of the time range. ISO 8601 date, epoch time, or "now". Defaults to now.
+        schema:
+          example: now
+          type: string
+      - name: order
+        required: false
+        in: query
+        description: Order of the returned log lines by timestamp. The endpoint sorts the time range before it applies limit, so desc returns the newest lines of the range and asc returns the oldest. Defaults to desc.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        required: false
+        in: query
+        description: Maximum number of log lines to return. Narrow the time range or use the order parameter to reach lines outside the returned page.
+        schema:
+          minimum: 1
+          maximum: 1000
+          default: 50
+          type: number
+      responses:
+        '200':
+          description: List of log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeploymentLogEntryPublicApiResponseDto'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Job deployment not found
+      summary: Get job deployment replica logs
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments:
+    get:
+      operationId: ScaledJobPublicApiController_getList
+      parameters: []
+      responses:
+        '200':
+          description: Fetch a list of job deployments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScaledJobShortInfoResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get all job deployments
+      tags:
+      - Serverless Jobs
+    post:
+      operationId: ScaledJobPublicApiController_createNewScaledJob
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScaledJobDto'
+      responses:
+        '201':
+          description: Returns the created job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaledJobResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Create new job
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}:
+    get:
+      operationId: ScaledJobPublicApiController_getByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '200':
+          description: Fetch a job deployment by name
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaledJobResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get job deployment by name
+      tags:
+      - Serverless Jobs
+    patch:
+      operationId: ScaledJobPublicApiController_updateScaledJobByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchScaledJobDto'
+      responses:
+        '200':
+          description: Returns the updated job deployment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaledJobResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Update job deployment
+      tags:
+      - Serverless Jobs
+    delete:
+      operationId: ScaledJobPublicApiController_deleteByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      - name: timeout
+        required: false
+        in: query
+        description: Maximum time to wait for job deployment deletion in milliseconds. Set to 0 to skip waiting.
+        schema:
+          minimum: 0
+          maximum: 300000
+          default: 60000
+          example: 60000
+          type: number
+      responses:
+        '200':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Delete job deployment
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/scaling:
+    get:
+      operationId: ScaledJobPublicApiController_getScalingOptionsByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '200':
+          description: Scaling options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScalingOptionsResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get job deployment scaling options
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/purge-queue:
+    post:
+      operationId: ScaledJobPublicApiController_purgeQueue
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Purge job deployment queue
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/pause:
+    post:
+      operationId: ScaledJobPublicApiController_pauseScaledJobByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Pause job deployment
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/resume:
+    post:
+      operationId: ScaledJobPublicApiController_resumeScaledJobByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '201':
+          description: ''
+        '401':
+          description: Unauthorized
+      summary: Resume job deployment
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/status:
+    get:
+      operationId: ScaledJobPublicApiController_getScaledJobStatusByName
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetScaledJobStatusResponseDto'
+        '401':
+          description: Unauthorized
+      summary: Get job deployment status
+      tags:
+      - Serverless Jobs
+  /v1/job-deployments/{jobName}/system-logs:
+    get:
+      description: Fetch job deployment system logs.
+      operationId: JobSystemLogsPublicApiController_getLogs
+      parameters:
+      - name: jobName
+        required: true
+        in: path
+        description: Name of the job
+        schema:
+          maxLength: 63
+          example: my-job
+          type: string
+      - name: reason
+        required: false
+        in: query
+        description: Exact display reasons. An unknown reason returns no events.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: involved_object
+        required: false
+        in: query
+        description: Exact involved object names.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: search_text
+        required: false
+        in: query
+        description: Case-insensitive substring of the clean message, display reason and involved object. Whitespace is trimmed; blank search imposes no restriction.
+        schema:
+          type: string
+      - name: since
+        required: false
+        in: query
+        description: Relative window such as 15m or 1d. Maximum range is 7 days. Blank time parameters use their defaults.
+        schema:
+          default: 1d
+          type: string
+      - name: start
+        required: false
+        in: query
+        description: ISO 8601 or epoch time (s, ms, us or ns). Overrides since. Maximum range is 7 days.
+        schema:
+          type: string
+      - name: end
+        required: false
+        in: query
+        description: ISO 8601, epoch time (s, ms, us or ns), or now.
+        schema:
+          default: now
+      - name: order
+        required: false
+        in: query
+        description: Timestamp order of the returned entries. Ascending does not reach events the request did not read.
+        schema:
+          default: desc
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: limit
+        required: false
+        in: query
+        description: 'Maximum number of entries to return. There is no paging: change the time range or the filters to reach other events.'
+        schema:
+          minimum: 1
+          maximum: 1000
+          default: 50
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemLogEntryPublicApiResponseDto'
+        '400':
+          description: Invalid query or job name
+        '401':
+          description: Unauthorized
+        '403':
+          description: Project access denied
+        '404':
+          description: Job deployment not found
+      summary: Get job deployment system logs
+      tags:
+      - Serverless Jobs
+components:
+  schemas:
+    SystemLogEntryPublicApiResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          example: '2026-06-01T12:00:00.123456789Z'
+          description: Latest observed timestamp of the group, RFC3339 with nanosecond precision.
+        reason:
+          type: string
+          example: SchedulingFailed
+          description: Display reason of the event.
+        message:
+          type: string
+          example: Replica is waiting for its storage volume to be provisioned
+          description: Event message without an observation-count suffix.
+        involved_object:
+          type: string
+          example: my-deployment-6f9c8b7d5-x2abc
+          description: Workload or child object the event concerns; not necessarily a replica.
+        count:
+          type: number
+          minimum: 1
+          example: 3
+          description: Collected records grouped into this entry, not a Kubernetes occurrence count. May be partial at the raw scan cap.
+      required:
+      - timestamp
+      - reason
+      - message
+      - involved_object
+      - count
+    CreateScaledJobContainerEnvVar:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the environment variable
+          example: MY_ENV_VAR
+        value_or_reference_to_secret:
+          type: string
+          description: Value of the environment variable, or a reference to the secret
+          example: my-value
+        type:
+          type: string
+          description: Type of the environment variable
+          example: plain
+          enum:
+          - plain
+          - secret
+      required:
+      - name
+      - value_or_reference_to_secret
+      - type
+    GetScaledJobStatusResponseDto:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the job deployment
+          example: ready
+          enum:
+          - paused
+          - terminating
+          - running
+          - ready
+      required:
+      - status
+    CreateScaledJobContainerHealthcheckSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is healthcheck enabled for the container. It it used to check if the container is ready to accept traffic
+          example: true
+        port:
+          type: number
+          description: Port to be used for healthcheck
+          example: 8081
+        path:
+          type: string
+          description: Path to be used for healthcheck
+          example: /health
+      required:
+      - enabled
+      - port
+      - path
+    CreateScaledJobContainerVolumeMount:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - scratch
+          - secret
+          - memory
+          - shared
+          enum:
+          - scratch
+          - shared
+          - secret
+          - memory
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted
+          example: /data
+        secret_name:
+          type: string
+          description: Name of the secret to be mounted, if volume type is "secret"
+          example: my-secret
+        size_in_mb:
+          type: number
+          description: Size of volume in MiB, if volume type is "memory"
+          enum:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+          examples:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+        volumeId:
+          type: string
+          description: Volume id of the shared storage
+          example: fa4a0338-65b2-4819-8450-821190fbaf6d
+      required:
+      - type
+      - mount_path
+      - volumeId
+    ContainerRegistryCredentialsResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Credential name of the secret containing the credentials
+          example: dockerhub-credentials
+      required:
+      - name
+    ContainerRegistrySettingsResponseDto:
+      type: object
+      properties:
+        is_private:
+          type: boolean
+          description: Privacy mode of the container registry - is it public or private
+          example: true
+        credentials:
+          description: Credential details for the registry if it is private. Required if privacy mode is private
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistryCredentialsResponseDto'
+      required:
+      - is_private
+      - credentials
+    ImageInfoResponseDto:
+      type: object
+      properties:
+        image:
+          type: string
+          description: The full image reference including registry, image name, and tag (e.g., Docker image URL)
+          example: registry-1.docker.io/chentex/random-logger:v1.0.1
+        last_updated_at:
+          type: string
+          description: The ISO 8601 timestamp indicating when the container image was last updated
+          example: '2026-10-19T07:54:29.457Z'
+      required:
+      - image
+    EnvVarResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the environment variable
+          example: MY_ENV_VAR
+        value_or_reference_to_secret:
+          type: string
+          description: Value of the environment variable, or a reference to the secret
+          example: my-value
+        type:
+          type: string
+          description: Type of the environment variable
+          example: plain
+          enum:
+          - plain
+          - secret
+      required:
+      - name
+      - value_or_reference_to_secret
+      - type
+    DeploymentLogEntryPublicApiResponseDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: Log line timestamp, ISO 8601 with nanosecond precision.
+          example: '2026-06-01T12:00:00.123456789Z'
+        container_name:
+          type: string
+          description: Name of the container that produced the log line.
+          example: app
+        replica:
+          type: string
+          description: Name of the replica (pod) that produced the log line.
+          example: my-deployment-6f9c8b7d5-x2abc
+        message:
+          type: string
+          description: The log line content.
+          example: GET /healthz 200
+      required:
+      - timestamp
+      - container_name
+      - replica
+      - message
+    CreateScaledJobDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the job deployment. Immutable after creation
+          example: flux-training
+        container_registry_settings:
+          description: Container registry settings
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerRegistrySettings'
+        containers:
+          description: Containers to be deployed
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScaledJobContainerDto'
+        compute:
+          description: Compute settings for the job deployment
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobComputeResourceDto'
+        scaling:
+          description: Scaling settings for the job deployment
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobScalingOptionsDto'
+      required:
+      - name
+      - containers
+      - compute
+      - scaling
+    VolumeMountResponseDto:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the volume
+          examples:
+          - scratch
+          - secret
+          - memory
+          - shared
+          enum:
+          - scratch
+          - shared
+          - secret
+          - memory
+        mount_path:
+          type: string
+          description: Path in the container where the volume will be mounted
+          example: /data
+        secret_name:
+          type: string
+          description: Name of the secret to be mounted, if volume type is "secret"
+          example: my-secret
+        size_in_mb:
+          type: number
+          description: Size of volume in MiB, if volume type is "memory"
+          enum:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+          examples:
+          - 64
+          - 128
+          - 256
+          - 512
+          - 1024
+          - 2048
+          - 4096
+          - 8192
+          - 16384
+          - 32768
+        volume_id:
+          type: string
+          description: Volume id of the shared storage, if volume type is "shared"
+          example: fa4a0338-65b2-4819-8450-821190fbaf6d
+      required:
+      - type
+      - mount_path
+    CreateScaledJobContainerDto:
+      type: object
+      properties:
+        image:
+          type: string
+          description: Image to be deployed in the container
+          example: registry-1.docker.io/chentex/random-logger:v1.0.1
+        should_use_cached_image:
+          type: boolean
+          description: Pull the image through the platform image cache. Applies only to public Docker Hub images. Has no effect for images from other registries, or when registry credentials are set. When the cache is used, registry credentials are not needed to avoid Docker Hub rate limits, because the cache pulls with a platform account. Without the cache, this does not apply.
+          example: true
+          default: true
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerHealthcheckSettings'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerEntrypointOverridesSettings'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScaledJobContainerEnvVar'
+        volume_mounts:
+          description: Volume mounts for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScaledJobContainerVolumeMount'
+      required:
+      - image
+      - exposed_port
+    CreateScaledJobContainerRegistryCredentialsDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the secret containing the container registry credentials
+          example: dockerhub-credentials
+      required:
+      - name
+    CreateScaledJobContainerRegistrySettings:
+      type: object
+      properties:
+        credentials:
+          description: Container registry credentials used for authorized access to private container registries. Currently, credentials must be created via the DataCrunch Cloud UI. Provide the name of the created credentials here.
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerRegistryCredentialsDto'
+    ScaledJobResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Job name
+          example: flux-training
+        containers:
+          description: Containers in the job deployment
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerResponseDto'
+        endpoint_base_url:
+          type: string
+          description: The base URL of the endpoint
+          example: https://containers.datacrunch.io/flux-training
+        created_at:
+          type: string
+          example: '2021-08-31T12:00:00.000Z'
+        created_by_user_id:
+          type: string
+          description: ID of the user who created the job
+          example: 0576ee4a-d45c-44b8-b2be-d8ad0347cb46
+        compute:
+          description: Compute resource details
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+        container_registry_settings:
+          description: Container registry settings
+          allOf:
+          - $ref: '#/components/schemas/ContainerRegistrySettingsResponseDto'
+      required:
+      - name
+      - containers
+      - endpoint_base_url
+      - created_at
+      - created_by_user_id
+      - compute
+      - container_registry_settings
+    ContainerResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Container name
+          example: random-logger-0
+        image:
+          description: Image details
+          allOf:
+          - $ref: '#/components/schemas/ImageInfoResponseDto'
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/HealthcheckSettingsResponseDto'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/EntrypointOverridesSettingsResponseDto'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/EnvVarResponseDto'
+        volume_mounts:
+          description: Volume mounts for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/VolumeMountResponseDto'
+        should_use_cached_image:
+          type: boolean
+          description: The image cache setting of the container. The image is pulled through the cache only when this is true, the image is from Docker Hub, and no registry credentials are set.
+          example: false
+      required:
+      - name
+      - image
+      - exposed_port
+      - env
+      - volume_mounts
+      - should_use_cached_image
+    CreateScaledJobComputeResourceDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the compute resource
+          example: H100
+        size:
+          type: number
+          description: Number of compute units (e.g. 4 GPUs). Default is 1
+          examples:
+          - 1
+          - 2
+          - 4
+          - 8
+          - 16
+          - 32
+          default: 1
+      required:
+      - name
+      - size
+    PatchScaledJobDto:
+      type: object
+      properties:
+        container_registry_settings:
+          description: Container registry settings
+          example:
+            credentials:
+              name: dockerhub-credentials
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerRegistrySettings'
+        containers:
+          description: Containers properties to be updated
+          type: array
+          items:
+            $ref: '#/components/schemas/PatchScaledJobContainerDto'
+        compute:
+          description: Compute settings for the job deployment
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobComputeResourceDto'
+        scaling:
+          description: Scaling settings for the job deployment
+          allOf:
+          - $ref: '#/components/schemas/PatchScaledJobScalingOptionsDto'
+    PatchScaledJobScalingOptionsDto:
+      type: object
+      properties:
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+          example: 1
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+          example: 300
+        deadline_seconds:
+          type: number
+          description: Duration in seconds that a job may run before the system attempts to terminate it.
+          minimum: 600
+          maximum: 604800
+    EntrypointOverridesSettingsResponseDto:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is the default docker start command and arguments overridden
+          example: true
+        entrypoint:
+          description: Entrypoint command to start the container
+          example:
+          - python3
+          - main.py
+          type: array
+          items:
+            type: string
+        cmd:
+          description: Arguments to the entrypoint command
+          example:
+          - --port
+          - '8080'
+          type: array
+          items:
+            type: string
+      required:
+      - enabled
+    ScaledJobShortInfoResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Job deployment name
+          example: flux-training
+        created_at:
+          format: date-time
+          type: string
+          example: '2021-08-31T12:00:00.000Z'
+        created_by_user_id:
+          type: string
+          description: ID of the user who created the job
+          example: 0576ee4a-d45c-44b8-b2be-d8ad0347cb46
+        compute:
+          description: Compute resource details
+          allOf:
+          - $ref: '#/components/schemas/ComputeResource'
+      required:
+      - name
+      - created_at
+      - created_by_user_id
+      - compute
+    HealthcheckSettingsResponseDto:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is healthcheck enabled for the container. It it used to check if the container is ready to accept traffic
+          example: true
+        port:
+          type: number
+          description: Port to be used for healthcheck
+          example: 8081
+        path:
+          type: string
+          description: Path to be used for healthcheck
+          example: /health
+      required:
+      - enabled
+      - port
+      - path
+    PatchScaledJobContainerDto:
+      type: object
+      properties:
+        image:
+          type: string
+          description: Image to be deployed in the container
+          example: registry-1.docker.io/chentex/random-logger:v1.0.1
+        should_use_cached_image:
+          type: boolean
+          description: Pull the image through the platform image cache. Applies only to public Docker Hub images. Has no effect for images from other registries, or when registry credentials are set. When the cache is used, registry credentials are not needed to avoid Docker Hub rate limits, because the cache pulls with a platform account. Without the cache, this does not apply. If `image` is not sent, the setting applies to the current image. If `image` is sent without this field, the current setting is kept.
+          example: true
+          default: true
+        exposed_port:
+          type: number
+          description: Port to be exposed by the container
+          example: 8080
+        healthcheck:
+          description: Healthcheck settings for the container
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerHealthcheckSettings'
+        entrypoint_overrides:
+          description: Entrypoint overrides settings for the container
+          allOf:
+          - $ref: '#/components/schemas/CreateScaledJobContainerEntrypointOverridesSettings'
+        env:
+          description: Environment variables for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScaledJobContainerEnvVar'
+        volume_mounts:
+          description: Volume mounts for the container
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateScaledJobContainerVolumeMount'
+        name:
+          type: string
+          description: Name of the container to update
+          example: video-generator-0
+      required:
+      - name
+    CreateScaledJobContainerEntrypointOverridesSettings:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          description: Is the default docker start command and arguments overridden
+          example: true
+        entrypoint:
+          description: Entrypoint command to start the container
+          example:
+          - python3
+          - main.py
+          type: array
+          items:
+            type: string
+        cmd:
+          description: Arguments to the entrypoint command
+          example:
+          - --port
+          - '8080'
+          type: array
+          items:
+            type: string
+      required:
+      - enabled
+    CreateScaledJobScalingOptionsDto:
+      type: object
+      properties:
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+          example: 1
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+          example: 300
+        deadline_seconds:
+          type: number
+          description: Duration in seconds that a job may run before the system attempts to terminate it.
+          minimum: 600
+          maximum: 604800
+      required:
+      - max_replica_count
+      - queue_message_ttl_seconds
+      - deadline_seconds
+    ComputeResource:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the compute resource
+          example: H100
+        size:
+          type: number
+          description: Number of compute units (e.g. 4 GPUs). Default is 1
+          examples:
+          - 1
+          - 2
+          - 4
+          - 8
+          - 16
+          - 32
+          default: 1
+      required:
+      - name
+      - size
+    ScalingOptionsResponseDto:
+      type: object
+      properties:
+        max_replica_count:
+          type: number
+          description: Maximum number of replicas
+        queue_message_ttl_seconds:
+          type: number
+          description: Duration in seconds after which messages in the queue will be dropped
+        deadline_seconds:
+          type: number
+          description: Duration in seconds that a job may run before the system attempts to terminate it.
+          minimum: 600
+          maximum: 604800
+      required:
+      - max_replica_count
+      - queue_message_ttl_seconds
+      - deadline_seconds
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

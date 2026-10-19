@@ -1,80 +1,361 @@
 openapi: 3.2.0
 info:
-  title: DataCrunch Public Instance Types API
-  description: Public REST API for DataCrunch, a European GPU cloud. The API lets you deploy and manage GPU/CPU instances, query instance types and real-time availability, manage OS images and startup scripts, SSH keys, block storage volumes, retrieve account balance, and deploy and operate serverless container deployments for inference. Authentication uses the OAuth 2.0 Client Credentials flow to obtain a short-lived Bearer access token.
-  termsOfService: https://datacrunch.io/legal/terms-of-service
+  title: Verda Cloud Public Instance Types API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
   contact:
-    name: DataCrunch Support
-    url: https://docs.datacrunch.io/
-  version: '1.0'
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
 servers:
-- url: https://api.datacrunch.io/v1
+- url: https://api.verda.com
 security:
-- bearerAuth: []
+- bearer: []
 tags:
 - name: Instance Types
 paths:
-  /instance-types:
+  /v1/instance-types:
     get:
-      operationId: listInstanceTypes
-      tags:
-      - Instance Types
-      summary: List available instance types
+      operationId: InstanceTypesController_getInstanceTypes
+      parameters:
+      - name: currency
+        required: false
+        in: query
+        description: Currency to get the price history for
+        schema:
+          default: usd
+          example: usd
+          type: string
+          enum:
+          - usd
+          - eur
       responses:
         '200':
-          description: A list of instance types with specs and pricing.
+          description: ''
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/InstanceType'
+      summary: Get instance types
+      tags:
+      - Instance Types
+      security: []
+  /v1/instance-types/price-history:
+    get:
+      deprecated: true
+      operationId: InstanceTypesController_getDailyDynamicPriceHistory
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      summary: Get daily dynamic price history (only the last price update per day) - Not…
+      tags:
+      - Instance Types
+      security: []
 components:
   schemas:
     InstanceType:
       type: object
       properties:
-        id:
-          type: string
-        instance_type:
-          type: string
-          example: 1H100.80S.30V
-        name:
-          type: string
-        description:
-          type: string
-        gpu:
-          type: object
-          properties:
-            description:
-              type: string
-            number_of_gpus:
-              type: integer
+        best_for:
+          description: Use cases for instance type
+          example:
+          - Giant ML models
+          - Multi-GPU training
+          - FP64 calculations
+          - NVLINK
+          type: array
+          items:
+            type: string
         cpu:
           type: object
-          properties:
-            description:
-              type: string
-            number_of_cores:
-              type: integer
+          description: CPU details
+          example:
+            description: 22 CPU
+            number_of_cores: 22
+            model: AMD Genoa
+        deploy_warning:
+          type: object
+          description: Deploy warning
+          example: Make sure your VM is running on latest Nvidia Driver 525.100+ or newer
+        description:
+          type: string
+          description: Instance type description
+          example: Dedicated Hardware Instance
+        gpu:
+          type: object
+          description: GPU details
+          example:
+            description: 1x H100 SXM5 80GB
+            number_of_gpus: 1
+        gpu_memory:
+          type: object
+          description: GPU memory details
+          example:
+            description: 80GB GPU RAM
+            size_in_gigabytes: 80
+        id:
+          type: string
+          description: Instance type ID
+          example: c01dd00d-0000-4972-ae4e-d429115d055b
+        instance_type:
+          type: string
+          description: Instance type
+          example: 1H100.80S.22V
         memory:
           type: object
-          properties:
-            description:
-              type: string
-            size_in_gigabytes:
-              type: integer
+          description: Memory details
+          example:
+            description: 187GB RAM
+            size_in_gigabytes: 187
+        model:
+          type: string
+          description: GPU model
+          example: H100
+        name:
+          type: string
+          description: GPU model name
+          example: H100 SXM5 80GB
+        p2p:
+          type: object
+          description: P2P details
+          example: 600 GB/s
+        price_per_hour:
+          type: string
+          description: Price per hour
+          example: '3.17'
+        spot_price:
+          type: string
+          description: Spot price per hour
+          example: '0.31'
+        dynamic_price:
+          type: object
+          description: Current dynamic price
+          example: '1.25'
+          deprecated: true
+        max_dynamic_price:
+          type: string
+          description: Ceiling value for dynamic price
+          example: '6.34'
+          deprecated: true
+        serverless_price:
+          type: object
+          description: Current serverless price
+          example: '1.75'
+        serverless_spot_price:
+          type: object
+          description: Current serverless spot price
+          example: '0.87'
         storage:
           type: object
-          properties:
-            description:
-              type: string
-        price_per_hour:
-          type: number
-          format: float
+          description: Storage details
+          example:
+            description: dynamic
+        currency:
+          type: string
+          enum:
+          - usd
+          - eur
+          description: Currency type
+          example: usd
+        manufacturer:
+          type: string
+          description: Manufacturer
+          example: NVIDIA
+        display_name:
+          type: object
+          description: Display name
+          example: NVIDIA H100 SXM5 80GB
+        supported_os:
+          description: Supported OS image types
+          example:
+          - ubuntu-22.04-cuda-12.3
+          - ubuntu-24.04
+          type: array
+          items:
+            type: string
+      required:
+      - best_for
+      - cpu
+      - description
+      - gpu
+      - gpu_memory
+      - id
+      - instance_type
+      - memory
+      - model
+      - name
+      - p2p
+      - price_per_hour
+      - spot_price
+      - max_dynamic_price
+      - storage
+      - currency
+      - manufacturer
+      - display_name
+      - supported_os
   securitySchemes:
-    bearerAuth:
-      type: http
+    bearer:
       scheme: bearer
       bearerFormat: JWT
-      description: Bearer access token obtained from POST /oauth2/token via the OAuth 2.0 Client Credentials grant.
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'

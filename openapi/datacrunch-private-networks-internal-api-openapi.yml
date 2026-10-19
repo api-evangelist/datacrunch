@@ -1,0 +1,445 @@
+openapi: 3.2.0
+info:
+  title: Verda Cloud Public Private Networks (internal) API
+  description: '# Introduction
+
+
+    Verda Cloud API allows you to deploy, control instances & more via external code. ## Open API schema
+
+
+    Download OpenAPI 3.1.0 schema here: /v1/openapi.json
+
+
+    The API is a RESTful API over HTTPS, all requests & responses use JSON as the data exchange format. ## Official SDKs
+
+
+    The following SDK packages maintained by Verda Cloud and use this API:
+
+
+    - **Python SDK**: https://github.com/verda-cloud/sdk-python
+
+    - **Go SDK**: https://github.com/verda-cloud/verdacloud-sdk-go
+
+    - **Terraform** and **OpenTofu** provider: https://github.com/verda-cloud/terraform-provider-verda
+
+
+    # Quick Start Guide
+
+
+    We use OAuth 2.0 Client Credentials authentication scheme. You can generate credentials via the console UI https://console.verda.com for external applications to use Verda API. The credentials are used to generate Access & Refresh tokens. All requests to this API must be authenticated using the Access token, except for a few open endpoints. Access tokens have a short lifespan, and can be regenerated using the Refresh token. ## 1. Get Credentials from the Verda Cloud Dashboard
+
+
+    Go to the Project page => **Keys** => **Cloud API Credentials** section and click on **Create**. These credentials will be used like a username & password for your application. Store the client secret safely - like a password. ## 2. Generate Access Token
+
+
+    An Access Token is needed to be sent with any API call for authentication. The Access Token has a limited lifetime and is expired after a while as defined in `expires_in`. It is used as a bearer token
+
+
+    ### To get an access token, call the token endpoint with the credentials obtained in step 1:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "client_credentials",
+
+    "client_id": "",
+
+    "client_secret": ""
+
+    }
+
+    }
+
+    ```
+
+
+    A valid response would look similar to this:
+
+
+    ```json
+
+    {
+
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8",
+
+    "token_type": "Bearer",
+
+    "expires_in": 3600,
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk",
+
+    "scope": "cloud-api-v1"
+
+    }
+
+    ```
+
+
+    `access_token` is the token value, to be used in the next step. `expires_in` is the duration in seconds until the token is expired. `refresh_token` can be used to create a new access token if expired. When an Access Token expires, create a new one using the refresh token:
+
+
+    ```json http
+
+    {
+
+    "method": "post",
+
+    "url": "https://api.verda.com/v1/oauth2/token",
+
+    "headers": {
+
+    "Content-Type": "application/json"
+
+    },
+
+    "body": {
+
+    "grant_type": "refresh_token",
+
+    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ3b3ciOiJhbmQgdGhpcyB0b28_In0.AC5gk-o-MOptUgrouEErlhr8WT3Hg_RR6px6A0I7ZEk"
+
+    }
+
+    }
+
+    ```
+
+
+    The response will include a new token. ## 3. Make REST API Calls
+
+
+    That''s it, you are ready to use the API, don''t forget to add the Access Token to your calls:
+
+
+    Let''s call the `/balance` endpoint. Add the Access Token value to the `Authorization` header, preceded by the "Bearer" string and a space:
+
+
+    ```json http
+
+    {
+
+    "method": "get",
+
+    "url": "https://api.verda.com/v1/balance",
+
+    "headers": {
+
+    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJoZXkiOiJ5b3UgYWN1YWxseSBjaGVja2VkIHRoaXM_In0.0RjcdKQ1NJP9gbRyXITE6LFFLwKGzeeshuubnkkfkb8"
+
+    }
+
+    }
+
+    ```
+
+
+    # Rate Limits
+
+
+    Authenticated public API requests are rate limited per project in 60 second windows. ## Limits enforced
+
+
+    - **Project limit**: 500 requests per minute for all authenticated API requests made for the same project
+
+    - **Endpoint limit**: 60 requests per minute for the same project, HTTP method, and request path combination
+
+
+    The endpoint limit key includes the full request path. Route-specific endpoint policies override the regular endpoint limit for the matching request path.'
+  version: v1
+  contact:
+    name: Verda Cloud Oy
+    url: https://verda.com
+    email: info@verda.com
+servers:
+- url: https://api.verda.com
+security:
+- bearer: []
+tags:
+- name: Private Networks (internal)
+paths:
+  /private-networks:
+    get:
+      operationId: PrivateNetworksInternalController_listNetworks
+      parameters:
+      - name: project_id
+        required: true
+        in: query
+        schema:
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PrivateNetworkResponseDto'
+      security:
+      - basic: []
+      summary: List the private networks of a project
+      tags:
+      - Private Networks (internal)
+  /private-networks/{id}:
+    get:
+      operationId: PrivateNetworksInternalController_getNetwork
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          example: pn_d90ky5tk
+          type: string
+      - name: project_id
+        required: true
+        in: query
+        schema:
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrivateNetworkResponseDto'
+      security:
+      - basic: []
+      summary: Get a private network of a project
+      tags:
+      - Private Networks (internal)
+  /private-networks/{id}/subnets:
+    get:
+      operationId: PrivateNetworksInternalController_listSubnets
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          example: pn_d90ky5tk
+          type: string
+      - name: project_id
+        required: true
+        in: query
+        schema:
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubnetResponseDto'
+      security:
+      - basic: []
+      summary: List the subnets of a private network of a project
+      tags:
+      - Private Networks (internal)
+  /private-networks/{id}/subnets/{subnetId}:
+    get:
+      operationId: PrivateNetworksInternalController_getSubnet
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          example: pn_d90ky5tk
+          type: string
+      - name: subnetId
+        required: true
+        in: path
+        schema:
+          example: sn_82gp8jck
+          type: string
+      - name: project_id
+        required: true
+        in: query
+        schema:
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubnetResponseDto'
+      security:
+      - basic: []
+      summary: Get a subnet of a private network of a project
+      tags:
+      - Private Networks (internal)
+components:
+  schemas:
+    SubnetResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: sn_82gp8jck
+        location:
+          example:
+            code: FIN-01
+            name: Finland 1
+            country_code: FI
+          description: Datacenter this subnet lives in
+          allOf:
+          - $ref: '#/components/schemas/Location'
+        name:
+          type: string
+          example: workers
+        cidr:
+          type: string
+          example: 10.0.0.0/24
+        is_default:
+          type: boolean
+          description: The subnet a deploy takes when it names this network but no subnet, in this datacenter
+        used_ip_count:
+          type: number
+          example: 3
+          description: Addresses in this subnet currently held by an instance
+        total_ip_count:
+          type: number
+          example: 254
+          description: Addresses this subnet can hand out in total
+        default_route_instance:
+          nullable: true
+          description: Instance carrying this subnet’s internet traffic; null when it has no default route
+          type: object
+          allOf:
+          - $ref: '#/components/schemas/AttachedInstanceResponseDto'
+        created_by_user_id:
+          type: string
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          description: Who created the subnet
+        created_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - location
+      - name
+      - cidr
+      - is_default
+      - used_ip_count
+      - total_ip_count
+      - default_route_instance
+      - created_by_user_id
+      - created_at
+    AttachedInstanceResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+        hostname:
+          type: string
+          example: hazy-star-swims-fin-01
+        private_ip:
+          type: string
+          example: 10.0.0.5
+          description: Address on the private network
+        public_ip:
+          type: object
+          example: 203.0.113.5
+          nullable: true
+          description: Public address, null when the instance has none
+        status:
+          type: string
+          example: running
+          enum:
+          - running
+          - provisioning
+          - offline
+          - discontinued
+          - unknown
+          - ordered
+          - notfound
+          - new
+          - error
+          - deleting
+          - validating
+          - no_capacity
+          - installation_failed
+          description: The instance's lifecycle status
+      required:
+      - id
+      - hostname
+      - private_ip
+      - public_ip
+      - status
+    PrivateNetworkResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          example: pn_d90ky5tk
+        name:
+          type: string
+          example: prod-net
+        mode:
+          type: string
+          enum:
+          - auto
+          - custom
+          description: '`auto`: subnets are created per location on first use. `custom`: you create them.'
+        is_default:
+          type: boolean
+          description: The network a deploy attaches to when it names neither `network` nor `subnet`
+        created_by_user_id:
+          type: string
+          example: 7dfc2631-0158-4f74-93f6-6b46dcb90fef
+          description: Who created the network
+        created_at:
+          format: date-time
+          type: string
+      required:
+      - id
+      - name
+      - mode
+      - is_default
+      - created_by_user_id
+      - created_at
+    Location:
+      type: object
+      properties:
+        code:
+          type: string
+          example: FIN-01
+          description: Datacenter location code
+        name:
+          type: string
+          example: Finland 1
+          description: Location name
+        country_code:
+          type: string
+          example: FI
+          description: Country code
+      required:
+      - code
+      - name
+      - country_code
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+      description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'
