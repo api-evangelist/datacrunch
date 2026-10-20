@@ -1,0 +1,18 @@
+edges:
+- partner_name: Amazon Web Services
+  partner: amazon-web-services
+  partner_match: shape-anchor
+  channel: provider-built
+  relationship: compatible
+  direction: provider-built
+  shape: aws-s3
+  type: contract
+  degree: declared-unqualified
+  evidence: https://github.com/api-evangelist/datacrunch/blob/main/openapi/datacrunch-object-storage-api-openapi.yml#L173
+  evidence_kind: own-contract
+  quote: 'description: ''S3-compatible object storage. Manage access keys, and buckets. Read more about our object
+    storage support here.'
+  detected_by: sweep-shape-compat.py
+  first_seen: '2026-10-19'
+generated: '2026-10-19'
+method: searched
