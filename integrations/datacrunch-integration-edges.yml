@@ -16,3 +16,7 @@ edges:
   first_seen: '2026-10-19'
 generated: '2026-10-19'
 method: searched
+checked:
+- https://github.com/api-evangelist/datacrunch/blob/main/openapi/datacrunch-object-storage-api-openapi.yml#L173
+source:
+- https://github.com/api-evangelist/datacrunch/blob/main/openapi/datacrunch-object-storage-api-openapi.yml#L173
