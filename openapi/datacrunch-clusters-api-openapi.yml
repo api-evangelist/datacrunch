@@ -1009,3 +1009,9 @@ components:
       bearerFormat: JWT
       type: http
       description: '[Generate the token here](#tag/authentication/POST/v1/oauth2/token). Bearer token to authenticate requests to the public API. You can generate a token by calling the `/v1/oauth2/token` endpoint.'
+x-provenance:
+  method: harvested
+  publisher: DataCrunch
+  source: https://api.datacrunch.io/v1/openapi.json
+  note: split by refine-openapis from the provider's own published document, verified by fetch (openapi/_original/*.fetch.json);
+    stamped by stamp-openapi-provenance.py (roadmap#793)
