@@ -286,6 +286,8 @@ apis:
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
+  - Cluster
+  tags_raw:
   - Clusters
   properties:
   - type: OpenAPI
@@ -346,6 +348,8 @@ apis:
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
+  - Instance Groups
+  tags_raw:
   - Instance groups
   properties:
   - type: OpenAPI
@@ -369,6 +373,8 @@ apis:
   humanURL: https://api.datacrunch.io/v1/docs
   baseURL: https://api.datacrunch.io/v1
   tags:
+  - Journals
+  tags_raw:
   - Journal
   properties:
   - type: OpenAPI
