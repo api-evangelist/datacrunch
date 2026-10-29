@@ -1,4 +1,4 @@
-# DataCrunch (datacrunch)
+# DataCrunch
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,182 +66,137 @@
 
 DataCrunch is a European (Finland-based) GPU cloud offering on-demand and reserved NVIDIA GPU instances (H200, H100, B200, A100, L40S, V100) plus a serverless inference and container deployment platform. Its REST API at https://api.datacrunch.io/v1 uses OAuth2 client-credentials to issue Bearer tokens and exposes instances, instance types, availability, images, SSH keys, startup scripts, volumes, balance, and serverless containers, with an OpenAI-compatible inference endpoint for deployed models.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/datacrunch/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/datacrunch/refs/heads/main/apis.yml)
+**Areas:** GPU Cloud · Infrastructure · Compute · Inference · Serverless · Europe
 
-## Tags
+## DataCrunch on APIs.io
 
-- GPU Cloud
-- Infrastructure
-- Compute
-- Inference
-- Serverless
-- Europe
+Everything profiled for DataCrunch is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/datacrunch/](https://apis.io/providers/datacrunch/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (11)
 
-- **Created:** 2026-06-21
-- **Modified:** 2026-06-21
+- [DataCrunch Balance API](https://apis.io/apis/datacrunch/datacrunch-balance-api/) — The Balance API from DataCrunch — 1 operation(s) for balance.
+- [DataCrunch Images API](https://apis.io/apis/datacrunch/datacrunch-images-api/) — The Images API from DataCrunch — 2 operation(s) for images.
+- [DataCrunch Instance Availability API](https://apis.io/apis/datacrunch/datacrunch-instance-availability-api/) — The Instance Availability API from DataCrunch — 2 operation(s) for instance availability.
+- [DataCrunch Instance Types API](https://apis.io/apis/datacrunch/datacrunch-instance-types-api/) — The Instance Types API from DataCrunch — 1 operation(s) for instance types.
+- [DataCrunch Instances API](https://apis.io/apis/datacrunch/datacrunch-instances-api/) — The Instances API from DataCrunch — 2 operation(s) for instances.
+- [DataCrunch Locations API](https://apis.io/apis/datacrunch/datacrunch-locations-api/) — The Locations API from DataCrunch — 1 operation(s) for locations.
+- [DataCrunch Serverless Containers API](https://apis.io/apis/datacrunch/datacrunch-serverless-containers-api/) — The Serverless Containers API from DataCrunch — 8 operation(s) for serverless containers.
+- [DataCrunch SSH Keys API](https://apis.io/apis/datacrunch/datacrunch-ssh-keys-api/) — The SSH Keys API from DataCrunch — 2 operation(s) for ssh keys.
+- [DataCrunch Startup Scripts API](https://apis.io/apis/datacrunch/datacrunch-startup-scripts-api/) — The Startup Scripts API from DataCrunch — 2 operation(s) for startup scripts.
+- [DataCrunch Volumes API](https://apis.io/apis/datacrunch/datacrunch-volumes-api/) — The Volumes API from DataCrunch — 4 operation(s) for volumes.
+- [DataCrunch O Auth API](https://apis.io/apis/datacrunch/datacrunch-oauth-api/) — The OAuth API from DataCrunch — 1 operation(s) for oauth.
 
-## APIs
+### Published properties
 
-### DataCrunch Instances API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-Deploy, list, inspect, and act on GPU/CPU instances. Actions (boot, shutdown, hibernate, restore, delete, force-shutdown) are issued via PUT against one or more instance IDs.
+#### Agentic access (1)
 
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Datacrunch Agentic Access](https://apis.io/agentic-access/datacrunch/datacrunch-agentic-access/)
 
-- Instances
-- Compute
-- GPU
+#### Collections (12)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [DataCrunch Public API](https://apis.io/collections/datacrunch/open-datacrunch/)
+- [DataCrunch Public Balance API](https://apis.io/collections/datacrunch/open-datacrunch-balance-api/)
+- [DataCrunch Public Balance Images API](https://apis.io/collections/datacrunch/open-datacrunch-images-api/)
+- [DataCrunch Public Balance Instance Availability API](https://apis.io/collections/datacrunch/open-datacrunch-instance-availability-api/)
+- [DataCrunch Public Balance Instance Types API](https://apis.io/collections/datacrunch/open-datacrunch-instance-types-api/)
+- [DataCrunch Public Balance Instances API](https://apis.io/collections/datacrunch/open-datacrunch-instances-api/)
+- [DataCrunch Public Balance Locations API](https://apis.io/collections/datacrunch/open-datacrunch-locations-api/)
+- [DataCrunch Public Balance OAuth API](https://apis.io/collections/datacrunch/open-datacrunch-oauth-api/)
+- [DataCrunch Public Balance Serverless Containers API](https://apis.io/collections/datacrunch/open-datacrunch-serverless-containers-api/)
+- [DataCrunch Public Balance SSH Keys API](https://apis.io/collections/datacrunch/open-datacrunch-ssh-keys-api/)
+- [DataCrunch Public Balance Startup Scripts API](https://apis.io/collections/datacrunch/open-datacrunch-startup-scripts-api/)
+- [DataCrunch Public Balance Volumes API](https://apis.io/collections/datacrunch/open-datacrunch-volumes-api/)
 
-### DataCrunch Instance Types & Availability API
+#### Security (3)
 
-Lists available instance types with GPU/CPU/RAM/storage specs and per-hour pricing, and reports real-time availability across datacenter locations.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
+- [Datacrunch Authentication](https://apis.io/security/datacrunch/datacrunch-authentication/)
+- [Datacrunch Domain Security](https://apis.io/security/datacrunch/datacrunch-domain-security/)
+- [Datacrunch Vulnerability Disclosure](https://apis.io/security/datacrunch/datacrunch-vulnerability-disclosure/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Instance Types
-- Availability
-- Catalog
+Published plans, tiers and prices.
 
-#### Properties
+- [Datacrunch Plans Pricing](https://apis.io/plans/datacrunch/datacrunch-plans-pricing/)
 
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+#### Rate limits (1)
 
-### DataCrunch Images & Startup Scripts API
+Published request limits.
 
-Lists available OS images for instances and clusters, and manages startup (cloud-init) scripts used to provision instances at deploy time.
+- [Datacrunch Rate Limits](https://apis.io/rate-limits/datacrunch/datacrunch-rate-limits/)
 
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Images
-- Startup Scripts
-- Provisioning
+- [Datacrunch Finops](https://apis.io/finops/datacrunch/datacrunch-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-### DataCrunch SSH Keys API
-
-Add, list, retrieve, and delete the SSH public keys injected into instances at deploy time for secure access.
-
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
-
-#### Tags
-
-- SSH Keys
-- Access
-- Security
-
-#### Properties
-
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### DataCrunch Volumes API
-
-Create, list, inspect, and delete block storage volumes and run volume actions (attach, detach, resize, clone, rename), including a trash listing for soft-deleted volumes and a volume-types catalog.
-
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
-
-#### Tags
-
-- Volumes
-- Storage
-- Block Storage
-
-#### Properties
-
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### DataCrunch Serverless Inference & Containers API
-
-Deploy and manage autoscaling serverless container deployments (create, list, get, update, delete, scaling, status, pause, resume, purge-queue) running vLLM/TGI/SGLang, and invoke deployed models through an OpenAI-compatible inference endpoint.
-
-- **Human URL:** [https://docs.datacrunch.io/inference/overview](https://docs.datacrunch.io/inference/overview)
-- **Base URL:** `https://api.datacrunch.io/v1`
-
-#### Tags
-
-- Serverless
-- Inference
-- Containers
-
-#### Properties
-
-- [Documentation](https://docs.datacrunch.io/containers/overview)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-### DataCrunch Balance API
-
-Retrieves the project account balance and currency for the authenticated client.
-
-- **Human URL:** [https://api.datacrunch.io/v1/docs](https://api.datacrunch.io/v1/docs)
-- **Base URL:** `https://api.datacrunch.io/v1`
-
-#### Tags
-
-- Balance
-- Billing
-- Account
-
-#### Properties
-
-- [Documentation](https://docs.datacrunch.io/)
-- [API Reference](https://api.datacrunch.io/v1/docs)
-- [OpenAPI](openapi/datacrunch-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/datacrunch.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/datacrunch.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
-
-## Common Properties
-
-- [GitHub Organization](https://github.com/DataCrunch-io)
-- [LinkedIn](https://www.linkedin.com/company/datacrunch-oy)
 - [Website](https://datacrunch.io)
 - [Documentation](https://docs.datacrunch.io/)
-- [Plans](plans/datacrunch-plans-pricing.yml)
-- [Rate Limits](rate-limits/datacrunch-rate-limits.yml)
-- [Fin Ops](finops/datacrunch-finops.yml)
+- [Blog](https://verda.com/blog)
+- [GitHub](https://github.com/DataCrunch-io)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 27.6** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 48.7 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 32.1 |
+| Access clarity | 7.9 |
+
+**Agent readiness 17.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | — |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.4** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/datacrunch/](https://apis.io/providers/datacrunch/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for DataCrunch: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/datacrunch/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
